@@ -15,6 +15,11 @@
   .brand:before{content:"posco\A FUTURE M";white-space:pre-line;display:flex;align-items:center;width:58px;height:34px;padding-left:7px;border-radius:8px;background:#fff;border:1px solid #d4e4f1;color:#1661aa;font-size:9px;font-weight:900;line-height:1.05;letter-spacing:-.35px;box-shadow:0 4px 10px rgba(24,91,154,.08)}
     .cycle-detail-block{border-top:1px solid #e6edf3}.cycle-detail-block:first-child{border-top:0}.cycle-detail-block .cycle-row{border-top:0}.cycle-note-history{display:flex;gap:8px;align-items:flex-start;padding:8px 11px 9px;background:#fffaf4;color:#73522f;font-size:11px;line-height:1.45}.cycle-note-history b{white-space:nowrap;color:#9a5a22}.cycle-note-history span{color:#765d45}
   </style>
+<style>
+  .detail-edit-input{width:100%;min-width:0;border:1px solid #8ebee5;border-radius:7px;padding:7px 8px;background:#fff;color:var(--ink);font:inherit;font-size:13px}
+  .detail-edit-note{min-height:64px;resize:vertical;margin-top:8px}
+  .cycle-row .detail-edit-input{font-size:12px;padding:6px}
+</style>
 </head>
 <body>
   <header class="app-header"><div class="brand">AI 스마트 믹싱 <small>REFRACTORY FIELD SYSTEM</small></div><nav><button class="active" data-screen="process">공정 순서</button><button data-screen="dashboard">대시보드</button><button data-screen="worklog">작업일지 및 특이사항</button><button data-screen="history">배합 이력</button><button data-screen="learning">AI 이미지 학습</button></nav><span class="site-status">설비 연결 정상</span></header>
@@ -55,12 +60,7 @@
       const fields=[...worklog.querySelectorAll('.form-grid .field')];
       const value=label=>{const field=fields.find(item=>item.querySelector('label')?.textContent.trim()===label);return field?.querySelector('input,select')?.value||''};
       const rows=[...worklog.querySelectorAll('.worklog-table .log-row')];
-      const cycles=rows.map((row,index)=>{
-        const inputs=[...row.querySelectorAll('input')];
-        const cycleBox=row.closest('.log-cycle');
-        const numeric=value=>Number(String(value||'').replace(/[^\d.]/g,''))||0;
-        return {index:index+1,amount:numeric(row.querySelector('span')?.textContent),water:numeric(inputs[0]?.value),mixing:numeric(inputs[1]?.value),wait:numeric(cycleBox?.dataset.wait),risk:numeric(cycleBox?.dataset.risk),retarder:(row.querySelector('select')?.value||'').includes('사용')&&!((row.querySelector('select')?.value||'').includes('미사용'))};
-      });
+      const cycles=rows.map((row,index)=>{const inputs=[...row.querySelectorAll('input')];const cycleBox=row.closest('.log-cycle');const numeric=value=>Number(String(value||'').replace(/[^\d.]/g,''))||0;return {index:index+1,amount:numeric(row.querySelector('span')?.textContent),water:numeric(inputs[0]?.value),mixing:numeric(inputs[1]?.value),wait:numeric(cycleBox?.dataset.wait),risk:numeric(cycleBox?.dataset.risk),retarder:(row.querySelector('select')?.value||'').includes('사용')&&!((row.querySelector('select')?.value||'').includes('미사용'))};});
       const amount=cycles.reduce((sum,cycle)=>sum+cycle.amount,0);
       const cycleNotes=[...worklog.querySelectorAll('.cycle-note input')].map(input=>input.value.trim());
       const notes=cycleNotes.map((note,index)=>note?`${index+1}차: ${note}`:'').filter(Boolean);
@@ -578,6 +578,8 @@
         }
       }
       function showDetail(record, row) {
+        window.__activeMixingRecord = record;
+        window.__activeMixingRow = row;
         document.querySelectorAll('.job-history-record').forEach(item => item.classList.remove('selected'));
         row.classList.add('selected');
         document.getElementById('detailJob').textContent = record.job;
@@ -601,6 +603,7 @@
         detailGrid.append(workerDetail);
       }
       if (records[0]) {
+        window.__activeMixingRecord = records[0];
         document.getElementById('detailWorker').textContent = records[0].worker;
         renderBatchBreakdown(records[0]);
         renderCycleDetails(records[0]);
@@ -636,6 +639,120 @@
         });
         group.append(title, recordBox);
         list.append(group);
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      var editButton = document.querySelector('#history .panel-head button.button.secondary');
+      if (!editButton) return;
+      editButton.id = 'detailEdit';
+      var editing = false;
+
+      function inputFor(value, role) {
+        var input = document.createElement('input');
+        input.className = 'detail-edit-input';
+        input.value = value;
+        input.dataset.role = role || '';
+        return input;
+      }
+
+      function startEdit() {
+        var record = window.__activeMixingRecord;
+        if (!record) return;
+        document.querySelectorAll('#history .detail-grid .detail b').forEach(function (element, index) {
+          element.replaceWith(inputFor(element.textContent.trim(), ['job', 'material', 'amount', 'env', 'worker'][index] || ''));
+        });
+        document.querySelectorAll('#history .cycle-detail-block').forEach(function (block, index) {
+          var row = block.querySelector('.cycle-row');
+          row.dataset.editIndex = index;
+          row.querySelectorAll('span').forEach(function (span, spanIndex) {
+            if (spanIndex < 4) {
+              span.replaceWith(inputFor(span.textContent.trim(), ['amount', 'water', 'mixing', 'wait'][spanIndex]));
+            } else {
+              var select = document.createElement('select');
+              select.className = 'detail-edit-input';
+              select.dataset.role = 'retarder';
+              select.innerHTML = '<option value="사용">사용</option><option value="미사용">미사용</option>';
+              select.value = span.querySelector('.pill.use') ? '사용' : '미사용';
+              span.replaceWith(select);
+            }
+          });
+          var note = block.querySelector('.cycle-note-history span');
+          if (note) note.replaceWith(inputFor(note.textContent.trim(), 'note'));
+        });
+        var overall = document.getElementById('detailNote');
+        if (overall) {
+          var area = document.createElement('textarea');
+          area.className = 'detail-edit-input detail-edit-note';
+          area.value = record.overallNote || '';
+          overall.replaceWith(area);
+        }
+        editing = true;
+        editButton.textContent = '저장';
+      }
+
+      function numberValue(value) {
+        return Number(String(value || '').replace(/[^\d.]/g, '')) || 0;
+      }
+
+      function saveEdit() {
+        var record = window.__activeMixingRecord;
+        var row = window.__activeMixingRow;
+        if (!record) return;
+        var fields = {};
+        document.querySelectorAll('#history .detail-edit-input[data-role]').forEach(function (element) {
+          if (!['amount', 'water', 'mixing', 'wait', 'retarder', 'note'].includes(element.dataset.role)) fields[element.dataset.role] = element.value.trim();
+        });
+        var cycleNotes = [];
+        var cycles = [...document.querySelectorAll('#history .cycle-detail-block')].map(function (block, index) {
+          var values = block.querySelectorAll('.detail-edit-input');
+          var note = block.querySelector('.detail-edit-input[data-role="note"]');
+          cycleNotes[index] = note ? note.value.trim() : '';
+          return {
+            index: index + 1,
+            amount: numberValue(values[0]?.value),
+            water: numberValue(values[1]?.value),
+            mixing: numberValue(values[2]?.value),
+            wait: numberValue(values[3]?.value),
+            risk: record.cycles?.[index]?.risk || 0,
+            retarder: block.querySelector('.detail-edit-input[data-role="retarder"]')?.value === '사용'
+          };
+        });
+        var overall = document.querySelector('.detail-edit-note')?.value.trim() || '';
+        record.job = fields.job || record.job;
+        record.material = fields.material || record.material;
+        record.amount = fields.amount || (cycles.reduce(function (sum, cycle) { return sum + cycle.amount; }, 0).toLocaleString('ko-KR') + 'kg');
+        record.env = fields.env || record.env;
+        record.worker = fields.worker || record.worker;
+        record.cycles = cycles;
+        record.cycleNotes = cycleNotes;
+        record.overallNote = overall;
+        record.note = overall || cycleNotes.filter(Boolean).join(' / ') || record.note;
+        var saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+        var match = saved.findIndex(function (item) { return item.date === record.date && item.job === (row?.querySelector('div b')?.textContent || record.job); });
+        if (match >= 0) saved[match] = Object.assign({}, saved[match], record);
+        sessionStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(saved));
+        if (row) {
+          row.querySelector('small').textContent = record.date;
+          row.querySelector('.history-worker').textContent = record.worker;
+          row.querySelector('div b').textContent = record.amount;
+          row.querySelector('.history-env').textContent = record.env;
+        }
+        editing = false;
+        editButton.textContent = '수정';
+        document.getElementById('detailJob').textContent = record.job;
+        document.getElementById('detailMaterial').textContent = record.material;
+        document.getElementById('detailAmount').textContent = record.amount;
+        document.getElementById('detailEnv').textContent = record.env;
+        document.getElementById('detailWorker').textContent = record.worker;
+        document.getElementById('detailNote').textContent = record.overallNote || record.note;
+        renderBatchBreakdown(record);
+        renderCycleDetails(record);
+      }
+
+      editButton.addEventListener('click', function () {
+        if (editing) saveEdit(); else startEdit();
       });
     })();
   </script>
