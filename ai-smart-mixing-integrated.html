@@ -36,6 +36,7 @@
     function openScreen(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));navButtons.forEach(b=>b.classList.toggle('active',b.dataset.screen===id));history.replaceState(null,'','#'+id)}
     navButtons.forEach(b=>b.addEventListener('click',()=>openScreen(b.dataset.screen)));
     if(location.hash&&document.getElementById(location.hash.slice(1)))openScreen(location.hash.slice(1));
+    else openScreen('process');
     setInterval(()=>document.getElementById('clock').textContent=new Date().toLocaleString('ko-KR',{hour12:false}),1000);
     document.getElementById('approve').addEventListener('click',function(){this.textContent='작업일지에 조건 전달 완료';this.disabled=true;document.getElementById('dashState').textContent='1차 믹싱 준비 완료';document.getElementById('logState').textContent='AI 추천 조건 전달 완료';setTimeout(()=>openScreen('worklog'),450)});
     document.getElementById('saveLog').addEventListener('click',function(){this.textContent='저장 완료';setTimeout(()=>this.textContent='작업일지 저장',1000)});
