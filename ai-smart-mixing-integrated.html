@@ -696,6 +696,47 @@
         return Number(String(value || '').replace(/[^\d.]/g, '')) || 0;
       }
 
+      function restoreDetails(record) {
+        document.querySelectorAll('#history .detail-grid .detail .detail-edit-input').forEach(function (input) {
+          var value = document.createElement('b');
+          value.textContent = input.value;
+          input.replaceWith(value);
+        });
+        document.querySelectorAll('#history .cycle-detail-block').forEach(function (block, index) {
+          var row = block.querySelector('.cycle-row');
+          var values = row.querySelectorAll('.detail-edit-input');
+          var cycle = record.cycles?.[index] || {};
+          var displayValues = [values[0]?.value || ((cycle.amount || 0) + 'kg'), values[1]?.value || ((cycle.water || 0).toFixed(1) + 'L'), values[2]?.value || ((cycle.mixing || 0) + '분'), values[3]?.value || ((cycle.wait || 0) + '분')];
+          values.forEach(function (input, valueIndex) {
+            if (input.dataset.role === 'retarder') return;
+            var span = document.createElement('span');
+            span.textContent = displayValues[valueIndex];
+            input.replaceWith(span);
+          });
+          var select = row.querySelector('.detail-edit-input[data-role="retarder"]');
+          if (select) {
+            var status = document.createElement('span');
+            var retarder = select.value === '사용';
+            var risk = Number(cycle.risk) || 0;
+            status.innerHTML = '<i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i>';
+            select.replaceWith(status);
+          }
+          var noteInput = block.querySelector('.detail-edit-input[data-role="note"]');
+          if (noteInput) {
+            var note = document.createElement('span');
+            note.textContent = noteInput.value;
+            noteInput.replaceWith(note);
+          }
+        });
+        var overall = document.querySelector('.detail-edit-note');
+        if (overall) {
+          var noteText = document.createElement('span');
+          noteText.id = 'detailNote';
+          noteText.textContent = record.overallNote || record.note || '';
+          overall.replaceWith(noteText);
+        }
+      }
+
       function saveEdit() {
         var record = window.__activeMixingRecord;
         var row = window.__activeMixingRow;
@@ -747,8 +788,7 @@
         document.getElementById('detailEnv').textContent = record.env;
         document.getElementById('detailWorker').textContent = record.worker;
         document.getElementById('detailNote').textContent = record.overallNote || record.note;
-        renderBatchBreakdown(record);
-        renderCycleDetails(record);
+        restoreDetails(record);
       }
 
       editButton.addEventListener('click', function () {
