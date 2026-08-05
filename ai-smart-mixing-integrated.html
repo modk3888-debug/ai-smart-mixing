@@ -36,13 +36,38 @@
     const navButtons=[...document.querySelectorAll('nav button')];
     const screens=[...document.querySelectorAll('.screen')];
     function openScreen(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));navButtons.forEach(b=>b.classList.toggle('active',b.dataset.screen===id));history.replaceState(null,'','#'+id)}
-    navButtons.forEach(b=>b.addEventListener('click',()=>openScreen(b.dataset.screen)));
+    navButtons.forEach(b=>b.addEventListener('click',()=>{
+      if(b.dataset.screen==='history'){
+        const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||'[]');
+        const applied=Number(sessionStorage.getItem('aiSmartMixingHistoryAppliedCount')||0);
+        if(saved.length>applied){location.hash='history';location.reload();return}
+      }
+      openScreen(b.dataset.screen)
+    }));
     if(location.hash&&document.getElementById(location.hash.slice(1)))openScreen(location.hash.slice(1));
     else openScreen('process');
     setInterval(()=>document.getElementById('clock').textContent=new Date().toLocaleString('ko-KR',{hour12:false}),1000);
     document.getElementById('approve').addEventListener('click',function(){const button=this;button.textContent='작업일지에 조건 전달 완료';document.getElementById('dashState').textContent='1차 믹싱 준비 완료';document.getElementById('logState').textContent='AI 추천 조건 전달 완료';setTimeout(()=>{openScreen('worklog');button.textContent='추천 조건 승인 · 작업일지로 전달';},450)});
+    function captureSavedWorklog(){
+      const worklog=document.getElementById('worklog');
+      if(!worklog)return;
+      const fields=[...worklog.querySelectorAll('.form-grid .field')];
+      const value=label=>{const field=fields.find(item=>item.querySelector('label')?.textContent.trim()===label);return field?.querySelector('input,select')?.value||''};
+      const rows=[...worklog.querySelectorAll('.worklog-table .log-row')];
+      const amount=rows.reduce((sum,row)=>sum+Number((row.querySelector('span')?.textContent||'').replace(/[^\d]/g,'')),0);
+      const notes=[...worklog.querySelectorAll('.cycle-note input')].map((input,index)=>input.value.trim()?`${index+1}차: ${input.value.trim()}`:'').filter(Boolean);
+      const overall=worklog.querySelector('textarea')?.value.trim();
+      if(overall)notes.push(`전체: ${overall}`);
+      const now=new Date();
+      const date=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+      const record={job:value('작업명'),material:value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${value('작업장 온도')} · ${value('상대습도')}`,date,worker:'현장 작업자',result:'저장 완료',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
+      const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||'[]');
+      saved.unshift(record);
+      sessionStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
+      sessionStorage.setItem('aiSmartMixingHistoryAppliedCount',String(saved.length-1));
+    }
     document.getElementById('saveLog').textContent='저장';
-    document.getElementById('saveLog').addEventListener('click',function(){this.textContent='완료';setTimeout(()=>this.textContent='저장',1000)});
+    document.getElementById('saveLog').addEventListener('click',function(){captureSavedWorklog();this.textContent='완료';setTimeout(()=>this.textContent='저장',1000)});
     document.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',()=>{document.querySelectorAll('.history-item').forEach(x=>x.classList.remove('selected'));item.classList.add('selected');document.getElementById('detailJob').textContent=item.dataset.job;document.getElementById('detailMaterial').textContent=item.dataset.material;document.getElementById('detailAmount').textContent=item.dataset.amount;document.getElementById('detailEnv').textContent=item.dataset.env;document.getElementById('detailDate').textContent=item.dataset.date+' · '+item.dataset.result;document.getElementById('detailNote').textContent=item.dataset.note}));
     document.querySelectorAll('.learn-title').forEach(button=>button.addEventListener('click',()=>{const item=button.parentElement;item.classList.toggle('open');button.querySelector('span').textContent=item.classList.contains('open')?'접기':'펼치기'}));
     (function(){
@@ -466,9 +491,29 @@
         '2026.07.11': '정상 완료', '2026.07.03': '정상 완료', '2026.06.27': '지연제 사용 완료',
         '2026.06.18': '대기시간 조정 완료', '2026.06.11': '정상 완료', '2026.06.03': '재확인 완료'
       };
+      const savedHistory = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+      savedHistory.forEach(record => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.dataset.job = record.job;
+        item.dataset.material = record.material;
+        item.dataset.date = record.date;
+        item.dataset.amount = record.amount;
+        item.dataset.env = record.env;
+        item.dataset.result = record.result;
+        item.dataset.note = record.note;
+        item.dataset.worker = record.worker;
+        item.innerHTML = '<small>' + record.date + '</small><div><b>' + record.job + '</b><small>' + record.material + ' · ' + record.amount + '</small></div><span class="pill use">' + record.result + '</span>';
+        list.append(item);
+      });
+      if (savedHistory.length) {
+        sessionStorage.setItem('aiSmartMixingHistoryAppliedCount', String(savedHistory.length));
+        const countBadge = document.querySelector('#history .panel-head .badge');
+        if (countBadge) countBadge.textContent = '전체 ' + list.querySelectorAll('.history-item').length + '건';
+      }
       const records = [...list.querySelectorAll('.history-item')].map(item => ({
         job: item.dataset.job, material: item.dataset.material, date: item.dataset.date,
-        amount: item.dataset.amount, env: item.dataset.env, result: resultByDate[item.dataset.date] || item.dataset.result, note: item.dataset.note,
+        amount: item.dataset.amount, env: item.dataset.env, result: item.dataset.result || resultByDate[item.dataset.date], note: item.dataset.note,
         worker: item.dataset.worker || workerByDate[item.dataset.date] || '이민호'
       }));
       const grouped = records.reduce((groups, record) => {
