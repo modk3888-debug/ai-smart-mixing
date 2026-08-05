@@ -13,6 +13,7 @@
   #learning .learning-upload-panel{margin:0 0 17px}.photo-preview-box{display:grid;place-items:center;position:relative;height:190px;margin:11px 0;border:1px dashed #9fc5e5;border-radius:10px;background:linear-gradient(135deg,#f9fcff,#eef7ff);overflow:hidden}.photo-preview-empty{display:grid;place-items:center;gap:6px;color:#66839c;font-size:12px;text-align:center}.photo-preview-empty:before{content:"▧";display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#e3f1ff;color:#287ac0;font-size:20px;font-weight:800}.photo-preview-box .photo-upload-preview{display:none;width:100%;height:100%;margin:0;border:0;border-radius:0;object-fit:contain;background:#fff}
   .log-cycle{border-top:1px solid #e7eef4}.log-cycle .log-row{border-top:0}.cycle-note{display:flex;align-items:center;gap:9px;padding:0 11px 11px;background:#fbfdff}.cycle-note label{min-width:78px;color:#6b8198;font-size:11px;font-weight:800}.cycle-note input{width:100%;border:1px solid #dce6ef;border-radius:6px;padding:7px 8px;background:#fff;color:var(--ink);font:inherit;font-size:11px}@media(max-width:720px){.cycle-note{align-items:flex-start;flex-direction:column;gap:5px}.cycle-note label{min-width:0}}
   .brand:before{content:"posco\A FUTURE M";white-space:pre-line;display:flex;align-items:center;width:58px;height:34px;padding-left:7px;border-radius:8px;background:#fff;border:1px solid #d4e4f1;color:#1661aa;font-size:9px;font-weight:900;line-height:1.05;letter-spacing:-.35px;box-shadow:0 4px 10px rgba(24,91,154,.08)}
+    .cycle-detail-block{border-top:1px solid #e6edf3}.cycle-detail-block:first-child{border-top:0}.cycle-detail-block .cycle-row{border-top:0}.cycle-note-history{display:flex;gap:8px;align-items:flex-start;padding:8px 11px 9px;background:#fffaf4;color:#73522f;font-size:11px;line-height:1.45}.cycle-note-history b{white-space:nowrap;color:#9a5a22}.cycle-note-history span{color:#765d45}
   </style>
 </head>
 <body>
@@ -55,12 +56,13 @@
       const value=label=>{const field=fields.find(item=>item.querySelector('label')?.textContent.trim()===label);return field?.querySelector('input,select')?.value||''};
       const rows=[...worklog.querySelectorAll('.worklog-table .log-row')];
       const amount=rows.reduce((sum,row)=>sum+Number((row.querySelector('span')?.textContent||'').replace(/[^\d]/g,'')),0);
-      const notes=[...worklog.querySelectorAll('.cycle-note input')].map((input,index)=>input.value.trim()?`${index+1}차: ${input.value.trim()}`:'').filter(Boolean);
+      const cycleNotes=[...worklog.querySelectorAll('.cycle-note input')].map(input=>input.value.trim());
+      const notes=cycleNotes.map((note,index)=>note?`${index+1}차: ${note}`:'').filter(Boolean);
       const overall=worklog.querySelector('textarea')?.value.trim();
       if(overall)notes.push(`전체: ${overall}`);
       const now=new Date();
       const date=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
-      const record={job:value('작업명'),material:value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${value('작업장 온도')} · ${value('상대습도')}`,date,worker:'현장 작업자',result:'저장 완료',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
+      const record={job:value('작업명'),material:value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${value('작업장 온도')} · ${value('상대습도')}`,date,worker:'현장 작업자',result:'저장 완료',cycleNotes,overallNote:overall||'',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
       const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||'[]');
       saved.unshift(record);
       sessionStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
@@ -502,6 +504,8 @@
         item.dataset.env = record.env;
         item.dataset.result = record.result;
         item.dataset.note = record.note;
+        item.dataset.cyclenotes = JSON.stringify(record.cycleNotes || []);
+        item.dataset.overallnote = record.overallNote || '';
         item.dataset.worker = record.worker;
         item.innerHTML = '<small>' + record.date + '</small><div><b>' + record.job + '</b><small>' + record.material + ' · ' + record.amount + '</small></div><span class="pill use">' + record.result + '</span>';
         list.append(item);
@@ -514,7 +518,9 @@
       const records = [...list.querySelectorAll('.history-item')].map(item => ({
         job: item.dataset.job, material: item.dataset.material, date: item.dataset.date,
         amount: item.dataset.amount, env: item.dataset.env, result: item.dataset.result || resultByDate[item.dataset.date], note: item.dataset.note,
-        worker: item.dataset.worker || workerByDate[item.dataset.date] || '이민호'
+        worker: item.dataset.worker || workerByDate[item.dataset.date] || '이민호',
+        cycleNotes: (() => { try { return JSON.parse(item.dataset.cyclenotes || '[]'); } catch (_) { return []; } })(),
+        overallNote: item.dataset.overallnote || ''
       }));
       const grouped = records.reduce((groups, record) => {
         (groups[record.job] ||= []).push(record);
@@ -537,7 +543,9 @@
           const wait = (batches.length - index - 1) * mixingTime;
           const risk = Math.min(30, Math.round(5 + wait * .35));
           const retarder = risk > 10;
-          return '<div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + (index + 1) + '차</b><span>' + batch.amount.toLocaleString('ko-KR') + 'kg</span><span>' + batch.water.toFixed(1) + 'L</span><span>' + mixingTime + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>';
+          const note = record.cycleNotes?.[index] || '';
+          const noteHtml = note ? '<div class="cycle-note-history"><b>' + (index + 1) + '차 특이사항</b><span>' + note + '</span></div>' : '';
+          return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + (index + 1) + '차</b><span>' + batch.amount.toLocaleString('ko-KR') + 'kg</span><span>' + batch.water.toFixed(1) + 'L</span><span>' + mixingTime + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
         }).join('');
       }
       function renderBatchBreakdown(record) {
@@ -569,7 +577,7 @@
         document.getElementById('detailEnv').textContent = record.env;
         document.getElementById('detailWorker').textContent = record.worker;
         document.getElementById('detailDate').textContent = record.date + ' · ' + record.result;
-        document.getElementById('detailNote').textContent = record.note;
+        document.getElementById('detailNote').textContent = record.overallNote || (record.cycleNotes?.length ? '차수별 특이사항은 위 회차별 항목에서 확인할 수 있습니다.' : record.note);
         renderBatchBreakdown(record);
         renderCycleDetails(record);
         document.querySelector('#history .grid > .side').scrollIntoView({ behavior: 'smooth', block: 'start' });
