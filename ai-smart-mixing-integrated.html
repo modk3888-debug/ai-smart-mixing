@@ -55,14 +55,20 @@
       const fields=[...worklog.querySelectorAll('.form-grid .field')];
       const value=label=>{const field=fields.find(item=>item.querySelector('label')?.textContent.trim()===label);return field?.querySelector('input,select')?.value||''};
       const rows=[...worklog.querySelectorAll('.worklog-table .log-row')];
-      const amount=rows.reduce((sum,row)=>sum+Number((row.querySelector('span')?.textContent||'').replace(/[^\d]/g,'')),0);
+      const cycles=rows.map((row,index)=>{
+        const inputs=[...row.querySelectorAll('input')];
+        const cycleBox=row.closest('.log-cycle');
+        const numeric=value=>Number(String(value||'').replace(/[^\d.]/g,''))||0;
+        return {index:index+1,amount:numeric(row.querySelector('span')?.textContent),water:numeric(inputs[0]?.value),mixing:numeric(inputs[1]?.value),wait:numeric(cycleBox?.dataset.wait),risk:numeric(cycleBox?.dataset.risk),retarder:(row.querySelector('select')?.value||'').includes('사용')&&!((row.querySelector('select')?.value||'').includes('미사용'))};
+      });
+      const amount=cycles.reduce((sum,cycle)=>sum+cycle.amount,0);
       const cycleNotes=[...worklog.querySelectorAll('.cycle-note input')].map(input=>input.value.trim());
       const notes=cycleNotes.map((note,index)=>note?`${index+1}차: ${note}`:'').filter(Boolean);
       const overall=worklog.querySelector('textarea')?.value.trim();
       if(overall)notes.push(`전체: ${overall}`);
       const now=new Date();
       const date=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
-      const record={job:value('작업명'),material:value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${value('작업장 온도')} · ${value('상대습도')}`,date,worker:'현장 작업자',result:'저장 완료',cycleNotes,overallNote:overall||'',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
+      const record={job:value('작업명'),material:value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${value('작업장 온도')} · ${value('상대습도')}`,date,worker:'현장 작업자',result:'저장 완료',cycles,cycleNotes,overallNote:overall||'',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
       const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||'[]');
       saved.unshift(record);
       sessionStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
@@ -415,7 +421,7 @@
         const worklogTable = worklog.querySelector('.worklog-table');
         worklogTable.innerHTML = '<div class="log-head"><span>회차</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + recommendation.cycles.map((cycle, index) => {
           const retarder = cycle.risk > 10;
-          return '<div class="log-cycle"><div class="log-row"><b>' + (index + 1) + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + (index + 1) + '차 특이사항</label><input placeholder="예: 호퍼 대기시간, 수분량 조정, 점검 내용 입력"></div></div>';
+          return '<div class="log-cycle" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '"><div class="log-row"><b>' + (index + 1) + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + (index + 1) + '차 특이사항</label><input placeholder="예: 호퍼 대기시간, 수분량 조정, 점검 내용 입력"></div></div>';
         }).join('');
         worklog.querySelector('.panel-head .badge').textContent = 'AI 추천 · ' + formatKg(recommendation.amount);
         const aiValues = worklog.querySelectorAll('.side .detail b');
@@ -506,6 +512,7 @@
         item.dataset.note = record.note;
         item.dataset.cyclenotes = JSON.stringify(record.cycleNotes || []);
         item.dataset.overallnote = record.overallNote || '';
+        item.dataset.cycles = JSON.stringify(record.cycles || []);
         item.dataset.worker = record.worker;
         item.innerHTML = '<small>' + record.date + '</small><div><b>' + record.job + '</b><small>' + record.material + ' · ' + record.amount + '</small></div><span class="pill use">' + record.result + '</span>';
         list.append(item);
@@ -520,6 +527,7 @@
         amount: item.dataset.amount, env: item.dataset.env, result: item.dataset.result || resultByDate[item.dataset.date], note: item.dataset.note,
         worker: item.dataset.worker || workerByDate[item.dataset.date] || '이민호',
         cycleNotes: (() => { try { return JSON.parse(item.dataset.cyclenotes || '[]'); } catch (_) { return []; } })(),
+        cycles: (() => { try { return JSON.parse(item.dataset.cycles || '[]'); } catch (_) { return []; } })(),
         overallNote: item.dataset.overallnote || ''
       }));
       const grouped = records.reduce((groups, record) => {
@@ -539,13 +547,14 @@
           batches.push({ amount: batchAmount, water: +(waterPer500 * batchAmount / 500).toFixed(1) });
           remaining -= batchAmount;
         }
-        cycleBox.innerHTML = '<div class="cycle-head"><span>회차</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + batches.map((batch, index) => {
-          const wait = (batches.length - index - 1) * mixingTime;
-          const risk = Math.min(30, Math.round(5 + wait * .35));
-          const retarder = risk > 10;
+        const actualCycles = Array.isArray(record.cycles) && record.cycles.length ? record.cycles : batches.map((batch,index) => ({amount:batch.amount,water:batch.water,mixing:mixingTime,wait:(batches.length-index-1)*mixingTime,risk:Math.min(30,Math.round(5+((batches.length-index-1)*mixingTime)*.35)),retarder:Math.min(30,Math.round(5+((batches.length-index-1)*mixingTime)*.35))>10}));
+        cycleBox.innerHTML = '<div class="cycle-head"><span>회차</span><span>투입량</span><span>실제 수분</span><span>실제 믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + actualCycles.map((cycle, index) => {
+          const wait = Number(cycle.wait)||0;
+          const risk = Number(cycle.risk)||Math.min(30, Math.round(5 + wait * .35));
+          const retarder = Boolean(cycle.retarder);
           const note = record.cycleNotes?.[index] || '';
           const noteHtml = note ? '<div class="cycle-note-history"><b>' + (index + 1) + '차 특이사항</b><span>' + note + '</span></div>' : '';
-          return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + (index + 1) + '차</b><span>' + batch.amount.toLocaleString('ko-KR') + 'kg</span><span>' + batch.water.toFixed(1) + 'L</span><span>' + mixingTime + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
+          return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + (index + 1) + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
         }).join('');
       }
       function renderBatchBreakdown(record) {
