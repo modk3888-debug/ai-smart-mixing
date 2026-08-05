@@ -782,12 +782,6 @@
         }
         editing = false;
         editButton.textContent = '수정';
-        document.getElementById('detailJob').textContent = record.job;
-        document.getElementById('detailMaterial').textContent = record.material;
-        document.getElementById('detailAmount').textContent = record.amount;
-        document.getElementById('detailEnv').textContent = record.env;
-        document.getElementById('detailWorker').textContent = record.worker;
-        document.getElementById('detailNote').textContent = record.overallNote || record.note;
         try {
           restoreDetails(record);
           if (document.querySelectorAll('#history .detail-edit-input').length) location.reload();
