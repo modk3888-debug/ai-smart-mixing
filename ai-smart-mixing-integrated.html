@@ -455,6 +455,26 @@
           return '<div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + (index + 1) + '차</b><span>' + batch.amount.toLocaleString('ko-KR') + 'kg</span><span>' + batch.water.toFixed(1) + 'L</span><span>' + mixingTime + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>';
         }).join('');
       }
+      function renderBatchBreakdown(record) {
+        const amount = Number(record.amount.replace(/[^\d]/g, ''));
+        const fullBatches = Math.floor(amount / 500);
+        const remainder = amount % 500;
+        const parts = [];
+        if (fullBatches) parts.push('500kg × ' + fullBatches + '회');
+        if (remainder) parts.push(remainder + 'kg × 1회');
+        const totalRounds = fullBatches + (remainder ? 1 : 0);
+        let breakdown = document.getElementById('detailBatchBreakdown');
+        const cycleBox = document.querySelector('#history .cycles');
+        if (!breakdown && cycleBox) {
+          breakdown = document.createElement('div');
+          breakdown.id = 'detailBatchBreakdown';
+          breakdown.className = 'improve';
+          cycleBox.parentNode.insertBefore(breakdown, cycleBox);
+        }
+        if (breakdown) {
+          breakdown.innerHTML = '<b>총 투입량 산정</b><br>' + parts.join(' + ') + ' = 총 ' + amount.toLocaleString('ko-KR') + 'kg (총 ' + totalRounds + '회 믹싱)';
+        }
+      }
       function showDetail(record, row) {
         document.querySelectorAll('.job-history-record').forEach(item => item.classList.remove('selected'));
         row.classList.add('selected');
@@ -465,6 +485,7 @@
         document.getElementById('detailWorker').textContent = record.worker;
         document.getElementById('detailDate').textContent = record.date + ' · ' + record.result;
         document.getElementById('detailNote').textContent = record.note;
+        renderBatchBreakdown(record);
         renderCycleDetails(record);
         document.querySelector('#history .grid > .side').scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
@@ -479,6 +500,7 @@
       }
       if (records[0]) {
         document.getElementById('detailWorker').textContent = records[0].worker;
+        renderBatchBreakdown(records[0]);
         renderCycleDetails(records[0]);
       }
       Object.entries(grouped).forEach(([job, jobRecords], index) => {
