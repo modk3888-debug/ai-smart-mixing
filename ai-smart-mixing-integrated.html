@@ -547,13 +547,14 @@
           batches.push({ amount: batchAmount, water: +(waterPer500 * batchAmount / 500).toFixed(1) });
           remaining -= batchAmount;
         }
-        const actualCycles = Array.isArray(record.cycles) && record.cycles.length ? record.cycles : batches.map((batch,index) => ({amount:batch.amount,water:batch.water,mixing:mixingTime,wait:(batches.length-index-1)*mixingTime,risk:Math.min(30,Math.round(5+((batches.length-index-1)*mixingTime)*.35)),retarder:Math.min(30,Math.round(5+((batches.length-index-1)*mixingTime)*.35))>10}));
+        const fallbackCycles = batches.map((batch,index) => ({amount:batch.amount,water:batch.water,mixing:mixingTime,wait:(batches.length-index-1)*mixingTime,risk:Math.min(30,Math.round(5+((batches.length-index-1)*mixingTime)*.35)),retarder:Math.min(30,Math.round(5+((batches.length-index-1)*mixingTime)*.35))>10}));
+        const actualCycles = Array.isArray(record.cycles) && record.cycles.length ? record.cycles.map((cycle,index) => ({...fallbackCycles[index],...cycle,amount:Number(cycle.amount)||fallbackCycles[index].amount,water:Number(cycle.water)||fallbackCycles[index].water,mixing:Number(cycle.mixing)||fallbackCycles[index].mixing,wait:Number(cycle.wait)||fallbackCycles[index].wait,risk:Number(cycle.risk)||fallbackCycles[index].risk,retarder:typeof cycle.retarder === 'boolean' ? cycle.retarder : fallbackCycles[index].retarder})) : fallbackCycles;
         cycleBox.innerHTML = '<div class="cycle-head"><span>회차</span><span>투입량</span><span>실제 수분</span><span>실제 믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + actualCycles.map((cycle, index) => {
           const wait = Number(cycle.wait)||0;
           const risk = Number(cycle.risk)||Math.min(30, Math.round(5 + wait * .35));
           const retarder = Boolean(cycle.retarder);
           const note = record.cycleNotes?.[index] || '';
-          const displayNote = note || '특이사항 없음';
+          const displayNote = note || (retarder ? '호퍼 대기 ' + wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
           const noteHtml = '<div class="cycle-note-history"><b>' + (index + 1) + '차 특이사항</b><span>' + displayNote + '</span></div>';
           return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + (index + 1) + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
         }).join('');
