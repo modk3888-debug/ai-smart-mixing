@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: ai-smart-mixing-presentation
+    runtime: python
+    rootDir: ai-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    plan: free
