@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 스마트 믹싱</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f7f9fc;color:#102a43;font-family:Arial,"Malgun Gothic",sans-serif}header{height:78px;background:#fff;border-bottom:1px solid #e5eaf1;box-shadow:0 4px 18px rgba(16,42,67,.08);display:flex;align-items:center;gap:52px;padding:0 5vw;position:relative;z-index:3}header b{display:flex;align-items:center;gap:12px;font-size:19px;letter-spacing:-.5px;color:#102a43;white-space:nowrap}header b:before{content:"✦";display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#0a6cff,#6d4aff);color:#fff;font-size:14px;box-shadow:0 5px 12px rgba(55,102,220,.22)}nav{height:100%;display:flex;align-items:center;gap:7px}nav button{height:43px;padding:0 16px;border:1px solid transparent;border-radius:6px;background:transparent;color:#64748b;font-size:13px;letter-spacing:.1px;cursor:pointer;transition:.2s ease}nav button:hover{color:#0a6cff;background:#f0f6ff;border-color:#dbe9ff}nav button.active{font-weight:700;color:#fff;background:linear-gradient(135deg,#0a6cff,#6748e8);border-color:#0a6cff;box-shadow:0 7px 16px rgba(48,91,210,.2)}.viewport{height:calc(100vh - 78px);overflow:hidden;background:#f7f9fc}.frame{width:100%;height:100vh;border:0;display:block;transform:translateY(-78px)}</style>
+</head>
+<body>
+<header><b>AI 스마트 믹싱</b><nav><button class="active" data-page="process-flow.html">공정 순서</button><button data-page="dashboard-final-direct.html">대시보드</button><button data-page="worklog-final-direct.html">작업일지 및 특이사항</button><button data-page="history-auto-enhanced.html">배합 이력</button><button data-page="ai-learning.html">AI 이미지 학습</button></nav></header>
+<div class="viewport"><iframe class="frame" id="frame" src="process-flow.html" title="내화물 배합 화면"></iframe></div>
+<script>
+const frame=document.getElementById('frame');
+const buttons=[...document.querySelectorAll('nav button')];
+function openPage(file){frame.src=file;buttons.forEach(b=>b.classList.toggle('active',b.dataset.page===file))}
+buttons.forEach(b=>b.addEventListener('click',()=>openPage(b.dataset.page)));
+function bindDashboard(){
+  try{
+    const doc=frame.contentDocument;
+    doc.querySelectorAll('a').forEach(a=>{
+      if((a.textContent||'').includes('작업일지')||(a.textContent||'').includes('실제 회차별')){
+        a.textContent='작업일지 작성하기';
+        a.href='#작업일지';
+        a.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openPage('worklog-final-direct.html')},true);
+      }
+    });
+    doc.addEventListener('click',e=>{
+      const a=e.target.closest&&e.target.closest('a');
+      if(a&&((a.textContent||'').includes('작업일지 작성하기')||a.getAttribute('href')==='#작업일지')){
+        e.preventDefault();e.stopPropagation();openPage('worklog-final-direct.html');
+      }
+    },true);
+  }catch(e){}
+}
+frame.addEventListener('load',bindDashboard);
+setTimeout(bindDashboard,300);
+setTimeout(bindDashboard,1000);
+function openRequestedPage(){const routes={"#dashboard":"dashboard-final-direct.html","#history":"history-auto-enhanced.html","#worklog":"worklog-shell.html","#process":"process-flow.html","#ai":"ai-analysis-models.html","#learning":"ai-learning.html"};if(routes[location.hash]){openPage(routes[location.hash])}}
+window.addEventListener('hashchange',openRequestedPage);
+openRequestedPage();
+</script>
+</body>
+</html>
+
