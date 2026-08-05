@@ -788,7 +788,12 @@
         document.getElementById('detailEnv').textContent = record.env;
         document.getElementById('detailWorker').textContent = record.worker;
         document.getElementById('detailNote').textContent = record.overallNote || record.note;
-        restoreDetails(record);
+        try {
+          restoreDetails(record);
+          if (document.querySelectorAll('#history .detail-edit-input').length) location.reload();
+        } catch (error) {
+          location.reload();
+        }
       }
 
       editButton.addEventListener('click', function () {
