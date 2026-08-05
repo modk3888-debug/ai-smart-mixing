@@ -553,7 +553,8 @@
           const risk = Number(cycle.risk)||Math.min(30, Math.round(5 + wait * .35));
           const retarder = Boolean(cycle.retarder);
           const note = record.cycleNotes?.[index] || '';
-          const noteHtml = note ? '<div class="cycle-note-history"><b>' + (index + 1) + '차 특이사항</b><span>' + note + '</span></div>' : '';
+          const displayNote = note || '특이사항 없음';
+          const noteHtml = '<div class="cycle-note-history"><b>' + (index + 1) + '차 특이사항</b><span>' + displayNote + '</span></div>';
           return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + (index + 1) + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
         }).join('');
       }
