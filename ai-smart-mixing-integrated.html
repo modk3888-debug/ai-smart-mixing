@@ -912,5 +912,48 @@
       });
     })();
   </script>
+  <script>
+    // 승인 후 작업일지에는 현장 입력 예시를 회차 순서대로 표시합니다.
+    (function () {
+      const approve = document.getElementById('approve');
+      const worklog = document.getElementById('worklog');
+      if (!approve || !worklog) return;
+
+      function fillFieldData() {
+        const rows = [...worklog.querySelectorAll('.worklog-table .log-cycle')];
+        rows.forEach((cycle, index) => {
+          const row = cycle.querySelector('.log-row');
+          const inputs = row ? [...row.querySelectorAll('input')] : [];
+          const wait = Number(cycle.dataset.wait || 0);
+          const risk = Number(cycle.dataset.risk || 0);
+          if (inputs[0]) inputs[0].value = (26 + [0.2, -0.2, 0, 0.1, -0.1][index % 5]).toFixed(1) + ' L';
+          if (inputs[1]) inputs[1].value = (5 + (index % 4 === 3 ? 1 : 0)) + ' 분';
+          const select = row?.querySelector('select');
+          if (select) select.value = risk > 10 ? '사용' : '미사용';
+          const note = cycle.querySelector('.cycle-note input');
+          if (note && !note.value) {
+            note.value = risk > 10
+              ? '호퍼 대기 ' + wait + '분으로 지연제 사용. 믹싱 후 즉시 이송하고 유량계 상태를 확인함.'
+              : wait > 0
+                ? '호퍼 대기 ' + wait + '분, 지연제 미사용. 기준 시간 내 이송 완료.'
+                : '대기 없이 이송 완료. 수분량과 믹싱 상태 정상.';
+          }
+        });
+        const overall = worklog.querySelector('textarea');
+        if (overall && !overall.value) overall.value = '회차별 실제 수분량·믹싱시간을 기록하고, 위험도 10% 초과 회차는 지연제를 사용함.';
+      }
+
+      approve.addEventListener('click', () => {
+        setTimeout(() => {
+          fillFieldData();
+          document.getElementById('worklog').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          worklog.querySelector('.worklog-table input')?.focus({ preventScroll: true });
+        }, 550);
+      });
+
+      document.getElementById('dashboardJob')?.addEventListener('change', () => setTimeout(fillFieldData, 30));
+    })();
+  </script>
 </body>
 </html>
