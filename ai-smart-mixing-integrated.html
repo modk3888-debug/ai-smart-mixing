@@ -965,5 +965,48 @@
       document.getElementById('dashboardJob')?.addEventListener('change', () => setTimeout(fillFieldData, 30));
     })();
   </script>
+  <style>
+    .worklog-table .log-head,
+    .worklog-table .log-row { grid-template-columns: .6fr .8fr 1fr 1fr .8fr .8fr; }
+    .worklog-table .log-row input:nth-of-type(3) { min-width: 0; }
+  </style>
+  <script>
+    (() => {
+      function syncWorklogWaitColumn() {
+        document.querySelectorAll('.worklog-table').forEach(table => {
+          const head = table.querySelector('.log-head');
+          if (head && head.children.length === 5) {
+            const waitHead = document.createElement('span');
+            waitHead.textContent = '호퍼 대기시간';
+            head.insertBefore(waitHead, head.lastElementChild);
+          }
+          table.querySelectorAll('.log-cycle').forEach(cycle => {
+            const row = cycle.querySelector('.log-row');
+            if (!row || row.querySelector('input[data-wait-input]')) return;
+            const wait = document.createElement('input');
+            wait.dataset.waitInput = 'true';
+            wait.value = (Number(cycle.dataset.wait) || 0) + ' 분';
+            row.insertBefore(wait, row.querySelector('select'));
+          });
+          table.querySelectorAll('.log-row').forEach((row, index) => {
+            if (row.querySelector('input[data-wait-input]')) return;
+            const waits = [12, 6, 0, 6, 0];
+            const wait = document.createElement('input');
+            wait.dataset.waitInput = 'true';
+            wait.value = (waits[index] ?? 0) + ' 분';
+            row.insertBefore(wait, row.querySelector('select'));
+          });
+        });
+      }
+      syncWorklogWaitColumn();
+      document.addEventListener('input', event => {
+        const input = event.target;
+        if (!input.matches('.log-row input[data-wait-input]')) return;
+        const cycle = input.closest('.log-cycle');
+        if (cycle) cycle.dataset.wait = String(Number(input.value.replace(/[^\d.]/g, '')) || 0);
+      });
+      document.getElementById('approve')?.addEventListener('click', () => setTimeout(syncWorklogWaitColumn, 650));
+    })();
+  </script>
 </body>
 </html>
