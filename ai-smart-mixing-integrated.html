@@ -438,6 +438,9 @@
         fields[1].querySelector('input').value = recommendation.material;
         fields[2].querySelector('input').value = recommendation.temperature;
         fields[3].querySelector('input').value = recommendation.humidity;
+        // 작업명을 바꾸면 이전 작업의 전체 특이사항을 남기지 않고 새 추천값으로 다시 작성합니다.
+        const overallNote = worklog.querySelector('textarea');
+        if (overallNote) overallNote.value = '';
         const worklogTable = worklog.querySelector('.worklog-table');
         worklogTable.innerHTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + groupedCycles(recommendation.cycles, ({ cycle }) => {
           const retarder = cycle.risk > 10;
