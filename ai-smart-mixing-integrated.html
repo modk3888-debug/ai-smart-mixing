@@ -1075,5 +1075,18 @@
     syncEnvironment();
   })();
 </script>
+<script>
+  // 저장 완료 후 배합 이력 화면으로 이동하고, 방금 저장한 기록을 다시 불러옵니다.
+  (() => {
+    const saveButton = document.getElementById('saveLog');
+    if (!saveButton) return;
+    saveButton.addEventListener('click', () => {
+      setTimeout(() => {
+        location.hash = 'history';
+        location.reload();
+      }, 900);
+    });
+  })();
+</script>
 </body>
 </html>
