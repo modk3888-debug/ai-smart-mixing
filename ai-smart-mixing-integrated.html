@@ -384,6 +384,17 @@
           return { amount, wait, risk, water: +(job.water * amount / 500).toFixed(1), cycle, round };
         });
       }
+      function groupedCycles(cycles, renderRow) {
+        const groups = cycles.reduce((result, cycle, index) => {
+          const key = cycle.cycle || (Math.floor(index / 3) + 1);
+          (result[key] ||= []).push({ cycle, index });
+          return result;
+        }, {});
+        return Object.entries(groups).map(([cycleNumber, entries]) => {
+          const total = entries.reduce((sum, entry) => sum + Number(entry.cycle.amount || 0), 0);
+          return '<section class="cycle-group"><div class="cycle-group-head"><b>' + cycleNumber + '사이클</b><span>' + total.toLocaleString('ko-KR') + 'kg · ' + entries.length + '회 믹싱</span></div>' + entries.map(renderRow).join('') + '</section>';
+        }).join('');
+      }
       function render(name) {
         const job = jobs[name];
         const cycles = buildCycles(job);
@@ -399,9 +410,9 @@
         infos[0].innerHTML = '<small>내화물 종류 · 원료 LOT</small><b>' + job.material + '</b> <span>' + job.lot + '</span>';
         infos[2].innerHTML = '<small>AI 권장 총 수분량</small><b>' + cycles.reduce((sum, cycle) => sum + cycle.water, 0).toFixed(1) + 'L</b> <span>회차별 분할 투입</span>';
         const cycleBox = dashboard.querySelector('.cycles');
-        cycleBox.innerHTML = '<div class="cycle-head"><span>회차</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + cycles.map((cycle, index) => {
+        cycleBox.innerHTML = '<div class="cycle-head"><span>차수</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + groupedCycles(cycles, ({ cycle, index }) => {
           const useRetarder = cycle.risk > 10;
-          return '<div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + (index + 1) + '차</b><span>' + formatKg(cycle.amount) + '</span><span>' + cycle.water.toFixed(1) + 'L</span><span>' + job.mixing + '분</span><span>' + cycle.wait + '분</span><span><i class="pill ' + (useRetarder ? 'use' : 'no') + '">' + (useRetarder ? '사용' : '미사용') + '</i> <i class="' + (useRetarder ? 'risk-high' : 'risk-low') + '">' + cycle.risk + '%</i></span></div>';
+          return '<div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><span>' + cycle.water.toFixed(1) + 'L</span><span>' + job.mixing + '분</span><span>' + cycle.wait + '분</span><span><i class="pill ' + (useRetarder ? 'use' : 'no') + '">' + (useRetarder ? '사용' : '미사용') + '</i> <i class="' + (useRetarder ? 'risk-high' : 'risk-low') + '">' + cycle.risk + '%</i></span></div>';
         }).join('');
         const notice = dashboard.querySelector('.action-bar div');
         const used = cycles.filter(cycle => cycle.risk > 10).map((cycle, index) => cycles.indexOf(cycle) + 1);
@@ -427,9 +438,9 @@
         fields[2].querySelector('input').value = recommendation.temperature;
         fields[3].querySelector('input').value = recommendation.humidity;
         const worklogTable = worklog.querySelector('.worklog-table');
-        worklogTable.innerHTML = '<div class="log-head"><span>회차</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + recommendation.cycles.map((cycle, index) => {
+        worklogTable.innerHTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + groupedCycles(recommendation.cycles, ({ cycle }) => {
           const retarder = cycle.risk > 10;
-          return '<div class="log-cycle" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '"><div class="log-row"><b>' + cycle.cycle + '사이클 ' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.cycle + '사이클 ' + cycle.round + '차 특이사항</label><input placeholder="예: 호퍼 대기시간, 수분량 조정, 점검 내용 입력"></div></div>';
+          return '<div class="log-cycle" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input placeholder="예: 호퍼 대기시간, 수분량 조정, 점검 내용 입력"></div></div>';
         }).join('');
         worklog.querySelector('.panel-head .badge').textContent = 'AI 추천 · ' + formatKg(recommendation.amount);
         const aiValues = worklog.querySelectorAll('.side .detail b');
