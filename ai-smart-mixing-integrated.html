@@ -416,8 +416,8 @@
           return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><span>' + cycle.water.toFixed(1) + 'L</span><span>' + job.mixing + '분</span><span>' + cycle.wait + '분</span><span><i class="pill ' + (useRetarder ? 'use' : 'no') + '">' + (useRetarder ? '사용' : '미사용') + '</i> <i class="' + (useRetarder ? 'risk-high' : 'risk-low') + '">' + cycle.risk + '%</i></span></div><div class="cycle-note-history"><b>' + cycle.round + '차 특이사항</b><span>' + note + '</span></div></div>';
         });
         const notice = dashboard.querySelector('.action-bar div');
-        const used = cycles.filter(cycle => cycle.risk > 10).map((cycle, index) => cycles.indexOf(cycle) + 1);
-        notice.innerHTML = used.length ? '<b>● 승인 전 확인 필요</b>' + used.join('·') + '차는 위험도 10% 초과로 지연제 사용 조건이 포함되어 있습니다.' : '<b>● 정상 조건</b>모든 회차가 위험도 10% 이하로 지연제 사용 없이 작업할 수 있습니다.';
+        const used = cycles.filter(cycle => cycle.risk > 10).map(cycle => cycle.cycle + '사이클 ' + cycle.round + '차');
+        notice.innerHTML = used.length ? '<b>● 승인 전 확인 필요</b>' + used.join(' · ') + '에 위험도 10% 초과로 지연제 사용 조건이 포함되어 있습니다.' : '<b>● 정상 조건</b>모든 사이클·차수가 위험도 10% 이하로 지연제 사용 없이 작업할 수 있습니다.';
       }
       function transferRecommendation(name) {
         const job = jobs[name];
@@ -445,7 +445,7 @@
         worklogTable.innerHTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + groupedCycles(recommendation.cycles, ({ cycle }) => {
           const retarder = cycle.risk > 10;
           const note = retarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.';
-          return '<div class="log-cycle" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '" data-retarder="' + retarder + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input value="' + note + '"></div></div>';
+          return '<div class="log-cycle" data-cycle="' + cycle.cycle + '" data-round="' + cycle.round + '" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '" data-retarder="' + retarder + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input value="' + note + '"></div></div>';
         });
         worklog.querySelector('.panel-head .badge').textContent = 'AI 추천 · ' + formatKg(recommendation.amount);
         const aiValues = worklog.querySelectorAll('.side .detail b');
@@ -946,7 +946,7 @@
           const useRetarder = cycle.dataset.retarder === 'true' || (cycle.dataset.retarder == null && risk > 10);
           const select = row?.querySelector('select');
           if (select) select.value = useRetarder ? '사용' : '미사용';
-          if (useRetarder) usedRounds.push((index + 1) + '차');
+          if (useRetarder) usedRounds.push((cycle.dataset.cycle || Math.floor(index / 3) + 1) + '사이클 ' + (cycle.dataset.round || (index % 3 + 1)) + '차');
           const note = cycle.querySelector('.cycle-note input');
           if (note && !note.value) {
             note.value = useRetarder
@@ -959,8 +959,8 @@
         const overall = worklog.querySelector('textarea');
         if (overall && !overall.value) {
           overall.value = usedRounds.length
-            ? '회차별 실제 수분량·믹싱시간을 기록했습니다. ' + usedRounds.join('·') + ' 지연제 사용으로 작업했습니다.'
-            : '회차별 실제 수분량·믹싱시간을 기록했습니다. 전 회차 지연제 미사용으로 작업했습니다.';
+            ? usedRounds.join(' · ') + '에 지연제를 사용했습니다.'
+            : '전체 사이클·차수에서 지연제를 사용하지 않았습니다.';
         }
       }
 
