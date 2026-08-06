@@ -1024,6 +1024,7 @@
     (() => {
       // 실제 작업 중 발생한 예시 상황: 래들 바닥 1사이클 2차에서 호퍼 배출 게이트 점검으로 이송이 지연된 경우
       function applyFieldScenario() {
+        return;
         const job = document.querySelector('#worklog .form-grid select')?.value;
         if (job !== '래들 바닥') return;
         const target = document.querySelector('#worklog .log-cycle[data-cycle="1"][data-round="2"]');
