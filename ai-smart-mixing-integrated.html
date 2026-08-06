@@ -450,13 +450,43 @@
         if (aiValues[2]) aiValues[2].textContent = '10% 초과 시 사용';
         document.getElementById('logState').textContent = 'AI 추천 조건 전달 완료 · ' + recommendation.name;
       }
-      select.addEventListener('change', () => render(select.value));
+      function recommendationFor(name) {
+        const job = jobs[name];
+        const cycles = buildCycles(job);
+        return {
+          name,
+          material: job.material,
+          amount: job.amount,
+          mixing: job.mixing,
+          temperature: dashboard.querySelectorAll('.sensor b')[0].textContent,
+          humidity: dashboard.querySelectorAll('.sensor b')[1].textContent,
+          cycles
+        };
+      }
+      select.addEventListener('change', () => {
+        render(select.value);
+        applyRecommendation(recommendationFor(select.value));
+      });
       document.getElementById('approve').addEventListener('click', () => transferRecommendation(select.value));
       const savedRecommendation = sessionStorage.getItem('aiSmartMixingRecommendation');
+      let restoredRecommendation = false;
       if (savedRecommendation) {
-        try { applyRecommendation(JSON.parse(savedRecommendation)); } catch (error) { sessionStorage.removeItem('aiSmartMixingRecommendation'); }
+        try {
+          const parsed = JSON.parse(savedRecommendation);
+          const savedTotal = (parsed.cycles || []).reduce((sum, cycle) => sum + Number(cycle.amount || 0), 0);
+          if (parsed.name && jobs[parsed.name] && savedTotal === Number(parsed.amount)) {
+            applyRecommendation(parsed);
+            restoredRecommendation = true;
+          } else {
+            const fresh = recommendationFor(select.value);
+            sessionStorage.setItem('aiSmartMixingRecommendation', JSON.stringify(fresh));
+            applyRecommendation(fresh);
+            restoredRecommendation = true;
+          }
+        } catch (error) { sessionStorage.removeItem('aiSmartMixingRecommendation'); }
       }
       render(select.value);
+      if (!restoredRecommendation) applyRecommendation(recommendationFor(select.value));
     })();
   </script>
   <script>
