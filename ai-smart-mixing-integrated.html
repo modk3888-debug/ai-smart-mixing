@@ -381,7 +381,7 @@
           const cycleLength = Math.min(3, rows.length - ((cycle - 1) * 3));
           const wait = (cycleLength - round) * job.mixing;
           const risk = Math.min(30, Math.round(job.baseRisk + wait * 0.35));
-          const scenario = job.amount === 3500 && cycle === 1 && round === 2 ? { wait: 9, risk: 12, retarder: true } : null;
+          const scenario = null;
           return { amount, wait: scenario ? scenario.wait : wait, risk: scenario ? scenario.risk : risk, water: +(job.water * amount / 500).toFixed(1), cycle, round, scenario, retarder: scenario ? scenario.retarder : risk > 10 };
         });
       }
