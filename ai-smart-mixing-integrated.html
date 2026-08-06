@@ -930,6 +930,7 @@
 
       function fillFieldData() {
         const rows = [...worklog.querySelectorAll('.worklog-table .log-cycle')];
+        const usedRounds = [];
         rows.forEach((cycle, index) => {
           const row = cycle.querySelector('.log-row');
           const inputs = row ? [...row.querySelectorAll('input')] : [];
@@ -941,6 +942,7 @@
           const useRetarder = cycle.dataset.retarder === 'true' || (cycle.dataset.retarder == null && risk > 10);
           const select = row?.querySelector('select');
           if (select) select.value = useRetarder ? '사용' : '미사용';
+          if (useRetarder) usedRounds.push((index + 1) + '차');
           const note = cycle.querySelector('.cycle-note input');
           if (note && !note.value) {
             note.value = useRetarder
@@ -951,7 +953,11 @@
           }
         });
         const overall = worklog.querySelector('textarea');
-        if (overall && !overall.value) overall.value = '회차별 실제 수분량·믹싱시간을 기록하고, 위험도 10% 초과 회차는 지연제를 사용함.';
+        if (overall && !overall.value) {
+          overall.value = usedRounds.length
+            ? '회차별 실제 수분량·믹싱시간을 기록했습니다. ' + usedRounds.join('·') + ' 지연제 사용으로 작업했습니다.'
+            : '회차별 실제 수분량·믹싱시간을 기록했습니다. 전 회차 지연제 미사용으로 작업했습니다.';
+        }
       }
 
       approve.addEventListener('click', () => {
