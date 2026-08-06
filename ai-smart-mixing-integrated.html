@@ -598,7 +598,16 @@
           remaining -= batchAmount;
         }
         const fallbackCycles = batches.map((batch,index) => { const cycle=Math.floor(index/3)+1; const round=(index%3)+1; const cycleLength=Math.min(3,batches.length-((cycle-1)*3)); const wait=(cycleLength-round)*mixingTime; const risk=Math.min(30,Math.round(5+wait*.35)); return {amount:batch.amount,water:batch.water,mixing:mixingTime,wait,risk,retarder:risk>10,cycle,round}; });
-        const actualCycles = Array.isArray(record.cycles) && record.cycles.length ? record.cycles.map((cycle,index) => ({...fallbackCycles[index],...cycle,amount:Number(cycle.amount)||fallbackCycles[index].amount,water:Number(cycle.water)||fallbackCycles[index].water,mixing:Number(cycle.mixing)||fallbackCycles[index].mixing,wait:Number(cycle.wait)||fallbackCycles[index].wait,risk:Number(cycle.risk)||fallbackCycles[index].risk,retarder:typeof cycle.retarder === 'boolean' ? cycle.retarder : fallbackCycles[index].retarder,cycle:cycle.cycle||fallbackCycles[index].cycle,round:cycle.round||fallbackCycles[index].round})) : fallbackCycles;
+        const mergedCycles = Array.isArray(record.cycles) && record.cycles.length ? record.cycles.map((cycle,index) => ({...fallbackCycles[index],...cycle,amount:Number(cycle.amount)||fallbackCycles[index].amount,water:Number(cycle.water)||fallbackCycles[index].water,mixing:Number(cycle.mixing)||fallbackCycles[index].mixing,retarder:typeof cycle.retarder === 'boolean' ? cycle.retarder : fallbackCycles[index].retarder,cycle:cycle.cycle||fallbackCycles[index].cycle,round:cycle.round||fallbackCycles[index].round})) : fallbackCycles;
+        const cycleCounts = mergedCycles.reduce((counts, cycle, index) => { const key = Number(cycle.cycle) || (Math.floor(index / 3) + 1); counts[key] = (counts[key] || 0) + 1; return counts; }, {});
+        const actualCycles = mergedCycles.map((cycle, index) => {
+          const cycleNumber = Number(cycle.cycle) || (Math.floor(index / 3) + 1);
+          const roundNumber = Number(cycle.round) || (index % 3) + 1;
+          const mixing = Number(cycle.mixing) || mixingTime;
+          const wait = Math.max(0, (cycleCounts[cycleNumber] - roundNumber) * mixing);
+          const risk = Math.min(30, Math.round(5 + wait * 0.35));
+          return {...cycle, cycle: cycleNumber, round: roundNumber, mixing, wait, risk, retarder: typeof cycle.retarder === 'boolean' ? cycle.retarder : risk > 10};
+        });
         const cycleGroups = actualCycles.reduce((groups, cycle, index) => { const key = cycle.cycle || (Math.floor(index / 3) + 1); (groups[key] ||= []).push({cycle,index}); return groups; }, {});
         const cycleHtml = Object.entries(cycleGroups).map(([cycleNumber, entries]) => '<section class="cycle-group"><div class="cycle-group-head"><b>' + cycleNumber + '사이클</b><span>' + entries.reduce((sum, entry) => sum + Number(entry.cycle.amount || 0), 0).toLocaleString('ko-KR') + 'kg · ' + entries.length + '회 믹싱</span></div>' + entries.map(({cycle,index}) => {
           const wait = Number(cycle.wait)||0;
