@@ -212,7 +212,10 @@
       };
       async function getFieldSession() {
         const stored = JSON.parse(localStorage.getItem('ai-smart-mixing-field-session') || 'null');
-        if (stored && stored.access_token && stored.user) return stored;
+        let storedExp = Number(stored?.expires_at || 0);
+        if (!storedExp && stored?.access_token) { try { storedExp = Number(JSON.parse(atob(stored.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp || 0); } catch (_) {} }
+        if (stored && stored.access_token && stored.user && (!storedExp || storedExp * 1000 > Date.now() + 60000)) return stored;
+        localStorage.removeItem('ai-smart-mixing-field-session');
         const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
           method: 'POST',
           headers: {
@@ -813,7 +816,10 @@
 
       async function fieldSession() {
         const cached = JSON.parse(localStorage.getItem('ai-smart-mixing-field-session') || 'null');
-        if (cached?.access_token && cached.user) return cached;
+        let cachedExp = Number(cached?.expires_at || 0);
+        if (!cachedExp && cached?.access_token) { try { cachedExp = Number(JSON.parse(atob(cached.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp || 0); } catch (_) {} }
+        if (cached?.access_token && cached.user && (!cachedExp || cachedExp * 1000 > Date.now() + 60000)) return cached;
+        localStorage.removeItem('ai-smart-mixing-field-session');
         const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
           method: 'POST',
           headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
