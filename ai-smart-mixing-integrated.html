@@ -1019,5 +1019,32 @@
       document.getElementById('approve')?.addEventListener('click', () => setTimeout(syncWorklogWaitColumn, 650));
     })();
   </script>
+  <script>
+    (() => {
+      // 실제 작업 중 발생한 예시 상황: 래들 바닥 1사이클 2차에서 호퍼 배출 게이트 점검으로 이송이 지연된 경우
+      function applyFieldScenario() {
+        const job = document.querySelector('#worklog .form-grid select')?.value;
+        if (job !== '래들 바닥') return;
+        const target = document.querySelector('#worklog .log-cycle[data-cycle="1"][data-round="2"]');
+        if (!target) return;
+        target.dataset.wait = '9';
+        target.dataset.risk = '12';
+        target.dataset.retarder = 'true';
+        const select = target.querySelector('select');
+        if (select) select.value = '사용';
+        const note = target.querySelector('.cycle-note input');
+        if (note && (!note.value || note.value.includes('기준 시간 내'))) {
+          note.value = '호퍼 배출 게이트 점검으로 이송이 4분 지연됨. 호퍼 대기 9분 후 지연제 사용.';
+        }
+        const overall = document.querySelector('#worklog textarea');
+        if (overall && (!overall.value || overall.value.includes('전체 사이클'))) {
+          overall.value = '1사이클 2차에서 호퍼 배출 게이트 점검으로 이송이 지연되어 지연제를 사용했습니다.';
+        }
+      }
+      document.getElementById('approve')?.addEventListener('click', () => setTimeout(applyFieldScenario, 700));
+      document.getElementById('dashboardJob')?.addEventListener('change', () => setTimeout(applyFieldScenario, 120));
+      window.addEventListener('hashchange', () => setTimeout(applyFieldScenario, 120));
+    })();
+  </script>
 </body>
 </html>
