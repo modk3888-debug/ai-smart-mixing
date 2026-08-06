@@ -371,9 +371,12 @@
         let remaining = job.amount;
         while (remaining > 0) { rows.push(Math.min(500, remaining)); remaining -= 500; }
         return rows.map((amount, index) => {
-          const wait = (rows.length - index - 1) * job.mixing;
+          const cycle = Math.floor(index / 3) + 1;
+          const round = (index % 3) + 1;
+          const cycleLength = Math.min(3, rows.length - ((cycle - 1) * 3));
+          const wait = (cycleLength - round) * job.mixing;
           const risk = Math.min(30, Math.round(job.baseRisk + wait * 0.35));
-          return { amount, wait, risk, water: +(job.water * amount / 500).toFixed(1) };
+          return { amount, wait, risk, water: +(job.water * amount / 500).toFixed(1), cycle, round };
         });
       }
       function render(name) {
@@ -421,7 +424,7 @@
         const worklogTable = worklog.querySelector('.worklog-table');
         worklogTable.innerHTML = '<div class="log-head"><span>회차</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + recommendation.cycles.map((cycle, index) => {
           const retarder = cycle.risk > 10;
-          return '<div class="log-cycle" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '"><div class="log-row"><b>' + (index + 1) + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + (index + 1) + '차 특이사항</label><input placeholder="예: 호퍼 대기시간, 수분량 조정, 점검 내용 입력"></div></div>';
+          return '<div class="log-cycle" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '"><div class="log-row"><b>' + cycle.cycle + '사이클 ' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.cycle + '사이클 ' + cycle.round + '차 특이사항</label><input placeholder="예: 호퍼 대기시간, 수분량 조정, 점검 내용 입력"></div></div>';
         }).join('');
         worklog.querySelector('.panel-head .badge').textContent = 'AI 추천 · ' + formatKg(recommendation.amount);
         const aiValues = worklog.querySelectorAll('.side .detail b');
@@ -547,16 +550,16 @@
           batches.push({ amount: batchAmount, water: +(waterPer500 * batchAmount / 500).toFixed(1) });
           remaining -= batchAmount;
         }
-        const fallbackCycles = batches.map((batch,index) => ({amount:batch.amount,water:batch.water,mixing:mixingTime,wait:(batches.length-index-1)*mixingTime,risk:Math.min(30,Math.round(5+((batches.length-index-1)*mixingTime)*.35)),retarder:Math.min(30,Math.round(5+((batches.length-index-1)*mixingTime)*.35))>10}));
-        const actualCycles = Array.isArray(record.cycles) && record.cycles.length ? record.cycles.map((cycle,index) => ({...fallbackCycles[index],...cycle,amount:Number(cycle.amount)||fallbackCycles[index].amount,water:Number(cycle.water)||fallbackCycles[index].water,mixing:Number(cycle.mixing)||fallbackCycles[index].mixing,wait:Number(cycle.wait)||fallbackCycles[index].wait,risk:Number(cycle.risk)||fallbackCycles[index].risk,retarder:typeof cycle.retarder === 'boolean' ? cycle.retarder : fallbackCycles[index].retarder})) : fallbackCycles;
+        const fallbackCycles = batches.map((batch,index) => { const cycle=Math.floor(index/3)+1; const round=(index%3)+1; const cycleLength=Math.min(3,batches.length-((cycle-1)*3)); const wait=(cycleLength-round)*mixingTime; const risk=Math.min(30,Math.round(5+wait*.35)); return {amount:batch.amount,water:batch.water,mixing:mixingTime,wait,risk,retarder:risk>10,cycle,round}; });
+        const actualCycles = Array.isArray(record.cycles) && record.cycles.length ? record.cycles.map((cycle,index) => ({...fallbackCycles[index],...cycle,amount:Number(cycle.amount)||fallbackCycles[index].amount,water:Number(cycle.water)||fallbackCycles[index].water,mixing:Number(cycle.mixing)||fallbackCycles[index].mixing,wait:Number(cycle.wait)||fallbackCycles[index].wait,risk:Number(cycle.risk)||fallbackCycles[index].risk,retarder:typeof cycle.retarder === 'boolean' ? cycle.retarder : fallbackCycles[index].retarder,cycle:cycle.cycle||fallbackCycles[index].cycle,round:cycle.round||fallbackCycles[index].round})) : fallbackCycles;
         cycleBox.innerHTML = '<div class="cycle-head"><span>회차</span><span>투입량</span><span>실제 수분</span><span>실제 믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + actualCycles.map((cycle, index) => {
           const wait = Number(cycle.wait)||0;
           const risk = Number(cycle.risk)||Math.min(30, Math.round(5 + wait * .35));
           const retarder = Boolean(cycle.retarder);
           const note = record.cycleNotes?.[index] || '';
           const displayNote = note || (retarder ? '호퍼 대기 ' + wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
-          const noteHtml = '<div class="cycle-note-history"><b>' + (index + 1) + '차 특이사항</b><span>' + displayNote + '</span></div>';
-          return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + (index + 1) + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
+          const noteHtml = '<div class="cycle-note-history"><b>' + cycle.cycle + '사이클 ' + cycle.round + '차 특이사항</b><span>' + displayNote + '</span></div>';
+          return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.cycle + '사이클 ' + cycle.round + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
         }).join('');
       }
       function renderBatchBreakdown(record) {
