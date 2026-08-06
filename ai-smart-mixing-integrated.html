@@ -1048,5 +1048,32 @@
       window.addEventListener('hashchange', () => setTimeout(applyFieldScenario, 120));
     })();
   </script>
+<script>
+  // 작업명에 따라 현장 센서 표시값을 바꿔, 작업별 조건 차이를 대시보드와 작업일지에 함께 전달합니다.
+  (() => {
+    const conditions = {
+      '래들 벽체': { temperature: '31.0℃', humidity: '78%', refresh: '30초 전 갱신' },
+      '래들 바닥': { temperature: '28.0℃', humidity: '63%', refresh: '45초 전 갱신' },
+      '턴디쉬 카바': { temperature: '24.0℃', humidity: '53%', refresh: '20초 전 갱신' },
+      '승온 버너': { temperature: '26.0℃', humidity: '57%', refresh: '1분 전 갱신' }
+    };
+    const dashboard = document.getElementById('dashboard');
+    const select = document.getElementById('dashboardJob');
+    if (!dashboard || !select) return;
+    function syncEnvironment() {
+      const condition = conditions[select.value] || conditions['래들 벽체'];
+      const sensors = dashboard.querySelectorAll('.sensor b');
+      if (sensors[0]) sensors[0].textContent = condition.temperature;
+      if (sensors[1]) sensors[1].textContent = condition.humidity;
+      const info = dashboard.querySelectorAll('.info-grid .info')[1];
+      if (info) info.innerHTML = '<small>작업환경 자동 감지</small><b>' + condition.temperature + ' · ' + condition.humidity + '</b> <span>' + condition.refresh + '</span>';
+      const worklogFields = document.querySelectorAll('#worklog .form-grid .field input');
+      if (worklogFields[1]) worklogFields[1].value = condition.temperature;
+      if (worklogFields[2]) worklogFields[2].value = condition.humidity;
+    }
+    select.addEventListener('change', () => setTimeout(syncEnvironment, 60));
+    syncEnvironment();
+  })();
+</script>
 </body>
 </html>
