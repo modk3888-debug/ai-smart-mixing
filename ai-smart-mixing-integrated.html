@@ -46,7 +46,7 @@
     function openScreen(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));navButtons.forEach(b=>b.classList.toggle('active',b.dataset.screen===id));history.replaceState(null,'','#'+id)}
     navButtons.forEach(b=>b.addEventListener('click',()=>{
       if(b.dataset.screen==='history'){
-        const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||'[]');
+        const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||localStorage.getItem('aiSmartMixingSavedHistory')||'[]');
         const applied=Number(sessionStorage.getItem('aiSmartMixingHistoryAppliedCount')||0);
         if(saved.length>applied){location.hash='history';location.reload();return}
       }
@@ -71,9 +71,10 @@
       const now=new Date();
       const date=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
       const record={job:value('작업명'),material:value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${value('작업장 온도')} · ${value('상대습도')}`,date,worker:'현장 작업자',result:'저장 완료',cycles,cycleNotes,overallNote:overall||'',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
-      const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||'[]');
+      const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||localStorage.getItem('aiSmartMixingSavedHistory')||'[]');
       saved.unshift(record);
       sessionStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
+      localStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
       sessionStorage.setItem('aiSmartMixingHistoryAppliedCount',String(saved.length-1));
     }
     document.getElementById('saveLog').textContent='저장';
@@ -554,7 +555,7 @@
         '2026.07.11': '정상 완료', '2026.07.03': '정상 완료', '2026.06.27': '지연제 사용 완료',
         '2026.06.18': '대기시간 조정 완료', '2026.06.11': '정상 완료', '2026.06.03': '재확인 완료'
       };
-      const savedHistory = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+      const savedHistory = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || localStorage.getItem('aiSmartMixingSavedHistory') || '[]');
       savedHistory.forEach(record => {
         const item = document.createElement('div');
         item.className = 'history-item';
@@ -838,10 +839,11 @@
         record.cycleNotes = cycleNotes;
         record.overallNote = overall;
         record.note = overall || cycleNotes.filter(Boolean).join(' / ') || record.note;
-        var saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+        var saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || localStorage.getItem('aiSmartMixingSavedHistory') || '[]');
         var match = saved.findIndex(function (item) { return item.date === record.date && item.job === (row?.querySelector('div b')?.textContent || record.job); });
         if (match >= 0) saved[match] = Object.assign({}, saved[match], record);
         sessionStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(saved));
+        localStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(saved));
         if (row) {
           row.querySelector('small').textContent = record.date;
           row.querySelector('.history-worker').textContent = record.worker;
@@ -889,7 +891,7 @@
 
       saveButton.addEventListener('click', function () {
         setTimeout(async function () {
-          const saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+          const saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || localStorage.getItem('aiSmartMixingSavedHistory') || '[]');
           const record = saved[0];
           if (!record) return;
           try {
@@ -1081,10 +1083,12 @@
     const saveButton = document.getElementById('saveLog');
     if (!saveButton) return;
     saveButton.addEventListener('click', () => {
+      if (window.__mixingSaveRedirecting) return;
+      window.__mixingSaveRedirecting = true;
       setTimeout(() => {
         location.hash = 'history';
         location.reload();
-      }, 900);
+      }, 350);
     });
   })();
 </script>
