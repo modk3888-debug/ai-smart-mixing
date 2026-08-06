@@ -928,11 +928,12 @@
           const risk = Number(cycle.dataset.risk || 0);
           if (inputs[0]) inputs[0].value = (26 + [0.2, -0.2, 0, 0.1, -0.1][index % 5]).toFixed(1) + ' L';
           if (inputs[1]) inputs[1].value = (5 + (index % 4 === 3 ? 1 : 0)) + ' 분';
+          const useRetarder = risk > 10 || (wait >= 5 && index % 3 === 0);
           const select = row?.querySelector('select');
-          if (select) select.value = risk > 10 ? '사용' : '미사용';
+          if (select) select.value = useRetarder ? '사용' : '미사용';
           const note = cycle.querySelector('.cycle-note input');
           if (note && !note.value) {
-            note.value = risk > 10
+            note.value = useRetarder
               ? '호퍼 대기 ' + wait + '분으로 지연제 사용. 믹싱 후 즉시 이송하고 유량계 상태를 확인함.'
               : wait > 0
                 ? '호퍼 대기 ' + wait + '분, 지연제 미사용. 기준 시간 내 이송 완료.'
