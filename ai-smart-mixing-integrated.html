@@ -16,6 +16,7 @@
     .cycle-detail-block{border-top:1px solid #e6edf3}.cycle-detail-block:first-child{border-top:0}.cycle-detail-block .cycle-row{border-top:0}.cycle-note-history{display:flex;gap:8px;align-items:flex-start;padding:8px 11px 9px;background:#fffaf4;color:#73522f;font-size:11px;line-height:1.45}.cycle-note-history b{white-space:nowrap;color:#9a5a22}.cycle-note-history span{color:#765d45}
   </style>
 <style>
+  .cycle-group{border:1px solid #dbe6ef;border-radius:10px;overflow:hidden;margin-top:10px;background:#fff}.cycle-group:first-of-type{margin-top:0}.cycle-group-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#eef6fc;color:var(--ink)}.cycle-group-head b{font-size:13px}.cycle-group-head span{font-size:11px;color:var(--muted)}.cycle-group .cycle-detail-block{border-top:1px solid #e6edf3}.cycle-group .cycle-detail-block:first-of-type{border-top:0}
   .detail-edit-input{width:100%;min-width:0;border:1px solid #8ebee5;border-radius:7px;padding:7px 8px;background:#fff;color:var(--ink);font:inherit;font-size:13px}
   .detail-edit-note{min-height:64px;resize:vertical;margin-top:8px}
   .cycle-row .detail-edit-input{font-size:12px;padding:6px}
@@ -552,15 +553,17 @@
         }
         const fallbackCycles = batches.map((batch,index) => { const cycle=Math.floor(index/3)+1; const round=(index%3)+1; const cycleLength=Math.min(3,batches.length-((cycle-1)*3)); const wait=(cycleLength-round)*mixingTime; const risk=Math.min(30,Math.round(5+wait*.35)); return {amount:batch.amount,water:batch.water,mixing:mixingTime,wait,risk,retarder:risk>10,cycle,round}; });
         const actualCycles = Array.isArray(record.cycles) && record.cycles.length ? record.cycles.map((cycle,index) => ({...fallbackCycles[index],...cycle,amount:Number(cycle.amount)||fallbackCycles[index].amount,water:Number(cycle.water)||fallbackCycles[index].water,mixing:Number(cycle.mixing)||fallbackCycles[index].mixing,wait:Number(cycle.wait)||fallbackCycles[index].wait,risk:Number(cycle.risk)||fallbackCycles[index].risk,retarder:typeof cycle.retarder === 'boolean' ? cycle.retarder : fallbackCycles[index].retarder,cycle:cycle.cycle||fallbackCycles[index].cycle,round:cycle.round||fallbackCycles[index].round})) : fallbackCycles;
-        cycleBox.innerHTML = '<div class="cycle-head"><span>회차</span><span>투입량</span><span>실제 수분</span><span>실제 믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + actualCycles.map((cycle, index) => {
+        const cycleGroups = actualCycles.reduce((groups, cycle, index) => { const key = cycle.cycle || (Math.floor(index / 3) + 1); (groups[key] ||= []).push({cycle,index}); return groups; }, {});
+        const cycleHtml = Object.entries(cycleGroups).map(([cycleNumber, entries]) => '<section class="cycle-group"><div class="cycle-group-head"><b>' + cycleNumber + '사이클</b><span>' + entries.reduce((sum, entry) => sum + Number(entry.cycle.amount || 0), 0).toLocaleString('ko-KR') + 'kg · ' + entries.length + '회 믹싱</span></div>' + entries.map(({cycle,index}) => {
           const wait = Number(cycle.wait)||0;
           const risk = Number(cycle.risk)||Math.min(30, Math.round(5 + wait * .35));
           const retarder = Boolean(cycle.retarder);
           const note = record.cycleNotes?.[index] || '';
           const displayNote = note || (retarder ? '호퍼 대기 ' + wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
-          const noteHtml = '<div class="cycle-note-history"><b>' + cycle.cycle + '사이클 ' + cycle.round + '차 특이사항</b><span>' + displayNote + '</span></div>';
-          return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.cycle + '사이클 ' + cycle.round + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
-        }).join('');
+          const noteHtml = '<div class="cycle-note-history"><b>' + (cycle.round || (index % 3 + 1)) + '차 특이사항</b><span>' + displayNote + '</span></div>';
+          return '<div class="cycle-detail-block"><div class="cycle-row' + ((cycle.round || (index % 3 + 1)) === 1 ? ' current' : '') + '"><b>' + (cycle.round || (index % 3 + 1)) + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
+        }).join('') + '</section>').join('');
+        cycleBox.innerHTML = '<div class="cycle-head"><span>차수</span><span>투입량</span><span>실제 수분</span><span>실제 믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + cycleHtml;
       }
       function renderBatchBreakdown(record) {
         const amount = Number(record.amount.replace(/[^\d]/g, ''));
