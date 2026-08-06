@@ -441,7 +441,7 @@
         const worklogTable = worklog.querySelector('.worklog-table');
         worklogTable.innerHTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + groupedCycles(recommendation.cycles, ({ cycle }) => {
           const retarder = cycle.risk > 10;
-          return '<div class="log-cycle" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input placeholder="예: 호퍼 대기시간, 수분량 조정, 점검 내용 입력"></div></div>';
+          return '<div class="log-cycle" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '" data-retarder="' + retarder + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input placeholder="예: 호퍼 대기시간, 수분량 조정, 점검 내용 입력"></div></div>';
         });
         worklog.querySelector('.panel-head .badge').textContent = 'AI 추천 · ' + formatKg(recommendation.amount);
         const aiValues = worklog.querySelectorAll('.side .detail b');
@@ -937,7 +937,8 @@
           const risk = Number(cycle.dataset.risk || 0);
           // 대시보드 추천값을 작업일지에서 임의의 예시값으로 덮어쓰지 않습니다.
           // applyRecommendation()이 전달한 수분량·믹싱시간을 그대로 유지합니다.
-          const useRetarder = risk > 10 || (wait >= 5 && index % 3 === 0);
+          // 지연제 사용 여부는 작업일지에서 재계산하지 않고 대시보드 추천값을 따릅니다.
+          const useRetarder = cycle.dataset.retarder === 'true' || (cycle.dataset.retarder == null && risk > 10);
           const select = row?.querySelector('select');
           if (select) select.value = useRetarder ? '사용' : '미사용';
           const note = cycle.querySelector('.cycle-note input');
