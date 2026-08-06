@@ -804,5 +804,65 @@
       });
     })();
   </script>
+  <script>
+    (function () {
+      const SUPABASE_URL = 'https://cpmstjyhrioppiiiiptn.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_vvktuYaLHgh362rxjJ7QPw_ysMsKO0l';
+      const saveButton = document.getElementById('saveLog');
+      if (!saveButton) return;
+
+      async function fieldSession() {
+        const cached = JSON.parse(localStorage.getItem('ai-smart-mixing-field-session') || 'null');
+        if (cached?.access_token && cached.user) return cached;
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+          method: 'POST',
+          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: { source: 'ai-smart-mixing-worklog' } })
+        });
+        const session = await response.json();
+        if (!response.ok || !session.access_token) throw new Error('현장 세션을 만들 수 없습니다.');
+        localStorage.setItem('ai-smart-mixing-field-session', JSON.stringify(session));
+        return session;
+      }
+
+      saveButton.addEventListener('click', function () {
+        setTimeout(async function () {
+          const saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+          const record = saved[0];
+          if (!record) return;
+          try {
+            const session = await fieldSession();
+            const temp = Number(String(record.env).match(/[\d.]+/)?.[0] || 0);
+            const humidity = Number(String(record.env).match(/[\d.]+/g)?.[1] || 0);
+            const clientKey = `${record.date}-${record.job}-${record.worker}-${record.amount}`;
+            const payload = {
+              client_key: clientKey,
+              job_name: record.job,
+              material_type: record.material,
+              total_kg: Number(String(record.amount).replace(/[^\d.]/g, '')) || 0,
+              temperature_c: temp,
+              humidity_pct: humidity,
+              worker_name: record.worker,
+              result: record.result,
+              overall_note: record.overallNote || record.note || '',
+              cycles: record.cycles || [],
+              cycle_notes: record.cycleNotes || [],
+              model_version: 'XGBoost · 현장 추천 v1.0'
+            };
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/mixing_worklogs`, {
+              method: 'POST',
+              headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' },
+              body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error(await response.text());
+            document.getElementById('logState').textContent = '저장 완료 · 서버 DB 동기화';
+          } catch (error) {
+            document.getElementById('logState').textContent = '저장 완료 · 로컬 기록';
+            console.warn('서버 DB 동기화 대기:', error);
+          }
+        }, 80);
+      });
+    })();
+  </script>
 </body>
 </html>
