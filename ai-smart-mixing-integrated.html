@@ -935,8 +935,8 @@
           const inputs = row ? [...row.querySelectorAll('input')] : [];
           const wait = Number(cycle.dataset.wait || 0);
           const risk = Number(cycle.dataset.risk || 0);
-          if (inputs[0]) inputs[0].value = (26 + [0.2, -0.2, 0, 0.1, -0.1][index % 5]).toFixed(1) + ' L';
-          if (inputs[1]) inputs[1].value = (5 + (index % 4 === 3 ? 1 : 0)) + ' 분';
+          // 대시보드 추천값을 작업일지에서 임의의 예시값으로 덮어쓰지 않습니다.
+          // applyRecommendation()이 전달한 수분량·믹싱시간을 그대로 유지합니다.
           const useRetarder = risk > 10 || (wait >= 5 && index % 3 === 0);
           const select = row?.querySelector('select');
           if (select) select.value = useRetarder ? '사용' : '미사용';
