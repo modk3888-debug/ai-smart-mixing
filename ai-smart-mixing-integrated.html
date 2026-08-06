@@ -441,7 +441,8 @@
         const worklogTable = worklog.querySelector('.worklog-table');
         worklogTable.innerHTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + groupedCycles(recommendation.cycles, ({ cycle }) => {
           const retarder = cycle.risk > 10;
-          return '<div class="log-cycle" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '" data-retarder="' + retarder + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input placeholder="예: 호퍼 대기시간, 수분량 조정, 점검 내용 입력"></div></div>';
+          const note = retarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.';
+          return '<div class="log-cycle" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '" data-retarder="' + retarder + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input value="' + note + '"></div></div>';
         });
         worklog.querySelector('.panel-head .badge').textContent = 'AI 추천 · ' + formatKg(recommendation.amount);
         const aiValues = worklog.querySelectorAll('.side .detail b');
