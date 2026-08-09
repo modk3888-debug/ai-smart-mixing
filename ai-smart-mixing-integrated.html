@@ -74,13 +74,23 @@
       const date=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
       const record={job:recommendation?.name||value('작업명'),material:recommendation?.material||value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${recommendation?.temperature||value('작업장 온도')} · ${recommendation?.humidity||value('상대습도')}`,date,savedAt:now.toISOString(),worker:'현장 작업자',result:'저장 완료',cycles,cycleNotes,overallNote:overall||'',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
       const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||localStorage.getItem('aiSmartMixingSavedHistory')||'[]');
+      const fingerprint=item=>JSON.stringify({job:item.job,material:item.material,amount:item.amount,env:item.env,cycles:item.cycles||[],cycleNotes:item.cycleNotes||[],overallNote:item.overallNote||''});
+      if(saved.some(item=>fingerprint(item)===fingerprint(record)))return false;
       saved.unshift(record);
       sessionStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
       localStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
       sessionStorage.setItem('aiSmartMixingHistoryAppliedCount',String(saved.length-1));
+      return true;
     }
     document.getElementById('saveLog').textContent='저장';
-    document.getElementById('saveLog').addEventListener('click',function(){captureSavedWorklog();this.textContent='완료';setTimeout(()=>this.textContent='저장',1000)});
+    document.getElementById('saveLog').addEventListener('click',function(){
+      if(window.__mixingSaveStarted)return;
+      window.__mixingSaveStarted=true;
+      this.disabled=true;
+      captureSavedWorklog();
+      this.textContent='완료';
+      setTimeout(()=>{this.textContent='저장';this.disabled=false},1000)
+    });
     document.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',()=>{document.querySelectorAll('.history-item').forEach(x=>x.classList.remove('selected'));item.classList.add('selected');document.getElementById('detailJob').textContent=item.dataset.job;document.getElementById('detailMaterial').textContent=item.dataset.material;document.getElementById('detailAmount').textContent=item.dataset.amount;document.getElementById('detailEnv').textContent=item.dataset.env;document.getElementById('detailDate').textContent=item.dataset.date+' · '+item.dataset.result;document.getElementById('detailNote').textContent=item.dataset.note}));
     document.querySelectorAll('.learn-title').forEach(button=>button.addEventListener('click',()=>{const item=button.parentElement;item.classList.toggle('open');button.querySelector('span').textContent=item.classList.contains('open')?'접기':'펼치기'}));
     (function(){
@@ -557,7 +567,14 @@
         '2026.07.11': '정상 완료', '2026.07.03': '정상 완료', '2026.06.27': '지연제 사용 완료',
         '2026.06.18': '대기시간 조정 완료', '2026.06.11': '정상 완료', '2026.06.03': '재확인 완료'
       };
-      const savedHistory = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || localStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+      const storedHistory = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || localStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+      const historyFingerprint=item=>JSON.stringify({job:item.job,material:item.material,amount:item.amount,env:item.env,cycles:item.cycles||[],cycleNotes:item.cycleNotes||[],overallNote:item.overallNote||''});
+      const seenHistory=new Set();
+      const savedHistory=storedHistory.filter(item=>{const key=historyFingerprint(item);if(seenHistory.has(key))return false;seenHistory.add(key);return true});
+      if(savedHistory.length!==storedHistory.length){
+        sessionStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(savedHistory));
+        localStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(savedHistory));
+      }
       savedHistory.forEach(record => {
         const item = document.createElement('div');
         item.className = 'history-item';
