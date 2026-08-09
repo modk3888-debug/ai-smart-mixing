@@ -620,8 +620,10 @@
           const cycleNumber = Number(cycle.cycle) || (Math.floor(index / 3) + 1);
           const roundNumber = Number(cycle.round) || (index % 3) + 1;
           const mixing = Number(cycle.mixing) || mixingTime;
-          const wait = Math.max(0, (cycleCounts[cycleNumber] - roundNumber) * mixing);
-          const risk = Math.min(30, Math.round(5 + wait * 0.35));
+          const calculatedWait = Math.max(0, (cycleCounts[cycleNumber] - roundNumber) * mixing);
+          const wait = Number.isFinite(Number(cycle.wait)) ? Math.max(0, Number(cycle.wait)) : calculatedWait;
+          const calculatedRisk = Math.min(30, Math.round(5 + wait * 0.35));
+          const risk = Number.isFinite(Number(cycle.risk)) ? Number(cycle.risk) : calculatedRisk;
           return {...cycle, cycle: cycleNumber, round: roundNumber, mixing, wait, risk, retarder: typeof cycle.retarder === 'boolean' ? cycle.retarder : risk > 10};
         });
         const cycleGroups = actualCycles.reduce((groups, cycle, index) => { const key = cycle.cycle || (Math.floor(index / 3) + 1); (groups[key] ||= []).push({cycle,index}); return groups; }, {});
