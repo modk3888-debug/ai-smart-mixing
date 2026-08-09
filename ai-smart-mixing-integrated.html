@@ -59,10 +59,12 @@
     function captureSavedWorklog(){
       const worklog=document.getElementById('worklog');
       if(!worklog)return;
+      let recommendation=null;
+      try{recommendation=JSON.parse(sessionStorage.getItem('aiSmartMixingRecommendation')||'null')}catch(_){recommendation=null}
       const fields=[...worklog.querySelectorAll('.form-grid .field')];
       const value=label=>{const field=fields.find(item=>item.querySelector('label')?.textContent.trim()===label);return field?.querySelector('input,select')?.value||''};
       const rows=[...worklog.querySelectorAll('.worklog-table .log-row')];
-      const cycles=rows.map((row,index)=>{const inputs=[...row.querySelectorAll('input')];const cycleBox=row.closest('.log-cycle');const numeric=value=>Number(String(value||'').replace(/[^\d.]/g,''))||0;return {index:index+1,amount:numeric(row.querySelector('span')?.textContent),water:numeric(inputs[0]?.value),mixing:numeric(inputs[1]?.value),wait:numeric(cycleBox?.dataset.wait),risk:numeric(cycleBox?.dataset.risk),retarder:(row.querySelector('select')?.value||'').includes('사용')&&!((row.querySelector('select')?.value||'').includes('미사용'))};});
+      const cycles=rows.map((row,index)=>{const inputs=[...row.querySelectorAll('input')];const cycleBox=row.closest('.log-cycle');const numeric=value=>Number(String(value||'').replace(/[^\d.]/g,''))||0;const recommended=recommendation?.cycles?.[index]||{};const selectedRetarder=(row.querySelector('select')?.value||'');return {index:index+1,cycle:Number(cycleBox?.dataset.cycle)||recommended.cycle||Math.floor(index/3)+1,round:Number(cycleBox?.dataset.round)||recommended.round||(index%3)+1,amount:numeric(row.querySelector('span')?.textContent)||Number(recommended.amount)||0,water:numeric(inputs[0]?.value),mixing:numeric(inputs[1]?.value),wait:numeric(cycleBox?.dataset.wait),risk:numeric(cycleBox?.dataset.risk)||Number(recommended.risk)||0,retarder:selectedRetarder==='사용'};});
       const amount=cycles.reduce((sum,cycle)=>sum+cycle.amount,0);
       const cycleNotes=[...worklog.querySelectorAll('.cycle-note input')].map(input=>input.value.trim());
       const notes=cycleNotes.map((note,index)=>note?`${index+1}차: ${note}`:'').filter(Boolean);
@@ -70,7 +72,7 @@
       if(overall)notes.push(`전체: ${overall}`);
       const now=new Date();
       const date=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
-      const record={job:value('작업명'),material:value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${value('작업장 온도')} · ${value('상대습도')}`,date,worker:'현장 작업자',result:'저장 완료',cycles,cycleNotes,overallNote:overall||'',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
+      const record={job:recommendation?.name||value('작업명'),material:recommendation?.material||value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${recommendation?.temperature||value('작업장 온도')} · ${recommendation?.humidity||value('상대습도')}`,date,savedAt:now.toISOString(),worker:'현장 작업자',result:'저장 완료',cycles,cycleNotes,overallNote:overall||'',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
       const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||localStorage.getItem('aiSmartMixingSavedHistory')||'[]');
       saved.unshift(record);
       sessionStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
@@ -566,6 +568,7 @@
         item.dataset.env = record.env;
         item.dataset.result = record.result;
         item.dataset.note = record.note;
+        item.dataset.savedat = record.savedAt || '';
         item.dataset.cyclenotes = JSON.stringify(record.cycleNotes || []);
         item.dataset.overallnote = record.overallNote || '';
         item.dataset.cycles = JSON.stringify(record.cycles || []);
@@ -581,11 +584,18 @@
       const records = [...list.querySelectorAll('.history-item')].map(item => ({
         job: item.dataset.job, material: item.dataset.material, date: item.dataset.date,
         amount: item.dataset.amount, env: item.dataset.env, result: item.dataset.result || resultByDate[item.dataset.date], note: item.dataset.note,
+        savedAt: item.dataset.savedat || '',
         worker: item.dataset.worker || workerByDate[item.dataset.date] || '이민호',
         cycleNotes: (() => { try { return JSON.parse(item.dataset.cyclenotes || '[]'); } catch (_) { return []; } })(),
         cycles: (() => { try { return JSON.parse(item.dataset.cycles || '[]'); } catch (_) { return []; } })(),
         overallNote: item.dataset.overallnote || ''
       }));
+      // 오늘 저장한 작업이 고정 예시 이력 뒤로 밀리지 않도록 최신 저장순으로 정렬합니다.
+      records.sort((a,b)=>{
+        const dateCompare=String(b.date||'').localeCompare(String(a.date||''));
+        if(dateCompare!==0)return dateCompare;
+        return String(b.savedAt||'').localeCompare(String(a.savedAt||''));
+      });
       const grouped = records.reduce((groups, record) => {
         (groups[record.job] ||= []).push(record);
         return groups;
