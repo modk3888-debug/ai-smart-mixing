@@ -1291,6 +1291,15 @@ atus || location.protocol === 'file:') return;
         });
       };
       install();
+      document.querySelectorAll('nav button[data-screen]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const target = document.getElementById(button.dataset.screen);
+          if (!target) return;
+          document.querySelectorAll('.screen').forEach((screen) => screen.classList.remove('active'));
+          target.classList.add('active');
+          install();
+        });
+      });
       window.addEventListener('hashchange', install);
     })();
   </script>
