@@ -26,6 +26,10 @@ e{display:flex;align-items:center;gap:9px;padding:0 11px 11px;background:#fbfdff
   .detail-edit-note{min-height:64px;resize:vertical;margin-top:8px}
   .cycle-row .detail-edit-input{font-size:12px;padding:6px}
 </style>
+  <style>
+    .learning-review-actions{display:flex;gap:8px;margin-top:10px}
+    .learning-review-actions button{width:auto;padding:8px 12px;font-size:12px}
+  </style>
 </head>
 <body>
   <header class="app-header"><div class="brand">AI 스마트 믹싱 <small>REFRACTORY FIELD SYSTEM</small></div><nav><button class="active" data-screen="process">공정 순서</button><button data-screen="dashboard">대시보드</button><button data-screen="worklog">작업일지 및 특이사항</button><button data-screen="history">배합 이력</button><button data-screen="learning">AI 이미지 학습</button></nav><span class="site-status">운영 시스템 확인 중</span></header>
@@ -36,16 +40,16 @@ e{display:flex;align-items:center;gap:9px;padding:0 11px 11px;background:#fbfdff
       <div class="lower"><div class="mini"><h3>현장 적용 원칙</h3><p>AI는 추천·경고를 담당하고, 실제 설비 실행은 작업자 승인과 안전 인터록을 거쳐 진행합니다.</p></div><div class="mini"><h3>필수 연동 설비</h3><p>온습도 센서, 전자저울, 수분 유량계, 믹서 PLC, 호퍼 레벨센서를 연결합니다.</p></div><div class="mini"><h3>데이터 기준</h3><p>작업 지시번호, 원료 LOT, 회차별 실제값, 작업 결과와 이미지를 함께 보관합니다.</p></div></div>
     </section>
     <section class="screen" id="dashboard">
-      <div class="hero"><div><div class="eyebrow">LIVE MIXING CONTROL</div><h1>래들 벽체 · AI 추천 조건</h1><p>자동 수집된 현장 조건을 바탕으로 회차별 배합 조건을 추천하고, 승인 후 실제 작업으로 전달합니다.</p></div><div class="timestamp">작업 지시번호 WO-20851<b id="clock">2026.08
-.05 10:24:36</b></div></div>
+      <div class="hero"><div><div class="eyebrow">LIVE MIXIN
+G CONTROL</div><h1>래들 벽체 · AI 추천 조건</h1><p>자동 수집된 현장 조건을 바탕으로 회차별 배합 조건을 추천하고, 승인 후 실제 작업으로 전달합니다.</p></div><div class="timestamp">작업 지시번호 WO-20851<b id="clock">2026.08.05 10:24:36</b></div></div>
       <div class="summary"><div class="summary-card main"><small>현재 상태</small><b id="dashState">작업자 승인 대기</b></div><div class="summary-card"><small>계획 투입량</small><b>2,500kg</b></div><div class="summary-card"><small>총 믹싱 횟수</small><b>5회</b></div><div class="summary-card"><small>최대 위험도</small><b class="red">13%</b></div><div class="summary-card"><small>추천 신뢰도</small><b class="green">89%</b></div></div>
       <div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 실행 흐름</h2><p>현장 데이터와 AI 추천값을 작업자 승인 후 회차별로 실행합니다.</p></div><span class="badge">XGBoost v2.4</span></div><div class="panel-body"><div class="flow"><div class="flow-step done"><small>01</small><b>환경·원료 수집</b></div><span class="arrow">→</span><div class="flow-step done"><small>02</small><b>AI 조건 계산</b></div><span class="arrow">→</span><div class="flow-step active"><small>03</small><b>작업자 승인</b></div><span class="arrow">→</span><div class="flow-step"><small>04</small><b>1차 믹싱 실행</b></div><span class="arrow">→</span><div class="flow-step"><small>05</small><b>실제값 저장</b></div></div><div class="info-grid"><div class="info"><small>내화물 종류 · 원료 LOT</small><b>저시멘트 캐스터블</b> <span>LC-260805-03</span></div><div class="info"><small>작업환경 자동 감지</small><b>31.0℃ · 78%</b> <span>30초 전 갱신</span></div><div class="info"><small>AI 권장 총 수분량</small><b>130.0L</b> <span>회차별 분할 투입</span></div><div class="info"><small>호퍼 운영 기준</small><b>최대 1,500kg</b> <span>1회 최대 500kg</span></div></div><div class="cycles"><div class="cycle-head"><span>회차</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div><div class="cycle-row current"><b>1차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>12분</span><span><i class="pill use">사용</i> <i class="risk-high">13%</i></span></div><div class="cycle-row"><b>2차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>6분</span><span><i class="pill use">사용</i> <i class="risk-high">11%</i></span></div><div class="cycle-row"><b>3차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>0분</span><span><i class="pill no">미사용</i> <i class="risk-low">8%</i></span></div><div class="cycle-row"><b>4차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>6분</span><span><i class="pill use">사용</i> <i class="risk-high">11%</i></span></div><div class="cycle-row"><b>5차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>0분</span><span><i class="pill no">미사용</i> <i class="risk-low">8%</i></span></div></div><div class="action-bar"><div><b>● 승인 전 확인 필요</b>1·2·4차는 위험도 10% 초과로 지연제 사용 조건이 포함되어 있습니다.</div><button class="button" id="approve">추천 조건 승인 · 작업일지로 전달</button></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>실시간 설비·환경</h2><p>센서 이상 시 작업 실행이 제한됩니다.</p></div></div><div class="panel-body"><div class="sensor-grid"><div class="sensor"><small>작업장 온도 <em>정상</em></small><b>31.0℃</b></div><div class="sensor"><small>상대습도 <em>정상</em></small><b>78%</b></div><div class="sensor"><small>전자저울 <em>연결</em></small><b>0kg</b></div><div class="sensor"><small>수분 유량계 <em>연결</em></small><b>0.0L</b></div><div class="sensor"><small>믹서 PLC <em>대기</em></small><b>READY</b></div><div class="sensor"><small>호퍼 적재량 <em>정상</em></small><b>0kg</b></div></div></div></section><section class="panel"><div class="panel-head"><div><h2>안전 인터록</h2><p>기준을 만족해야 작업을 진행합니다.</p></div><span class="badge">4 / 4 확인</span></div><div class="panel-body"><div class="guard-note">AI 추천은 작업 보조 기준입니다. 수분·시간·지연제 조건 변경 시 변경 사유와 승인자를 기록합니다.</div><div class="check">원료 LOT 및 유효기간 확인</div><div class="check">호퍼 적재량 1,500kg 이하</div><div class="check">1회 믹싱량 500kg 이하</div><div class="check">지연제 사용 조건 확인</div></div></section></aside></div>
     </section>
-    <section class="screen" id="worklog"><div class="hero"><div><div class="eyebrow">WORK LOG</div><h1>작업일지 및 특이사항</h1><p>대시보드에서 승인한 AI 추천값을 기준으로 회차별 실제 작업값과 특이사항을 기록합니다.</p></div><div class="timestamp">작업 상태<b id="logState">추천 조건 전달 대기</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 정보</h2><p>작업 지시와 환경 데이터는 자동 입력됩니다.</p></div><span class="badge">WO-20851</span></div><div class="panel-body"><div class="form-grid"><div class="field"><label>작업명</label><select><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option></select></div><div class="field"><label>내화물 종류</label><input value="저시멘트 캐스터블" readonly></div><div class="field"><label>작업장 온도</label><input value="31.0 ℃" readonly></div><div class="field"><label>상대습도</label><input value="78 %" readonly></div></div><div class="worklog-table"><div class="log-head"><span>회차</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div><div class="log-row"><b>1차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>사용</option><option>미사용</option></select></div><div class="log-row"><b>2차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>사용</optio
-n><option>미사용</option></select></div><div class="log-row"><b>3차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>미사용</option><option>사용</option></select></div></div><div class="field" style="margin-top:14px"><label>전체 특이사항</label><textarea placeholder="예: 1차 호퍼 대기시간 12분으로 지연제 사용 후 정상 작업 진행"></textarea></div><div class="save-row"><button class="button secondary">임시 저장</button><button class="button" id="saveLog">작업일지 저장</button></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>AI 추천 기준</h2><p>실제값과 비교해 학습 데이터로 반영됩니다.</p></div></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>권장 총 수분량</small><b>130.0L</b></div><div class="detail"><small>위험도 기준</small><b>5~30%</b></div><div class="detail"><small>지연제 기준</small><b>10% 초과</b></div><div class="detail"><small>적용 모델</small><b>XGBoost</b></div></div></div></section><section class="panel"><div class="panel-head"><div><h2>저장 항목</h2></div></div><div class="panel-body"><div class="check">회차별 실제 배합값</div><div class="check">호퍼 대기시간 및 지연제</div><div class="check">작업 결과 및 특이사항</div><div class="check">작업자·작업 시각·모델 버전</div></div></section></aside></div></section>
+    <section class="screen" id="worklog"><div class="hero"><div><div class="eyebrow">WORK LOG</div><h1>작업일지 및 특이사항</h1><p>대시보드에서 승인한 AI 추천값을 기준으로 회차별 실제 작업값과 특이사항을 기록합니다.</p></div><div class="timestamp">작업 상태<b id="logState">추천 조건 전달 대기</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 정보</h2><p>작업 지시와 환경 데이터는 자동 입력됩니다.</p></div><span class="badge">WO-20851</span></div><div class="panel-body"><div class="form-grid"><div class="field"><label>작업명</label><select><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option></select></div><div class="field"><label>내화물 종류</label><input value="저시멘트 캐스터블" readonly></div><div class="field"><label>작업장 온도</label><input value="31.0 ℃" readonly></div><div class="field"><label>상대습도</label><input value="78 %" readonly></div></div><div class="worklog-table"><div class="log-head"><span>회차</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div><div class="log-row"><b>1차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select>
+<option>사용</option><option>미사용</option></select></div><div class="log-row"><b>2차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>사용</option><option>미사용</option></select></div><div class="log-row"><b>3차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>미사용</option><option>사용</option></select></div></div><div class="field" style="margin-top:14px"><label>전체 특이사항</label><textarea placeholder="예: 1차 호퍼 대기시간 12분으로 지연제 사용 후 정상 작업 진행"></textarea></div><div class="save-row"><button class="button secondary">임시 저장</button><button class="button" id="saveLog">작업일지 저장</button></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>AI 추천 기준</h2><p>실제값과 비교해 학습 데이터로 반영됩니다.</p></div></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>권장 총 수분량</small><b>130.0L</b></div><div class="detail"><small>위험도 기준</small><b>5~30%</b></div><div class="detail"><small>지연제 기준</small><b>10% 초과</b></div><div class="detail"><small>적용 모델</small><b>XGBoost</b></div></div></div></section><section class="panel"><div class="panel-head"><div><h2>저장 항목</h2></div></div><div class="panel-body"><div class="check">회차별 실제 배합값</div><div class="check">호퍼 대기시간 및 지연제</div><div class="check">작업 결과 및 특이사항</div><div class="check">작업자·작업 시각·모델 버전</div></div></section></aside></div></section>
     <section class="screen" id="history"><div class="hero"><div><div class="eyebrow">MIXING HISTORY</div><h1>배합 이력 및 상세 작업 내용</h1><p>작업명별 이력을 선택하면 환경 데이터와 회차별 실제 작업값을 즉시 확인할 수 있습니다.</p></div><div class="timestamp">보관 정책<b>작업 지시번호 기반 추적</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 이력 목록</h2><p>선택한 작업의 상세 내용이 우측에 표시됩니다.</p></div><span class="badge">전체 12건</span></div><div class="panel-body"><div class="history-list" id="historyList"><div class="history-item selected" data-job="래들 벽체" data-material="저시멘트 캐스터블" data-date="2026.08.05" data-amount="2,500kg" data-env="31.0℃ · 78%" data-result="정상 완료" data-note="1·2·4차 지연제 사용 조건으로 진행. 특이사항 없이 완료."><small>2026.08.05</small><div><b>래들 벽체</b><small>저시멘트 캐스터블 · 2,500kg</small></div><span class="pill use">정상 완료</span></div><div class="history-item" data-job="래들 바닥" data-material="고알루미나 캐스터블" data-date="2026.08.02" data-amount="3,500kg" data-env="28.0℃ · 63%" data-result="정상 완료" data-note="1차 대기시간 증가로 지연제 사용. 이후 회차는 기준값으로 진행."><small>2026.08.02</small><div><b>래들 바닥</b><small>고알루미나 캐스터블 · 3,500kg</small></div><span class="pill use">정상 완료</span></div><div class="history-item" data-job="턴디쉬 카바" data-material="저시멘트 캐스터블" data-date="2026.07.30" data-amount="1,250kg" data-env="25.0℃ · 55%" data-result="정상 완료" data-note="대기시간 짧아 지연제 미사용. 권장 수분량과 동일하게 작업."><small>2026.07.30</small><div><b>턴디쉬 카바</b><small>저시멘트 캐스터블 · 1,250kg</small></div><span class="pill no">정상 완료</span></div></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>상세 작업 내용</h2><p id="detailDate">2026.08.05 · 정상 완료</p></div><button class="button secondary">수정</button></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>작업명</small><b id="detailJob">래들 벽체</b></div><div class="detail"><small>내화물 종류</small><b id="detailMaterial">저시멘트 캐스터블</b></div><div class="detail"><small>총 투입량</small><b id="detailAmount">2,500kg</b></div><div class="detail"><small>작업환경</small><b id="detailEnv">31.0℃ · 78%</b></div></div><div class="cycles"><div class="cycle-head"><span>회차</span><span>투입량</span><span>수분</span><span>믹싱</span><span>대기</span><span>지연제 / 위험도</span></div><div class="cycle-row"><b>1차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>12분</span><span><i class="pill use">사용</i> <i class="risk-high">13%</i></span></div><div class="cycle-row"><b>2차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>6분</span><span><i class="pill use">사용</i> <i class="risk-high">11%</i></span></div><div class="cycle-row"><b>3차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>0분</span><span><i class="pill no">미사용</i> <i class="risk-low">8%</i></span></div></div><div class="improve"><b>전체 특이사항</b><br><span id="detailNote">1·2·4차 지연제 사용 조건으로 진행. 특이사항 없이 완료.</span></div></div></section></aside></div></section>
-    <section class="screen" id="learning"><div class="hero"><div><div class="eyebrow">AI IMAGE LEARNING</div><h1>이미지 기반 이상 징후 학습</h1><p>급속 경화 의심 이미지를 작업 조건과 함께 저장하고, 분석 결과와 개선 사안을 AI 재학습 데이터로 적용합니다.</p></div><div class="timestamp">분석 모델<b>PatchCore 이상 탐지</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>적용된 학습 데이터</h2><p>항목을 선택하면 이미지와 작업 조건, 분석 결과를 확인할 수 있습니다.</p></div><span class="badge">학습 이미지 128장</span></div><div class="panel-body"><div class="learn-list"><div class="learn-item"><button class="learn-title"><b>래들 벽체 · 1사이클 1차 · 표면 경화 의심</b><span>2026.08.05 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-ladle-wall.jpg" alt="래들 벽체 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>500kg</b></div><div class="detail"><small>환경</small><b>31℃ · 78%</b></div><div class="detail"><small>호퍼 대기</small
-><b>12분</b></div><div class="detail"><small>지연제</small><b>사용</b></div></div><p><b>AI 분석 결과</b><br>표면 경화 의심도 18%, 균열 의심도 7%로 정상 범위 내의 건조 흔적이 확인되었습니다.</p><div class="improve"><b>개선 사안</b><br>AI 추천 조건을 준수한 작업이므로 수분량 변경보다 실제 호퍼 대기시간과 지연제 투입 시점을 함께 비교해 다음 추천값을 보정합니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>래들 바닥 · 2사이클 2차 · 균열 패턴 확인</b><span>2026.08.02 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-ladle-bottom.jpg" alt="래들 바닥 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>500kg</b></div><div class="detail"><small>환경</small><b>28℃ · 63%</b></div><div class="detail"><small>호퍼 대기</small><b>8분</b></div><div class="detail"><small>지연제</small><b>사용</b></div></div><p><b>AI 분석 결과</b><br>국부 균열 의심도 14%로 판정되었으며, 급속 경화 패턴과의 유사도는 낮습니다.</p><div class="improve"><b>개선 사안</b><br>실제 수분량과 믹싱시간 편차 여부를 확인하고, 현장 이미지 촬영 거리·조도를 표준화해 학습 품질을 높입니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>턴디쉬 카바 · 1사이클 3차 · 정상 작업 이미지</b><span>2026.07.30 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-tundish-cover.jpg" alt="턴디쉬 카바 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>250kg</b></div><div class="detail"><small>환경</small><b>25℃ · 55%</b></div><div class="detail"><small>호퍼 대기</small><b>0분</b></div><div class="detail"><small>지연제</small><b>미사용</b></div></div><p><b>AI 분석 결과</b><br>표면 상태가 정상 범위이며 기준 이미지로 재학습에 반영됩니다.</p><div class="improve"><b>개선 사안</b><br>정상 이미지도 작업 조건과 함께 누적해 이상 이미지와의 비교 정확도를 높입니다.</div></div></div></div></div></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>이미지 학습 적용 기준</h2><p>분석 결과는 단독 판단이 아닌 현장 데이터와 함께 반영됩니다.</p></div></div><div class="panel-body"><div class="check">작업명·사이클·차수 입력</div><div class="check">환경·대기시간 자동 연동</div><div class="check">분석 결과와 개선 사안 기록</div><div class="check">관리자 검토 후 재학습 적용</div></div></section><section class="panel"><div class="panel-head"><div><h2>모델 상태</h2></div></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>분석 모델</small><b>PatchCore</b></div><div class="detail"><small>학습 이미지</small><b>128장</b></div><div class="detail"><small>최근 학습</small><b>오늘</b></div><div class="detail"><small>검토 상태</small><b class="green">정상</b></div></div></div></section></aside></div></section>
+    <section class="screen" id="learning"><div class="hero"><div><div class="eyebrow">AI IMAGE LEARNING</div><h1>이미지 기반 이상 징후 학습</h1><p>급속 경화 의심 이미지를 작업 조건과 함께 저장하고, 분석 결과와 개선 사안을 AI 재학습 데이터로 적용합니다.</p></div><div class="timestamp">분석 모델<b>PatchCore 이상 탐지</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>적용된 학습 데이터</h2><p>항목을 선택하면 이미지와 작업 조건, 분석 결과를 확인할 수 있습니다.</p></div><span class="badge">학습 이미지 128장</span></div><div class="panel-body"><div class="learn-list"><div class="learn-item"><button class="learn-title"><b>래들 벽체 · 1사이클 1차 · 표면 경화 의심</b><span>2026.08.05 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-ladle-wall.jpg" alt="래들 벽체 학습 이미지"><div><div class=
+"detail-grid"><div class="detail"><small>투입량</small><b>500kg</b></div><div class="detail"><small>환경</small><b>31℃ · 78%</b></div><div class="detail"><small>호퍼 대기</small><b>12분</b></div><div class="detail"><small>지연제</small><b>사용</b></div></div><p><b>AI 분석 결과</b><br>표면 경화 의심도 18%, 균열 의심도 7%로 정상 범위 내의 건조 흔적이 확인되었습니다.</p><div class="improve"><b>개선 사안</b><br>AI 추천 조건을 준수한 작업이므로 수분량 변경보다 실제 호퍼 대기시간과 지연제 투입 시점을 함께 비교해 다음 추천값을 보정합니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>래들 바닥 · 2사이클 2차 · 균열 패턴 확인</b><span>2026.08.02 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-ladle-bottom.jpg" alt="래들 바닥 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>500kg</b></div><div class="detail"><small>환경</small><b>28℃ · 63%</b></div><div class="detail"><small>호퍼 대기</small><b>8분</b></div><div class="detail"><small>지연제</small><b>사용</b></div></div><p><b>AI 분석 결과</b><br>국부 균열 의심도 14%로 판정되었으며, 급속 경화 패턴과의 유사도는 낮습니다.</p><div class="improve"><b>개선 사안</b><br>실제 수분량과 믹싱시간 편차 여부를 확인하고, 현장 이미지 촬영 거리·조도를 표준화해 학습 품질을 높입니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>턴디쉬 카바 · 1사이클 3차 · 정상 작업 이미지</b><span>2026.07.30 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-tundish-cover.jpg" alt="턴디쉬 카바 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>250kg</b></div><div class="detail"><small>환경</small><b>25℃ · 55%</b></div><div class="detail"><small>호퍼 대기</small><b>0분</b></div><div class="detail"><small>지연제</small><b>미사용</b></div></div><p><b>AI 분석 결과</b><br>표면 상태가 정상 범위이며 기준 이미지로 재학습에 반영됩니다.</p><div class="improve"><b>개선 사안</b><br>정상 이미지도 작업 조건과 함께 누적해 이상 이미지와의 비교 정확도를 높입니다.</div></div></div></div></div></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>이미지 학습 적용 기준</h2><p>분석 결과는 단독 판단이 아닌 현장 데이터와 함께 반영됩니다.</p></div></div><div class="panel-body"><div class="check">작업명·사이클·차수 입력</div><div class="check">환경·대기시간 자동 연동</div><div class="check">분석 결과와 개선 사안 기록</div><div class="check">관리자 검토 후 재학습 적용</div></div></section><section class="panel"><div class="panel-head"><div><h2>모델 상태</h2></div></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>분석 모델</small><b>PatchCore</b></div><div class="detail"><small>학습 이미지</small><b>128장</b></div><div class="detail"><small>최근 학습</small><b>오늘</b></div><div class="detail"><small>검토 상태</small><b class="green">정상</b></div></div></div></section></aside></div></section>
   </main>
   <script>
     const navButtons=[...document.querySelectorAll('nav button')];
@@ -69,10 +73,10 @@ n><option>미사용</option></select></div><div class="log-row"><b>3차</b><span
       const fields=[...worklog.querySelectorAll('.form-grid .field')];
       const value=label=>{const field=fields.find(item=>item.querySelector('label')?.textContent.trim()===label);return field?.querySelector('input,select')?.value||''};
       const rows=[...worklog.querySelectorAll('.worklog-table .log-row')];
-      const cycles=rows.map((row,index)=>{const inputs=[...row.querySelectorAll('input')];const cycleBox=row.closest('.log-cycle');const numeric=value=>Number(String(value||'').replace(/[^\d.]/g,''))||0;const cycleNo=Number(cycleBox?.dataset.cycle)||Math.floor(index/3)+1;const roundNo=Number(cycleBox?.dataset.round)||index%3+1;return {index:index+1,cycleNo,roundNo,amount:numeric(row.querySelector('span')?.textContent),water:numeric(inputs[0]?.value),mixing:numeric(inputs[1]?.value),wait:numeric(cycleBox?.dataset.wait),risk:numeric(cycleBox?.dataset.risk),retarder:(row.querySelector('select')?.value||'').includes('사용')&&!((row.querySelector('select')?.value||'').includes('미사용'))};});
+      const cycles=rows.map((row,index)=>{const inputs=[...row.querySelectorAll('input')];const cycleBox=row.closest('.log-cycle');const numeric=value=>Number(String(value||'').replace(/[^\d.]/g,''))||0;const cycleNo=Number(cycleBox?.dataset.cycle)||Math.floor(index/3)+1;const roundNo=Number(cycleBox?.dataset.round)||index%3+1;return {index:index+1,cycleNo,roundNo,amount:numeric(row.querySelector('span')?.textContent),water:numeric(inputs[0]?.value),mixing:numeric(inputs[1]?.value),wait:numeric(cycleBox?.dataset.wait),risk:numeric(cycleBox?.dataset.risk),retarder:(row.querySelector('select')?
+.value||'').includes('사용')&&!((row.querySelector('select')?.value||'').includes('미사용'))};});
       const amount=cycles.reduce((sum,cycle)=>sum+cycle.amount,0);
-      co
-nst cycleNotes=[...worklog.querySelectorAll('.cycle-note input')].map(input=>input.value.trim());
+      const cycleNotes=[...worklog.querySelectorAll('.cycle-note input')].map(input=>input.value.trim());
       const notes=cycleNotes.map((note,index)=>note?`${index+1}차: ${note}`:'').filter(Boolean);
       const overall=worklog.querySelector('textarea')?.value.trim();
       if(overall)notes.push(`전체: ${overall}`);
@@ -102,11 +106,11 @@ nst cycleNotes=[...worklog.querySelectorAll('.cycle-note input')].map(input=>inp
       learningSide.prepend(upload);
       const uploadButton=document.getElementById('uploadButton');
       let selectedImage={src:'learning-ladle-wall.jpg',name:'래들 벽체'};
-      document.querySelectorAll('.select-image').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.select-image').forEach(x=>x.classList.remove('selected'));button.classList.add('selected');selectedImage={src:button.dataset.src,name:button.dataset.name};document.getElementById('selectedFile').textContent='선택된 이미지: '+selectedImage.name;}));
+      document.querySelectorAll('.select-image').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.select-image').forEach(x=>x.classList.remove('selected'));button.classList.add('selected');selectedImage={src:button.dataset.src,name:button.dataset.name};document.getElementById('selectedFile').textContent='선택된 이미지: 
+'+selectedImage.name;}));
       uploadButton.addEventListener('click',function(){
           const job=document.getElementById('uploadJob').value;
-          const cycle=
-document.getElementById('uploadCycle').value;
+          const cycle=document.getElementById('uploadCycle').value;
           const round=document.getElementById('uploadRound').value;
           const item=document.createElement('div');
           item.className='learn-item open';
@@ -172,8 +176,8 @@ document.getElementById('uploadCycle').value;
       });
 
       document.getElementById('loadDemoPhoto').addEventListener('click', async function () {
-        const demoUrl = 'https://upload.wikimedia.org/wikipedia/commons/0/00/Refractory_bricks_lining.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_con
-tent=thumbnail_unscaled';
+ 
+       const demoUrl = 'https://upload.wikimedia.org/wikipedia/commons/0/00/Refractory_bricks_lining.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled';
         const demoButton = this;
         demoButton.disabled = true;
         demoButton.textContent = '공개 사진 불러오는 중...';
@@ -254,10 +258,10 @@ tent=thumbnail_unscaled';
       document.addEventListener('click', async function (event) {
         if (event.target.id !== 'addLearningPhoto') return;
         const fileInput = document.getElementById('learningPhotoInput');
-        const localFile = (fileInput && fileInput.files && fileInput.files[0]) || null;
+ 
+       const localFile = (fileInput && fileInput.files && fileInput.files[0]) || null;
         const file = localFile || window.aiSmartMixingDemoFile;
-        if (!file
-) return;
+        if (!file) return;
 
         const message = document.getElementById('photoUploadMessage');
         const fileName = document.getElementById('learningPhotoName');
@@ -271,11 +275,23 @@ tent=thumbnail_unscaled';
           const item = document.createElement('div');
           item.className = 'learn-item open';
           item.dataset.learningData = 'true';
-          item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 대기 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green">학습 대기</b></div></div><div class="improve"><b>학습 데이터 등록 완료</b><br>이 사진은 AI 판정 없이 학습 데이터로만 등록되었습니다. 작업 조건과 함께 검토·재학습할 수 있습니다.</div></div></div></div>`;
+          item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 대기 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green review-status">AI 추천 · 학습 후보</b></div></div><div class="improve"><b>AI 사전 추천</b><br>사진 형식과 등록 조건을 확인했습니다. 작업자가 승인하면 학습 데이터에 반영됩니다.<div class="learning-review-actions"><button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button></div></div></div></div></div>`;
           item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
           item.querySelector('.learn-title').addEventListener('click', () => {
             item.classList.toggle('open');
             item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
+          });
+          item.querySelector('[data-learning-approve]').addEventListener('click', (approveEvent) => {
+            approveEvent.stopPropagation();
+            item.querySelector('.review-status').textContent = '학습 반영 완료';
+            item.querySelector('.review-status').className = 'green review-status';
+            item.querySelector('.learning-review-actions').remove();
+            message.textContent = '작업자 승인 완료 · 학습 데이터에 반영되었습니다.';
+          });
+          item.querySelector('[data-learning-reject]').addEventListener('click', (rejectEvent) => {
+            rejectEvent.stopPropagation();
+            item.remove();
+            message.textContent = '학습 데이터에서 제외했습니다.';
           });
           document.querySelector('#learning .learn-list')?.prepend(item);
           message.style.display = 'block';
@@ -327,7 +343,8 @@ tent=thumbnail_unscaled';
               body: analysisBody
             });
             if (!analysisResponse.ok) throw new Error(await analysisResponse.text());
-            analysis = await analysisResponse.json();
+    
+        analysis = await analysisResponse.json();
           } catch (analysisError) {
             analysis = {
               image_scope: false,
@@ -355,8 +372,7 @@ tent=thumbnail_unscaled';
             cycle_no: String(cycleNo),
             round_no: String(roundNo),
             batch_kg: roundNo === 3 ? 250 : 500,
-      
-      temperature_c: temperature,
+            temperature_c: temperature,
             humidity_pct: humidity,
             hopper_wait_min: hopperWait,
             retarder_used: hopperWait > 0,
@@ -418,7 +434,8 @@ tent=thumbnail_unscaled';
             const resultText = document.createTextNode(`경화 의심 ${analysis.hardening_score}% · 균열 의심 ${analysis.crack_score}%\n${analysis.improvement_note}`);
             resultBox.appendChild(resultText);
             latestContent.appendChild(resultBox);
-            const status = latestContent.querySelector('.detail-grid .detail:last-child b');
+            const status = latestContent.querySe
+lector('.detail-grid .detail:last-child b');
             if (status) status.textContent = analysis.analysis_status;
           }
         } catch (error) {
@@ -442,8 +459,7 @@ tent=thumbnail_unscaled';
         '래들 벽체': { material: '저시멘트 캐스터블', amount: 2500, lot: 'LC-260805-03', water: 26, mixing: 5, baseRisk: 6, reliability: 89 },
         '래들 바닥': { material: '고알루미나 캐스터블', amount: 3500, lot: 'HA-260805-12', water: 25, mixing: 5, baseRisk: 7, reliability: 87 },
         '턴디쉬 카바': { material: '저시멘트 캐스터블', amount: 1250, lot: 'LC-260805-21', water: 24, mixing: 4, baseRisk: 5, reliability: 92 },
-    
-    '승온 버너': { material: '알루미나 캐스터블', amount: 1750, lot: 'AL-260805-08', water: 25, mixing: 4, baseRisk: 6, reliability: 90 }
+        '승온 버너': { material: '알루미나 캐스터블', amount: 1750, lot: 'AL-260805-08', water: 25, mixing: 4, baseRisk: 6, reliability: 90 }
       };
 
       const hero = dashboard.querySelector('.hero');
@@ -502,14 +518,14 @@ tent=thumbnail_unscaled';
         infos[0].innerHTML = '<small>내화물 종류 · 원료 LOT</small><b>' + job.material + '</b> <span>' + job.lot + '</span>';
         infos[2].innerHTML = '<small>AI 권장 총 수분량</small><b>' + cycles.reduce((sum, cycle) => sum + cycle.water, 0).toFixed(1) + 'L</b> <span>회차별 분할 투입</span>';
         const cycleBox = dashboard.querySelector('.cycles');
-        cycleBox.innerHTML = '<div class="cycle-head"><span>차수</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + groupedCycles(cycles, ({ cycle, index }) => {
+        cycleBox.innerHTML = '<div class="cycle-head"><s
+pan>차수</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + groupedCycles(cycles, ({ cycle, index }) => {
           const useRetarder = Boolean(cycle.retarder);
           const note = cycle.note || (useRetarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
           return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><span>' + cycle.water.toFixed(1) + 'L</span><span>' + job.mixing + '분</span><span>' + cycle.wait + '분</span><span><i class="pill ' + (useRetarder ? 'use' : 'no') + '">' + (useRetarder ? '사용' : '미사용') + '</i> <i class="' + (useRetarder ? 'risk-high' : 'risk-low') + '">' + cycle.risk + '%</i></span></div><div class="cycle-note-history"><b>' + cycle.round + '차 특이사항</b><span>' + note + '</span></div></div>';
         });
         const notice = dashboard.querySelector('.action-bar div');
-        const used = cycles.filter(cycle => c
-ycle.retarder).map(cycle => cycle.cycle + '사이클 ' + cycle.round + '차');
+        const used = cycles.filter(cycle => cycle.retarder).map(cycle => cycle.cycle + '사이클 ' + cycle.round + '차');
         notice.innerHTML = used.length ? '<b>● 승인 전 확인 필요</b>' + used.join(' · ') + '에 위험도 10% 초과로 지연제 사용 조건이 포함되어 있습니다.' : '<b>● 정상 조건</b>모든 사이클·차수가 위험도 10% 이하로 지연제 사용 없이 작업할 수 있습니다.';
       }
       function transferRecommendation(name) {
@@ -564,7 +580,8 @@ ycle.retarder).map(cycle => cycle.cycle + '사이클 ' + cycle.round + '차');
         render(select.value);
         applyRecommendation(recommendationFor(select.value));
       });
-      document.getElementById('approve').addEventListener('click', () => transferRecommendation(select.value));
+      document.getElementById('approve').addEventListener('click', () => transferRecommendati
+on(select.value));
       const savedRecommendation = sessionStorage.getItem('aiSmartMixingRecommendation');
       let restoredRecommendation = false;
       if (savedRecommendation) {
@@ -587,7 +604,6 @@ ycle.retarder).map(cycle => cycle.cycle + '사이클 ' + cycle.round + '차');
     })();
   </script>
   <script>
-
     (function () {
       const list = document.getElementById('historyList');
       if (!list || list.children.length >= 12) return;
@@ -652,7 +668,8 @@ ycle.retarder).map(cycle => cycle.cycle + '사이클 ' + cycle.round + '차');
         const item = document.createElement('div');
         item.className = 'history-item';
         item.dataset.job = record.job;
-        item.dataset.material = record.material;
+      
+  item.dataset.material = record.material;
         item.dataset.date = record.date;
         item.dataset.amount = record.amount;
         item.dataset.env = record.env;
@@ -668,8 +685,7 @@ ycle.retarder).map(cycle => cycle.cycle + '사이클 ' + cycle.round + '차');
       if (savedHistory.length) {
         sessionStorage.setItem('aiSmartMixingHistoryAppliedCount', String(savedHistory.length));
         const countBadge = document.querySelector('#history .panel-head .badge');
-        if (countBadge) countBadge.textContent = '전체 ' + list.querySelectorAll('.hi
-story-item').length + '건';
+        if (countBadge) countBadge.textContent = '전체 ' + list.querySelectorAll('.history-item').length + '건';
       }
       const records = [...list.querySelectorAll('.history-item')].map(item => ({
         job: item.dataset.job, material: item.dataset.material, date: item.dataset.date,
@@ -710,15 +726,15 @@ story-item').length + '건';
           return {...cycle, cycle: cycleNumber, round: roundNumber, mixing, wait, risk, retarder: typeof cycle.retarder === 'boolean' ? cycle.retarder : risk > 10};
         });
         const cycleGroups = actualCycles.reduce((groups, cycle, index) => { const key = cycle.cycle || (Math.floor(index / 3) + 1); (groups[key] ||= []).push({cycle,index}); return groups; }, {});
-        const cycleHtml = Object.entries(cycleGroups).map(([cycleNumber, entries]) => '<section class="cycle-group"><div class="cycle-group-head"><b>' + cycleNumber + '사이클</b><span>' + entries.reduce((sum, entry) => sum + Number(entry.cycle.amount || 0), 0).toLocaleString('ko-KR') + 'kg · ' + entries.length + '회 믹싱</span></div>' + entries.map(({cycle,index}) => {
+        const cycleHtml = Object.entries(cycleGroups).map(([cycleNumber, entries]) => '<section class="cycle-group"><div class="cycle-group-head"><b>' + cycleNumber + '사이클</b><span>' + entries.reduce((sum, entry) => sum + Number(entry.cycle.amount || 0), 0).toLocaleString('ko-KR') + 'kg · ' + entries.length
+ + '회 믹싱</span></div>' + entries.map(({cycle,index}) => {
           const wait = Number(cycle.wait)||0;
           const risk = Number(cycle.risk)||Math.min(30, Math.round(5 + wait * .35));
           const retarder = Boolean(cycle.retarder);
           const note = record.cycleNotes?.[index] || '';
           const displayNote = note || (retarder ? '호퍼 대기 ' + wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
           const noteHtml = '<div class="cycle-note-history"><b>' + (cycle.round || (index % 3 + 1)) + '차 특이사항</b><span>' + displayNote + '</span></div>';
-          return '<div class="cycle-detail-block"><div class="cycle-row' + ((cycle.round || (index % 3 + 1)) === 1 ? ' current' : '') + '"><b>' + (cycle.round || (index % 3 + 1)) + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i 
-class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
+          return '<div class="cycle-detail-block"><div class="cycle-row' + ((cycle.round || (index % 3 + 1)) === 1 ? ' current' : '') + '"><b>' + (cycle.round || (index % 3 + 1)) + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
         }).join('') + '</section>').join('');
         cycleBox.innerHTML = '<div class="cycle-head"><span>차수</span><span>투입량</span><span>실제 수분</span><span>실제 믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + cycleHtml;
       }
@@ -782,7 +798,8 @@ class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></
         title.innerHTML = '<div><b>' + job + '</b><small>' + jobRecords[0].material + ' · 작업 이력 ' + jobRecords.length + '건</small></div><span>' + (index === 0 ? '접기 ▲' : '이력 보기 ▼') + '</span>';
         const recordBox = document.createElement('div');
         recordBox.className = 'job-history-records';
-        recordBox.innerHTML = '<div class="job-history-record-head"><span>작업일</span><span>작업자</span><span>총 투입량</span><span>작업환경</span><span>결과</span></div>';
+        recordBox.innerHTML = '<div class="job-history-record-head"><span>작업일</span><span>작업자</span><span>총 투입량</span><span>작업환경</span><span>결과</sp
+an></div>';
         jobRecords.forEach((record, recordIndex) => {
           const row = document.createElement('button');
           row.type = 'button';
@@ -798,8 +815,7 @@ class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></
             other.querySelector('.job-history-title span').textContent = '이력 보기 ▼';
           });
           if (opening) {
-          
-  group.classList.add('open');
+            group.classList.add('open');
             title.querySelector('span').textContent = '접기 ▲';
           }
         });
@@ -884,7 +900,8 @@ class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></
             var status = document.createElement('span');
             var retarder = select.value === '사용';
             var risk = Number(cycle.risk) || 0;
-            status.innerHTML = '<i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i>';
+            status.innerHTML = '<i class="pill ' + (retarder ? 'use'
+ : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i>';
             select.replaceWith(status);
           }
           var noteInput = block.querySelector('.detail-edit-input[data-role="note"]');
@@ -908,8 +925,7 @@ class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></
         var row = window.__activeMixingRow;
         if (!record) return;
         var fields = {};
-        document.querySelectorAll('#history .detail-edit-input[data-role]').forEach(func
-tion (element) {
+        document.querySelectorAll('#history .detail-edit-input[data-role]').forEach(function (element) {
           if (!['amount', 'water', 'mixing', 'wait', 'retarder', 'note'].includes(element.dataset.role)) fields[element.dataset.role] = element.value.trim();
         });
         var cycleNotes = [];
@@ -980,7 +996,8 @@ tion (element) {
           headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: { source: 'ai-smart-mixing-worklog' } })
         });
-        const session = await response.json();
+        const session = await
+ response.json();
         if (!response.ok || !session.access_token) throw new Error('현장 세션을 만들 수 없습니다.');
         localStorage.setItem('ai-smart-mixing-field-session', JSON.stringify(session));
         return session;
@@ -1001,8 +1018,7 @@ tion (element) {
           }
           const local = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
           const merged = [...local];
-        
-  remote.forEach(row => {
+          remote.forEach(row => {
             const created = row.created_at ? new Date(row.created_at) : new Date();
             const date = `${created.getFullYear()}.${String(created.getMonth() + 1).padStart(2, '0')}.${String(created.getDate()).padStart(2, '0')}`;
             const amount = `${Number(row.total_kg || 0).toLocaleString('ko-KR')}kg`;
@@ -1072,7 +1088,8 @@ tion (element) {
                 status: '작업 저장 완료'
               })
             });
-            if (!workOrderResponse.ok) throw new Error(await workOrderResponse.text());
+            if (!workOrderResponse.ok) throw new Error(await workOrder
+Response.text());
             const workOrders = await workOrderResponse.json();
             const workOrderId = workOrders[0]?.id;
             if (workOrderId && Array.isArray(record.cycles) && record.cycles.length) {
@@ -1089,8 +1106,7 @@ tion (element) {
                 note: record.cycleNotes?.[Number(cycle.index || 1) - 1] || null
               }));
               const cycleResponse = await fetch(`${SUPABASE_URL}/rest/v1/mixing_cycles?on_conflict=work_order_id,cycle_no,round_no`, {
-                method: '
-POST',
+                method: 'POST',
                 headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' },
                 body: JSON.stringify(cycleRows)
               });
@@ -1175,7 +1191,8 @@ POST',
             const row = cycle.querySelector('.log-row');
             if (!row || row.querySelector('input[data-wait-input]')) return;
             const wait = document.createElement('input');
-            wait.dataset.waitInput = 'true';
+            wait.dataset.w
+aitInput = 'true';
             wait.value = (Number(cycle.dataset.wait) || 0) + ' 분';
             row.insertBefore(wait, row.querySelector('select'));
           });
@@ -1196,8 +1213,7 @@ POST',
         const cycle = input.closest('.log-cycle');
         if (cycle) cycle.dataset.wait = String(Number(input.value.replace(/[^\d.]/g, '')) || 0);
       });
-      document.getElementById('approve')?.addEventListener('click', () => setTimeout(syncWorkl
-ogWaitColumn, 650));
+      document.getElementById('approve')?.addEventListener('click', () => setTimeout(syncWorklogWaitColumn, 650));
     })();
   </script>
   <script>
@@ -1283,7 +1299,8 @@ ogWaitColumn, 650));
         const panel = document.createElement('section');
         panel.className = 'panel learning-upload-panel';
         panel.innerHTML = `
-          <div class="panel-head"><div><h2>현장 사진 업로드</h2><p>급속 경화 의심 사진을 등록해 AI 분석 대상 여부를 먼저 확인합니다.</p></div><span class="badge">JPG · PNG</span></div>
+          <div class="panel-head"><div><h2>현장 사진 업로드</h2><p>급속 경화 의심 사진을 등록해 AI 분석 대상 여부를 먼저 확인합니다.</p></div><span clas
+s="badge">JPG · PNG</span></div>
           <div class="panel-body"><div class="photo-upload">
             <label for="learningPhotoInput">사진 파일 선택</label>
             <input id="learningPhotoInput" type="file" accept="image/png,image/jpeg,image/webp">
@@ -1291,8 +1308,7 @@ ogWaitColumn, 650));
             <div class="photo-preview-box"><div id="learningPhotoEmpty" class="photo-preview-empty">사진을 선택하면<br>여기에 미리 보입니다.</div><img id="learningPhotoPreview" class="photo-upload-preview" alt="업로드 사진 미리보기"></div>
             <div class="upload-fields"><select id="photoJob"><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option><option>승온 버너</option></select><select id="photoCycle"><option>1사이클</option><option>2사이클</option><option>3사이클</option></select><select id="photoRound"><option>1차</option><option>2차</option><option>3차</option></select></div>
             <button id="loadDemoPhoto" class="button secondary" type="button">공개 데모 사진 불러오기</button>
-            <button id="addLearningPhoto" class=
-"button" type="button">AI 학습 데이터에 사진 추가</button>
+            <button id="addLearningPhoto" class="button" type="button">AI 학습 데이터에 사진 추가</button>
             <div id="photoUploadMessage" class="upload-message">판정 통과 후 학습 데이터에 추가됩니다.</div>
           </div></div>`;
         hero.insertAdjacentElement('afterend', panel);
@@ -1345,11 +1361,24 @@ ogWaitColumn, 650));
             const item = document.createElement('div');
             item.className = 'learn-item open';
             item.dataset.learningData = 'true';
-            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 대기 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green">학습 대기</b></div></div><div class="improve"><b>학습 데이터 등록 완료</b><br>이 사진은 AI 판정 없이 학습 데이터로만 등록되었습니다. 작업 조건과 함께 검토·재학습할 수 있습니다.</div></div></div></div>`;
+            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 대기 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green review-status">AI 추천 · 학습 후보</b></div></div><div class="improve"><b>AI 사전 추천</b><br>사진 형식과 등록 조건을 확인했습니다. 작업자가 승인하면 학습 데이터에 반영됩니다.<div class="learning-review-actions"><button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button></div></div></div></div></div>`;
             item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
             item.querySelector('.learn-title').addEventListener('click', () => {
               item.classList.toggle('open');
               item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
+            });
+            item.querySelector('[data-learning-approve]').addEventListener('click', (approveEvent) => {
+              approveEvent.stopPropagation();
+
+              item.querySelector('.review-status').textContent = '학습 반영 완료';
+              item.querySelector('.review-status').className = 'green review-status';
+              item.querySelector('.learning-review-actions').remove();
+              message.textContent = '작업자 승인 완료 · 학습 데이터에 반영되었습니다.';
+            });
+            item.querySelector('[data-learning-reject]').addEventListener('click', (rejectEvent) => {
+              rejectEvent.stopPropagation();
+              item.remove();
+              message.textContent = '학습 데이터에서 제외했습니다.';
             });
             learning.querySelector('.learn-list').prepend(item);
             message.style.display = 'block';
@@ -1380,8 +1409,7 @@ ogWaitColumn, 650));
             const cycle = panel.querySelector('#photoCycle').value;
             const round = panel.querySelector('#photoRound').value;
             const item = document.createElement('div');
- 
-           item.className = 'learn-item open';
+            item.className = 'learn-item open';
             item.dataset.learningApproved = 'true';
             item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 현장 업로드 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green">${analysis.analysis_status || '시범 판정 완료'}</b></div></div><div class="improve"><b>AI 판정 결과</b><br>경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%<br>${analysis.improvement_note || ''}</div></div></div></div>`;
             item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
