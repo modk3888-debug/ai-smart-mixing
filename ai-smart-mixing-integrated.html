@@ -1286,7 +1286,10 @@ aitInput = 'true';
         if (!learning || !hero) return;
         const cleanUnapprovedItems = () => {
           learning.querySelectorAll('.learn-list .learn-item').forEach((item) => {
-            if (item.textContent.includes('현장 업로드 이미지') && item.dataset.learningApproved !== 'true') item.remove();
+            const text = item.textContent;
+            const legacyUpload = text.includes('현장 업로드 이미지') && item.dataset.learningApproved !== 'true';
+            const legacyApproved = text.includes('학습 반영 완료') && text.includes('AI 사전 추천');
+            if (legacyUpload || legacyApproved) item.remove();
           });
         };
         cleanUnapprovedItems();
@@ -1297,10 +1300,10 @@ aitInput = 'true';
         }
         if (learning.querySelector('#learningPhotoInput')) return;
         const panel = document.createElement('section');
-        panel.className = 'panel learning-upload-panel';
+        panel.cla
+ssName = 'panel learning-upload-panel';
         panel.innerHTML = `
-          <div class="panel-head"><div><h2>현장 사진 업로드</h2><p>급속 경화 의심 사진을 등록해 AI 분석 대상 여부를 먼저 확인합니다.</p></div><span clas
-s="badge">JPG · PNG</span></div>
+          <div class="panel-head"><div><h2>현장 사진 업로드</h2><p>급속 경화 의심 사진을 등록해 AI 분석 대상 여부를 먼저 확인합니다.</p></div><span class="badge">JPG · PNG</span></div>
           <div class="panel-body"><div class="photo-upload">
             <label for="learningPhotoInput">사진 파일 선택</label>
             <input id="learningPhotoInput" type="file" accept="image/png,image/jpeg,image/webp">
@@ -1379,10 +1382,10 @@ s="badge">JPG · PNG</span></div>
               ? '<button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button>'
               : '<button type="button" class="button secondary" data-learning-reject>사진 제외</button>';
             const item = document.createElement('div');
-            item.className = 'learn-item open';
+    
+        item.className = 'learn-item open';
             item.dataset.learningData = 'true';
-            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${
-round} · 학습 검토 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="${scopeApproved ? 'green' : 'red'} review-status">${recommendationTitle}</b></div></div><div class="improve"><b>AI 사전 적합성 확인</b><br>${recommendationBody}<div class="learning-review-actions">${reviewActions}</div></div></div></div></div>`;
+            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 검토 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="${scopeApproved ? 'green' : 'red'} review-status">${recommendationTitle}</b></div></div><div class="improve"><b>AI 사전 적합성 확인</b><br>${recommendationBody}<div class="learning-review-actions">${reviewActions}</div></div></div></div></div>`;
             item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
             item.querySelector('.learn-title').addEventListener('click', () => {
               item.classList.toggle('open');
@@ -1447,13 +1450,13 @@ round} · 학습 검토 이미지</b><span>접기</span></button><div class="lea
             message.textContent = `등록 중단 · ${error.message}`;
           } finally {
             button.disabled = false;
+
           }
         }, true);
       };
       install();
       document.querySelectorAll('nav button[data-screen]').forEach((button) => {
         button.addEventListener('click', () => {
-
           const target = document.getElementById(button.dataset.screen);
           if (!target) return;
           document.querySelectorAll('.screen').forEach((screen) => screen.classList.remove('active'));
