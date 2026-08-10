@@ -84,7 +84,8 @@
     document.getElementById('saveLog').textContent='저장';
     document.getElementById('saveLog').addEventListener('click',function(){captureSavedWorklog();this.textContent='완료';setTimeout(()=>this.textContent='저장',1000)});
     document.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',()=>{document.querySelectorAll('.history-item').forEach(x=>x.classList.remove('selected'));item.classList.add('selected');document.getElementById('detailJob').textContent=item.dataset.job;document.getElementById('detailMaterial').textContent=item.dataset.material;document.getElementById('detailAmount').textContent=item.dataset.amount;document.getElementById('detailEnv').textContent=item.dataset.env;document.getElementById('detailDate').textContent=item.dataset.date+' · '+item.dataset.result;document.getElementById('detailNote').textContent=item.dataset.note}));
-    document.querySelectorAll('.learn-title').forEach(button=>button.addEventListener('click',()=>{const item=button.parentElement;item.classList.toggle('open');button.querySelector('span').textContent=item.classList.contains('open')?'접기':'펼치기'}));
+    function updateLearningToggle(button,item){const span=button.querySelector('span');if(!span)return;const base=span.dataset.baseLabel??span.textContent.replace(/\s*·\s*(펼치기|접기)$/,'').trim();span.dataset.baseLabel=base;span.textContent=base?(base+' · '+(item.classList.contains('open')?'접기':'펼치기')):(item.classList.contains('open')?'접기':'펼치기')}
+    document.querySelectorAll('.learn-title').forEach(button=>button.addEventListener('click',()=>{const item=button.parentElement;item.classList.toggle('open');updateLearningToggle(button,item)}));
     (function(){
       const learningSide=document.querySelector('#learning .side');
       const learningList=document.querySelector('#learning .learn-list');
@@ -113,7 +114,7 @@
           detail.querySelector('img').src=selectedImage.src;
           detail.querySelectorAll('.detail b')[0].textContent=job;
           detail.querySelectorAll('.detail b')[1].textContent=cycle+' · '+round;
-          title.addEventListener('click',()=>{item.classList.toggle('open');title.querySelector('span').textContent=item.classList.contains('open')?'접기':'펼치기';});
+          title.addEventListener('click',()=>{item.classList.toggle('open');updateLearningToggle(title,item);});
           learningList.prepend(item);
           document.getElementById('uploadMessage').style.display='block';
       });
@@ -225,7 +226,7 @@
         item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 현장 업로드 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>작업환경</small><b>자동 연동 예정</b></div><div class="detail"><small>분석 상태</small><b class="green">작업자 등록 완료</b></div></div><p><b>AI 검토 대기</b><br>작업자가 등록한 사진입니다. 아래에서 학습 반영 요청 또는 제외를 선택하세요.</p><div class="improve"><b>작업자 확인</b><br>사진과 작업 조건을 확인한 뒤 학습 반영을 요청할 수 있습니다.<div class="learning-review-actions"><button class="button" type="button" data-learning-action="submit">학습 반영 요청</button><button class="button secondary" type="button" data-learning-action="exclude">제외</button></div></div></div></div></div>`;
         item.querySelector('.uploaded-image').src = photoData;
         const title = item.querySelector('.learn-title');
-        title.addEventListener('click', function () { item.classList.toggle('open'); title.querySelector('span').textContent = item.classList.contains('open') ? '접기' : '펼치기'; });
+        title.addEventListener('click', function () { item.classList.toggle('open'); updateLearningToggle(title,item); });
         item.querySelector('[data-learning-action="submit"]')?.addEventListener('click', function (event) {
           event.stopPropagation();
           const state = item.querySelector('.detail-grid .detail:last-child b');
