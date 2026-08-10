@@ -209,7 +209,7 @@ tent=thumbnail_unscaled';
         const item = document.createElement('div');
         item.className = 'learn-item open';
         item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 현장 업로드 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>작업환경</small><b>자동 연동 예정</b></div><div class="detail"><small>분석 상태</small><b class="green">학습 대기</b></div></div><p><b>AI 분석 예정</b><br>등록된 현장 사진을 PatchCore 이상 탐지 모델의 검토·학습 데이터로 추가했습니다.</p><div class="improve"><b>다음 단계</b><br>관리자가 사진 상태와 작업 조건을 검토한 뒤 재학습 데이터에 반영합니다.</div></div></div></div>`;
-        item.querySelector('.uploaded-image').src = photoData;
+        item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
         const title = item.querySelector('.learn-title');
         title.addEventListener('click', function () { item.classList.toggle('open'); title.querySelector('span').textContent = item.classList.contains('open') ? '접기' : '펼치기'; });
         learningList.prepend(item);
@@ -257,9 +257,9 @@ tent=thumbnail_unscaled';
         const file = (fileInput && fileInput.files && fileInput.files[0]) || window.aiSmartMixingDemoFile;
         if (!file) return;
 
-        const message = document.getElementById('photoUploadMessage');
-        const file
-Name = document.getElementById('learningPhotoName');
+        const message = document.g
+etElementById('photoUploadMessage');
+        const fileName = document.getElementById('learningPhotoName');
         const button = event.target;
         const job = document.getElementById('photoJob').value;
         const cycle = document.getElementById('photoCycle').value;
@@ -362,14 +362,14 @@ Name = document.getElementById('learningPhotoName');
                 <div class="detail-grid">
                   <div class="detail"><small>작업명</small><b></b></div>
                   <div class="detail"><small>사이클 · 차수</small><b></b></div>
-                  <div class="detail"><small>작업환경</small><b>${temperature}℃ · ${humidity}%</b></div>
-                
-  <div class="detail"><small>분석 상태</small><b class="green"></b></div>
+                  <div class="detail"><small>작업환경</small><b>${
+temperature}℃ · ${humidity}%</b></div>
+                  <div class="detail"><small>분석 상태</small><b class="green"></b></div>
                 </div>
                 <div class="improve"><b>AI 판정 결과</b><br></div>
               </div></div></div>`;
             item.querySelector('.learn-title b').textContent = `${job} · ${cycle} ${round} · 현장 업로드 이미지`;
-            item.querySelector('.uploaded-image').src = photoData;
+            item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
             item.querySelectorAll('.detail b')[0].textContent = job;
             item.querySelectorAll('.detail b')[1].textContent = `${cycle} · ${round}`;
             item.querySelectorAll('.detail b')[3].textContent = analysis.analysis_status || '시범 판정 완료';
@@ -447,8 +447,8 @@ Name = document.getElementById('learningPhotoName');
           const wait = (cycleLength - round) * job.mixing;
           const risk = Math.min(30, Math.round(job.baseRisk + wait * 0.35));
           const scenario = job.amount === 3500 && cycle === 1 && round === 2
-            ? { wait: 9, risk: 12, retarder: true, note: '\uD638\uD37C \uBC30\uCD9C \uAC8C\uC774\uD2B8 \uC810\uAC80\uC73C\uB85C \uC774\uC1A1\uC774 4\uBD84 \uC9C0\uC5F0\uB428. \uD638\uD37C \uB300\uAE30 9\uBD84 \uD
-6C4 \uC9C0\uC5F0\uC81C \uC0AC\uC6A9.' }
+            ? { wait: 9, risk: 12, retarder: true, note: '\uD638\uD37C \uBC30\uCD9C \uAC8C\uC774\uD2B8
+ \uC810\uAC80\uC73C\uB85C \uC774\uC1A1\uC774 4\uBD84 \uC9C0\uC5F0\uB428. \uD638\uD37C \uB300\uAE30 9\uBD84 \uD6C4 \uC9C0\uC5F0\uC81C \uC0AC\uC6A9.' }
             : null;
           return { amount, wait, risk, water: +(job.water * amount / 500).toFixed(1), cycle, round, scenario, retarder: scenario ? scenario.retarder : risk > 10, note: scenario ? scenario.note : null };
         });
@@ -509,10 +509,10 @@ Name = document.getElementById('learningPhotoName');
         fields[3].querySelector('input').value = recommendation.humidity;
         // 작업명을 바꾸면 이전 작업의 전체 특이사항을 남기지 않고 새 추천값으로 다시 작성합니다.
         const overallNote = worklog.querySelector('textarea');
-        if (overallNote) overallNote.value = '';
+        if (overallNote) overallNot
+e.value = '';
         const worklogTable = worklog.querySelector('.worklog-table');
-        worklogTable.inner
-HTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + groupedCycles(recommendation.cycles, ({ cycle }) => {
+        worklogTable.innerHTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + groupedCycles(recommendation.cycles, ({ cycle }) => {
           const retarder = Boolean(cycle.retarder);
           const note = cycle.note || (retarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
           return '<div class="log-cycle" data-cycle="' + cycle.cycle + '" data-round="' + cycle.round + '" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '" data-retarder="' + retarder + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input value="' + note + '"></div></div>';
@@ -583,9 +583,9 @@ HTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실
         item.classList.add('selected');
         document.getElementById('detailJob').textContent = item.dataset.job;
         document.getElementById('detailMaterial').textContent = item.dataset.material;
-        document.getElementById('detailAmount').textContent = item.dataset.amount;
-        document.getElementById('detailEnv'
-).textContent = item.dataset.env;
+        document
+.getElementById('detailAmount').textContent = item.dataset.amount;
+        document.getElementById('detailEnv').textContent = item.dataset.env;
         document.getElementById('detailDate').textContent = item.dataset.date + ' · ' + item.dataset.result;
         document.getElementById('detailNote').textContent = item.dataset.note;
       }
@@ -671,11 +671,11 @@ HTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실
         let remaining = totalAmount;
         while (remaining > 0) {
           const batchAmount = Math.min(500, remaining);
-          batches.push({ amount: batchAmount, water: +(waterPer500 * batchAmount / 500).toFixed(1) });
+          batches.push({ amount: batchAmount, water
+: +(waterPer500 * batchAmount / 500).toFixed(1) });
           remaining -= batchAmount;
         }
-        cons
-t fallbackCycles = batches.map((batch,index) => { const cycle=Math.floor(index/3)+1; const round=(index%3)+1; const cycleLength=Math.min(3,batches.length-((cycle-1)*3)); const wait=(cycleLength-round)*mixingTime; const risk=Math.min(30,Math.round(5+wait*.35)); return {amount:batch.amount,water:batch.water,mixing:mixingTime,wait,risk,retarder:risk>10,cycle,round}; });
+        const fallbackCycles = batches.map((batch,index) => { const cycle=Math.floor(index/3)+1; const round=(index%3)+1; const cycleLength=Math.min(3,batches.length-((cycle-1)*3)); const wait=(cycleLength-round)*mixingTime; const risk=Math.min(30,Math.round(5+wait*.35)); return {amount:batch.amount,water:batch.water,mixing:mixingTime,wait,risk,retarder:risk>10,cycle,round}; });
         const mergedCycles = Array.isArray(record.cycles) && record.cycles.length ? record.cycles.map((cycle,index) => ({...fallbackCycles[index],...cycle,amount:Number(cycle.amount)||fallbackCycles[index].amount,water:Number(cycle.water)||fallbackCycles[index].water,mixing:Number(cycle.mixing)||fallbackCycles[index].mixing,retarder:typeof cycle.retarder === 'boolean' ? cycle.retarder : fallbackCycles[index].retarder,cycle:cycle.cycle||fallbackCycles[index].cycle,round:cycle.round||fallbackCycles[index].round})) : fallbackCycles;
         const cycleCounts = mergedCycles.reduce((counts, cycle, index) => { const key = Number(cycle.cycle) || (Math.floor(index / 3) + 1); counts[key] = (counts[key] || 0) + 1; return counts; }, {});
         const actualCycles = mergedCycles.map((cycle, index) => {
@@ -722,10 +722,10 @@ t fallbackCycles = batches.map((batch,index) => { const cycle=Math.floor(index/3
         window.__activeMixingRecord = record;
         window.__activeMixingRow = row;
         document.querySelectorAll('.job-history-record').forEach(item => item.classList.remove('selected'));
-        row.classList.add('selected');
+        row.classLis
+t.add('selected');
         document.getElementById('detailJob').textContent = record.job;
-        document.get
-ElementById('detailMaterial').textContent = record.material;
+        document.getElementById('detailMaterial').textContent = record.material;
         document.getElementById('detailAmount').textContent = record.amount;
         document.getElementById('detailEnv').textContent = record.env;
         document.getElementById('detailWorker').textContent = record.worker;
@@ -814,9 +814,9 @@ ElementById('detailMaterial').textContent = record.material;
             } else {
               var select = document.createElement('select');
               select.className = 'detail-edit-input';
-              select.dataset.role = 'retarder';
-              select.innerHTML = '<option value="사용">사용</option><option value="미사용">미사용</option
->';
+              select.dataset.role
+ = 'retarder';
+              select.innerHTML = '<option value="사용">사용</option><option value="미사용">미사용</option>';
               select.value = span.querySelector('.pill.use') ? '사용' : '미사용';
               span.replaceWith(select);
             }
@@ -913,9 +913,9 @@ ElementById('detailMaterial').textContent = record.material;
         record.cycleNotes = cycleNotes;
         record.overallNote = overall;
         record.note = overall || cycleNotes.filter(Boolean).join(' / ') || record.note;
-        var saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
-        var match = saved
-.findIndex(function (item) { return item.date === record.date && item.job === (row?.querySelector('div b')?.textContent || record.job); });
+        
+var saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+        var match = saved.findIndex(function (item) { return item.date === record.date && item.job === (row?.querySelector('div b')?.textContent || record.job); });
         if (match >= 0) saved[match] = Object.assign({}, saved[match], record);
         sessionStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(saved));
         if (row) {
@@ -1005,11 +1005,11 @@ ElementById('detailMaterial').textContent = record.material;
         setTimeout(async function () {
           const saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
           const record = saved[0];
-          if (!record) return;
+          if (!record) re
+turn;
           try {
             const session = await fieldSession();
-            const temp = Number(String
-(record.env).match(/[\d.]+/)?.[0] || 0);
+            const temp = Number(String(record.env).match(/[\d.]+/)?.[0] || 0);
             const humidity = Number(String(record.env).match(/[\d.]+/g)?.[1] || 0);
             const clientKey = `${record.date}-${record.job}-${record.worker}-${record.amount}`;
             const payload = {
@@ -1100,10 +1100,10 @@ ElementById('detailMaterial').textContent = record.material;
           // applyRecommendation()이 전달한 수분량·믹싱시간을 그대로 유지합니다.
           // 지연제 사용 여부는 작업일지에서 재계산하지 않고 대시보드 추천값을 따릅니다.
           const useRetarder = cycle.dataset.retarder === 'true' || (cycle.dataset.retarder == null && risk > 10);
-          const select = row?.querySelector('select');
+          c
+onst select = row?.querySelector('select');
           if (select) select.value = useRetarder ? '사용' : '미사용';
- 
-         if (useRetarder) usedRounds.push((cycle.dataset.cycle || Math.floor(index / 3) + 1) + '사이클 ' + (cycle.dataset.round || (index % 3 + 1)) + '차');
+          if (useRetarder) usedRounds.push((cycle.dataset.cycle || Math.floor(index / 3) + 1) + '사이클 ' + (cycle.dataset.round || (index % 3 + 1)) + '차');
           const note = cycle.querySelector('.cycle-note input');
           if (note && !note.value) {
             note.value = useRetarder
@@ -1208,9 +1208,9 @@ ElementById('detailMaterial').textContent = record.material;
     // 실제 AI 학습은 별도 모델이 배포된 뒤 이 상태에서 활성화됩니다.
     (() => {
       const status = document.querySelector('.site-status');
-      if (!status || location.protocol === 'file:') return;
-      fetch('/system/status', { headers: { Accept: 'application
-/json' } })
+      if (!st
+atus || location.protocol === 'file:') return;
+      fetch('/system/status', { headers: { Accept: 'application/json' } })
         .then(response => { if (!response.ok) throw new Error('status'); return response.json(); })
         .then(data => { status.textContent = data.system_status === 'ready' ? '운영 시스템 연결 정상' : '운영 시스템 준비 중'; })
         .catch(() => { status.textContent = '운영 시스템 연결 대기'; });
@@ -1236,6 +1236,62 @@ ElementById('detailMaterial').textContent = record.material;
           }
         }, 100);
       });
+    })();
+  </script>
+  <script>
+    // 업로드 패널은 화면 전환 시에도 항상 준비되도록 보강합니다.
+    (() => {
+      const install = () => {
+        const learning = document.querySelector('#learning');
+        const hero = learning?.querySelector('.hero');
+        if (!learning || !hero || learning.querySelector('#learningPhotoInput')) return;
+        const panel = document.createElement('section');
+        panel.className = 'panel learning-upload-panel';
+        panel.innerHTML = `
+          <div class="panel-head"><div><h2>현장 사진 업로드</h2><p>급속 경화 의심 사진을 등록해 AI 분석 대상 여부를 먼저 확인합니다.</p></div><span class="badge">JPG · PNG</span></div>
+          <div class="panel-body"><div class="photo-upload">
+            <label for="learningPhotoInput">사진 파일 선택</label>
+            <input id="learningPhotoInput" type="file" accept="image/png,image/jpeg,image/webp">
+            <div id="learningPhotoName" class="file-name">선택된 파일이 없습니다.</div>
+            <div class="photo-preview-box"><div id="learningPhotoEmpty" class="photo-preview-empty">사진을 선택하면<br>여기에 미리 보입니다.</div><img id="learningPhotoPreview" class="photo-upload-preview" alt="업로드 사진 미리보기"></div>
+            <div class="upload-fields"><select id="photoJob"><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option><option>승온 버너</option></select><select id="photoCycle"><option>1사이클</option><option>2사이클</option><option>3사이클</option></select><select id="photoRound"><option>1차</option><option>2차</option><option>3차</option></select></div>
+            <button id="loadDemoPhoto" class="button secondary" type="button">공개 데모 사진 불러오기</button>
+            <button id="addLearningPhoto" class="button" type="button">AI 학습 데이터에 사진 추가</button>
+            <div id="photoUploadMessage" class="upload-message">판정 통과 후 학습 데이터에 추가됩니다.</div>
+          </div></div>`;
+        hero.insertAdjacentElement('afterend', panel);
+        const input = panel.querySelector('#learningPhotoInput');
+        const preview = panel.querySelector('#learningPhotoPreview');
+        const empty = panel.querySelector('#learningPhotoEmpty');
+        const name = panel.querySelector('#learningPhotoName');
+        input.addEventListener('change', () => {
+          const file = input.files?.[0];
+          if (!file) return;
+          window.aiSmartMixingSelectedPreview = URL.createObjectURL(file);
+          preview.src = window.aiSmartMixingSelectedPreview;
+          preview.style.display = 'block';
+          empty.style.display = 'none';
+          name.textContent = `선택된 파일: ${file.name}`;
+        });
+        panel.querySelector('#loadDemoPhoto').addEventListener('click', async () => {
+          try {
+            const response = await fetch('/demo-image');
+            if (!response.ok) throw new Error('공개 데모 사진을 불러오지 못했습니다.');
+            const blob = await response.blob();
+            const file = new File([blob], 'refractory-bricks-lining-demo.jpg', {type: blob.type || 'image/jpeg'});
+            window.aiSmartMixingDemoFile = file;
+            window.aiSmartMixingSelectedPreview = URL.createObjectURL(blob);
+            preview.src = window.aiSmartMixingSelectedPreview;
+            preview.style.display = 'block';
+            empty.style.display = 'none';
+            name.textContent = '공개 데모 사진 선택됨';
+          } catch (error) {
+            name.textContent = error.message;
+          }
+        });
+      };
+      install();
+      window.addEventListener('hashchange', install);
     })();
   </script>
 </body>
