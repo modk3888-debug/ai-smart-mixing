@@ -24,7 +24,7 @@
 </style>
 </head>
 <body>
-  <header class="app-header"><div class="brand">AI 스마트 믹싱 <small>REFRACTORY FIELD SYSTEM</small></div><nav><button class="active" data-screen="process">공정 순서</button><button data-screen="dashboard">대시보드</button><button data-screen="worklog">작업일지 및 특이사항</button><button data-screen="history">배합 이력</button><button data-screen="learning">AI 이미지 학습</button></nav><span class="site-status">설비 연결 정상</span></header>
+  <header class="app-header"><div class="brand">AI 스마트 믹싱 <small>REFRACTORY FIELD SYSTEM</small></div><nav><button class="active" data-screen="process">공정 순서</button><button data-screen="dashboard">대시보드</button><button data-screen="worklog">작업일지 및 특이사항</button><button data-screen="history">배합 이력</button><button data-screen="learning">AI 이미지 학습</button></nav><span class="site-status">운영 시스템 확인 중</span></header>
   <main>
     <section class="screen active" id="process">
       <div class="hero"><div><div class="eyebrow">END-TO-END SYSTEM</div><h1>작업환경부터 AI 학습까지<br>하나의 배합 운영 흐름으로 관리합니다.</h1><p>AI 스마트 믹싱은 환경·원료·배합·작업 결과를 회차 단위로 연결해 급속 경화 위험을 줄이는 현장 운영 시스템입니다.</p></div><div class="timestamp">시스템 상태<b>센서·PLC·데이터 저장 정상</b></div></div>
@@ -46,7 +46,7 @@
     function openScreen(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));navButtons.forEach(b=>b.classList.toggle('active',b.dataset.screen===id));history.replaceState(null,'','#'+id)}
     navButtons.forEach(b=>b.addEventListener('click',()=>{
       if(b.dataset.screen==='history'){
-        const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||localStorage.getItem('aiSmartMixingSavedHistory')||'[]');
+        const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||'[]');
         const applied=Number(sessionStorage.getItem('aiSmartMixingHistoryAppliedCount')||0);
         if(saved.length>applied){location.hash='history';location.reload();return}
       }
@@ -59,12 +59,10 @@
     function captureSavedWorklog(){
       const worklog=document.getElementById('worklog');
       if(!worklog)return;
-      let recommendation=null;
-      try{recommendation=JSON.parse(sessionStorage.getItem('aiSmartMixingRecommendation')||'null')}catch(_){recommendation=null}
       const fields=[...worklog.querySelectorAll('.form-grid .field')];
       const value=label=>{const field=fields.find(item=>item.querySelector('label')?.textContent.trim()===label);return field?.querySelector('input,select')?.value||''};
       const rows=[...worklog.querySelectorAll('.worklog-table .log-row')];
-      const cycles=rows.map((row,index)=>{const inputs=[...row.querySelectorAll('input')];const cycleBox=row.closest('.log-cycle');const numeric=value=>Number(String(value||'').replace(/[^\d.]/g,''))||0;const recommended=recommendation?.cycles?.[index]||{};const selectedRetarder=(row.querySelector('select')?.value||'');return {index:index+1,cycle:Number(cycleBox?.dataset.cycle)||recommended.cycle||Math.floor(index/3)+1,round:Number(cycleBox?.dataset.round)||recommended.round||(index%3)+1,amount:numeric(row.querySelector('span')?.textContent)||Number(recommended.amount)||0,water:numeric(inputs[0]?.value),mixing:numeric(inputs[1]?.value),wait:numeric(cycleBox?.dataset.wait),risk:numeric(cycleBox?.dataset.risk)||Number(recommended.risk)||0,retarder:selectedRetarder==='사용'};});
+      const cycles=rows.map((row,index)=>{const inputs=[...row.querySelectorAll('input')];const cycleBox=row.closest('.log-cycle');const numeric=value=>Number(String(value||'').replace(/[^\d.]/g,''))||0;const cycleNo=Number(cycleBox?.dataset.cycle)||Math.floor(index/3)+1;const roundNo=Number(cycleBox?.dataset.round)||index%3+1;return {index:index+1,cycleNo,roundNo,amount:numeric(row.querySelector('span')?.textContent),water:numeric(inputs[0]?.value),mixing:numeric(inputs[1]?.value),wait:numeric(cycleBox?.dataset.wait),risk:numeric(cycleBox?.dataset.risk),retarder:(row.querySelector('select')?.value||'').includes('사용')&&!((row.querySelector('select')?.value||'').includes('미사용'))};});
       const amount=cycles.reduce((sum,cycle)=>sum+cycle.amount,0);
       const cycleNotes=[...worklog.querySelectorAll('.cycle-note input')].map(input=>input.value.trim());
       const notes=cycleNotes.map((note,index)=>note?`${index+1}차: ${note}`:'').filter(Boolean);
@@ -72,25 +70,18 @@
       if(overall)notes.push(`전체: ${overall}`);
       const now=new Date();
       const date=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
-      const record={job:recommendation?.name||value('작업명'),material:recommendation?.material||value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${recommendation?.temperature||value('작업장 온도')} · ${recommendation?.humidity||value('상대습도')}`,date,savedAt:now.toISOString(),worker:'현장 작업자',result:'저장 완료',cycles,cycleNotes,overallNote:overall||'',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
-      const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||localStorage.getItem('aiSmartMixingSavedHistory')||'[]');
-      const fingerprint=item=>JSON.stringify({job:item.job,material:item.material,amount:item.amount,env:item.env,cycles:item.cycles||[],cycleNotes:item.cycleNotes||[],overallNote:item.overallNote||''});
-      if(saved.some(item=>fingerprint(item)===fingerprint(record)))return false;
+      const record={job:value('작업명'),material:value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${value('작업장 온도')} · ${value('상대습도')}`,date,worker:'현장 작업자',result:'저장 완료',cycles,cycleNotes,overallNote:overall||'',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
+      record.clientKey=`${date}-${record.job}-${record.worker}-${record.amount}`;
+      const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||'[]');
+      const existingIndex=saved.findIndex(item=>item.clientKey===record.clientKey);
+      if(existingIndex>=0) saved.splice(existingIndex,1);
       saved.unshift(record);
       sessionStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
-      localStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
+      sessionStorage.removeItem('aiSmartMixingRemoteHydrated');
       sessionStorage.setItem('aiSmartMixingHistoryAppliedCount',String(saved.length-1));
-      return true;
     }
     document.getElementById('saveLog').textContent='저장';
-    document.getElementById('saveLog').addEventListener('click',function(){
-      if(window.__mixingSaveStarted)return;
-      window.__mixingSaveStarted=true;
-      this.disabled=true;
-      captureSavedWorklog();
-      this.textContent='완료';
-      setTimeout(()=>{this.textContent='저장';this.disabled=false},1000)
-    });
+    document.getElementById('saveLog').addEventListener('click',function(){captureSavedWorklog();this.textContent='완료';setTimeout(()=>this.textContent='저장',1000)});
     document.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',()=>{document.querySelectorAll('.history-item').forEach(x=>x.classList.remove('selected'));item.classList.add('selected');document.getElementById('detailJob').textContent=item.dataset.job;document.getElementById('detailMaterial').textContent=item.dataset.material;document.getElementById('detailAmount').textContent=item.dataset.amount;document.getElementById('detailEnv').textContent=item.dataset.env;document.getElementById('detailDate').textContent=item.dataset.date+' · '+item.dataset.result;document.getElementById('detailNote').textContent=item.dataset.note}));
     document.querySelectorAll('.learn-title').forEach(button=>button.addEventListener('click',()=>{const item=button.parentElement;item.classList.toggle('open');button.querySelector('span').textContent=item.classList.contains('open')?'접기':'펼치기'}));
     (function(){
@@ -178,7 +169,8 @@
         demoButton.textContent = '공개 사진 불러오는 중...';
         message.style.display = 'none';
         try {
-          const response = await fetch(demoUrl);
+          let response = await fetch(demoUrl, { mode: 'cors' });
+          if (!response.ok && location.protocol !== 'file:') response = await fetch('/demo-image');
           if (!response.ok) throw new Error('공개 사진을 가져오지 못했습니다.');
           const blob = await response.blob();
           const demoFile = new File([blob], 'refractory-bricks-lining-demo.jpg', { type: blob.type || 'image/jpeg' });
@@ -292,7 +284,7 @@
           try {
             const analysisBody = new FormData();
             analysisBody.append('file', file, file.name);
-            const localPreview = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+            const localPreview = location.protocol === 'file:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost';
             const analysisApi = window.AI_SMART_MIXING_ANALYSIS_API || (localPreview ? 'http://127.0.0.1:8000' : location.origin);
             const analysisResponse = await fetch(`${analysisApi}/analyze`, {
               method: 'POST',
@@ -394,8 +386,10 @@
           const cycleLength = Math.min(3, rows.length - ((cycle - 1) * 3));
           const wait = (cycleLength - round) * job.mixing;
           const risk = Math.min(30, Math.round(job.baseRisk + wait * 0.35));
-          const scenario = null;
-          return { amount, wait: scenario ? scenario.wait : wait, risk: scenario ? scenario.risk : risk, water: +(job.water * amount / 500).toFixed(1), cycle, round, scenario, retarder: scenario ? scenario.retarder : risk > 10 };
+          const scenario = job.amount === 3500 && cycle === 1 && round === 2
+            ? { wait: 9, risk: 12, retarder: true, note: '\uD638\uD37C \uBC30\uCD9C \uAC8C\uC774\uD2B8 \uC810\uAC80\uC73C\uB85C \uC774\uC1A1\uC774 4\uBD84 \uC9C0\uC5F0\uB428. \uD638\uD37C \uB300\uAE30 9\uBD84 \uD6C4 \uC9C0\uC5F0\uC81C \uC0AC\uC6A9.' }
+            : null;
+          return { amount, wait, risk, water: +(job.water * amount / 500).toFixed(1), cycle, round, scenario, retarder: scenario ? scenario.retarder : risk > 10, note: scenario ? scenario.note : null };
         });
       }
       function groupedCycles(cycles, renderRow) {
@@ -426,7 +420,7 @@
         const cycleBox = dashboard.querySelector('.cycles');
         cycleBox.innerHTML = '<div class="cycle-head"><span>차수</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + groupedCycles(cycles, ({ cycle, index }) => {
           const useRetarder = Boolean(cycle.retarder);
-          const note = useRetarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.';
+          const note = cycle.note || (useRetarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
           return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><span>' + cycle.water.toFixed(1) + 'L</span><span>' + job.mixing + '분</span><span>' + cycle.wait + '분</span><span><i class="pill ' + (useRetarder ? 'use' : 'no') + '">' + (useRetarder ? '사용' : '미사용') + '</i> <i class="' + (useRetarder ? 'risk-high' : 'risk-low') + '">' + cycle.risk + '%</i></span></div><div class="cycle-note-history"><b>' + cycle.round + '차 특이사항</b><span>' + note + '</span></div></div>';
         });
         const notice = dashboard.querySelector('.action-bar div');
@@ -458,7 +452,7 @@
         const worklogTable = worklog.querySelector('.worklog-table');
         worklogTable.innerHTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + groupedCycles(recommendation.cycles, ({ cycle }) => {
           const retarder = Boolean(cycle.retarder);
-          const note = retarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.';
+          const note = cycle.note || (retarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
           return '<div class="log-cycle" data-cycle="' + cycle.cycle + '" data-round="' + cycle.round + '" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '" data-retarder="' + retarder + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input value="' + note + '"></div></div>';
         });
         worklog.querySelector('.panel-head .badge').textContent = 'AI 추천 · ' + formatKg(recommendation.amount);
@@ -567,14 +561,7 @@
         '2026.07.11': '정상 완료', '2026.07.03': '정상 완료', '2026.06.27': '지연제 사용 완료',
         '2026.06.18': '대기시간 조정 완료', '2026.06.11': '정상 완료', '2026.06.03': '재확인 완료'
       };
-      const storedHistory = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || localStorage.getItem('aiSmartMixingSavedHistory') || '[]');
-      const historyFingerprint=item=>JSON.stringify({job:item.job,material:item.material,amount:item.amount,env:item.env,cycles:item.cycles||[],cycleNotes:item.cycleNotes||[],overallNote:item.overallNote||''});
-      const seenHistory=new Set();
-      const savedHistory=storedHistory.filter(item=>{const key=historyFingerprint(item);if(seenHistory.has(key))return false;seenHistory.add(key);return true});
-      if(savedHistory.length!==storedHistory.length){
-        sessionStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(savedHistory));
-        localStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(savedHistory));
-      }
+      const savedHistory = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
       savedHistory.forEach(record => {
         const item = document.createElement('div');
         item.className = 'history-item';
@@ -585,7 +572,6 @@
         item.dataset.env = record.env;
         item.dataset.result = record.result;
         item.dataset.note = record.note;
-        item.dataset.savedat = record.savedAt || '';
         item.dataset.cyclenotes = JSON.stringify(record.cycleNotes || []);
         item.dataset.overallnote = record.overallNote || '';
         item.dataset.cycles = JSON.stringify(record.cycles || []);
@@ -601,18 +587,11 @@
       const records = [...list.querySelectorAll('.history-item')].map(item => ({
         job: item.dataset.job, material: item.dataset.material, date: item.dataset.date,
         amount: item.dataset.amount, env: item.dataset.env, result: item.dataset.result || resultByDate[item.dataset.date], note: item.dataset.note,
-        savedAt: item.dataset.savedat || '',
         worker: item.dataset.worker || workerByDate[item.dataset.date] || '이민호',
         cycleNotes: (() => { try { return JSON.parse(item.dataset.cyclenotes || '[]'); } catch (_) { return []; } })(),
         cycles: (() => { try { return JSON.parse(item.dataset.cycles || '[]'); } catch (_) { return []; } })(),
         overallNote: item.dataset.overallnote || ''
       }));
-      // 오늘 저장한 작업이 고정 예시 이력 뒤로 밀리지 않도록 최신 저장순으로 정렬합니다.
-      records.sort((a,b)=>{
-        const dateCompare=String(b.date||'').localeCompare(String(a.date||''));
-        if(dateCompare!==0)return dateCompare;
-        return String(b.savedAt||'').localeCompare(String(a.savedAt||''));
-      });
       const grouped = records.reduce((groups, record) => {
         (groups[record.job] ||= []).push(record);
         return groups;
@@ -637,10 +616,8 @@
           const cycleNumber = Number(cycle.cycle) || (Math.floor(index / 3) + 1);
           const roundNumber = Number(cycle.round) || (index % 3) + 1;
           const mixing = Number(cycle.mixing) || mixingTime;
-          const calculatedWait = Math.max(0, (cycleCounts[cycleNumber] - roundNumber) * mixing);
-          const wait = Number.isFinite(Number(cycle.wait)) ? Math.max(0, Number(cycle.wait)) : calculatedWait;
-          const calculatedRisk = Math.min(30, Math.round(5 + wait * 0.35));
-          const risk = Number.isFinite(Number(cycle.risk)) ? Number(cycle.risk) : calculatedRisk;
+          const wait = Math.max(0, (cycleCounts[cycleNumber] - roundNumber) * mixing);
+          const risk = Math.min(30, Math.round(5 + wait * 0.35));
           return {...cycle, cycle: cycleNumber, round: roundNumber, mixing, wait, risk, retarder: typeof cycle.retarder === 'boolean' ? cycle.retarder : risk > 10};
         });
         const cycleGroups = actualCycles.reduce((groups, cycle, index) => { const key = cycle.cycle || (Math.floor(index / 3) + 1); (groups[key] ||= []).push({cycle,index}); return groups; }, {});
@@ -868,11 +845,10 @@
         record.cycleNotes = cycleNotes;
         record.overallNote = overall;
         record.note = overall || cycleNotes.filter(Boolean).join(' / ') || record.note;
-        var saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || localStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+        var saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
         var match = saved.findIndex(function (item) { return item.date === record.date && item.job === (row?.querySelector('div b')?.textContent || record.job); });
         if (match >= 0) saved[match] = Object.assign({}, saved[match], record);
         sessionStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(saved));
-        localStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(saved));
         if (row) {
           row.querySelector('small').textContent = record.date;
           row.querySelector('.history-worker').textContent = record.worker;
@@ -918,9 +894,47 @@
         return session;
       }
 
+      async function hydrateHistoryFromDatabase() {
+        if (sessionStorage.getItem('aiSmartMixingRemoteHydrated') === '1') return;
+        try {
+          const session = await fieldSession();
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/mixing_worklogs?select=*&order=created_at.desc&limit=50`, {
+            headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` }
+          });
+          if (!response.ok) return;
+          const remote = await response.json();
+          if (!Array.isArray(remote) || !remote.length) {
+            sessionStorage.setItem('aiSmartMixingRemoteHydrated', '1');
+            return;
+          }
+          const local = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+          const merged = [...local];
+          remote.forEach(row => {
+            const created = row.created_at ? new Date(row.created_at) : new Date();
+            const date = `${created.getFullYear()}.${String(created.getMonth() + 1).padStart(2, '0')}.${String(created.getDate()).padStart(2, '0')}`;
+            const amount = `${Number(row.total_kg || 0).toLocaleString('ko-KR')}kg`;
+            const clientKey = row.client_key || `${date}-${row.job_name}-${row.worker_name}-${amount}`;
+            if (!merged.some(item => item.clientKey === clientKey)) merged.push({
+              clientKey, job: row.job_name, material: row.material_type || '미분류', amount,
+              env: `${row.temperature_c ?? '-'}℃ · ${row.humidity_pct ?? '-'}%`, date,
+              worker: row.worker_name || '현장 작업자', result: row.result || '저장 완료',
+              overallNote: row.overall_note || '', note: row.overall_note || '저장된 작업 이력',
+              cycles: row.cycles || [], cycleNotes: row.cycle_notes || []
+            });
+          });
+          sessionStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(merged));
+          sessionStorage.setItem('aiSmartMixingRemoteHydrated', '1');
+          if (merged.length !== local.length && location.hash === '#history') location.reload();
+        } catch (error) {
+          console.warn('배합 이력 원격 조회 대기:', error);
+        }
+      }
+
+      hydrateHistoryFromDatabase();
+
       saveButton.addEventListener('click', function () {
         setTimeout(async function () {
-          const saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || localStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+          const saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
           const record = saved[0];
           if (!record) return;
           try {
@@ -948,9 +962,49 @@
               body: JSON.stringify(payload)
             });
             if (!response.ok) throw new Error(await response.text());
+
+            // 운영용 구조에도 작업 본체와 회차를 분리 저장합니다.
+            // AI 학습이 없어도 대시보드·작업일지·배합 이력이 같은 작업 ID를 공유합니다.
+            const workOrderResponse = await fetch(`${SUPABASE_URL}/rest/v1/work_orders?on_conflict=client_key`, {
+              method: 'POST',
+              headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=representation' },
+              body: JSON.stringify({
+                client_key: clientKey,
+                job_name: record.job,
+                material_type: record.material,
+                total_kg: Number(String(record.amount).replace(/[^\d.]/g, '')) || 0,
+                temperature_c: temp,
+                humidity_pct: humidity,
+                worker_name: record.worker,
+                status: '작업 저장 완료'
+              })
+            });
+            if (!workOrderResponse.ok) throw new Error(await workOrderResponse.text());
+            const workOrders = await workOrderResponse.json();
+            const workOrderId = workOrders[0]?.id;
+            if (workOrderId && Array.isArray(record.cycles) && record.cycles.length) {
+              const cycleRows = record.cycles.map(cycle => ({
+                work_order_id: workOrderId,
+                cycle_no: Number(cycle.cycleNo || 1),
+                round_no: Number(cycle.roundNo || cycle.index || 1),
+                amount_kg: Number(cycle.amount || 0),
+                actual_water_l: Number(cycle.water || 0),
+                actual_mixing_min: Number(cycle.mixing || 0),
+                hopper_wait_min: Number(cycle.wait || 0),
+                retarder_used: Boolean(cycle.retarder),
+                risk_pct: Number(cycle.risk || 0),
+                note: record.cycleNotes?.[Number(cycle.index || 1) - 1] || null
+              }));
+              const cycleResponse = await fetch(`${SUPABASE_URL}/rest/v1/mixing_cycles?on_conflict=work_order_id,cycle_no,round_no`, {
+                method: 'POST',
+                headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' },
+                body: JSON.stringify(cycleRows)
+              });
+              if (!cycleResponse.ok) throw new Error(await cycleResponse.text());
+            }
             document.getElementById('logState').textContent = '저장 완료 · 서버 DB 동기화';
           } catch (error) {
-            document.getElementById('logState').textContent = '저장 완료 · 로컬 기록';
+            document.getElementById('logState').textContent = '저장 완료 · 로컬 기록 (DB 스키마 확인 필요)';
             console.warn('서버 DB 동기화 대기:', error);
           }
         }, 80);
@@ -1055,7 +1109,6 @@
     (() => {
       // 실제 작업 중 발생한 예시 상황: 래들 바닥 1사이클 2차에서 호퍼 배출 게이트 점검으로 이송이 지연된 경우
       function applyFieldScenario() {
-        return;
         const job = document.querySelector('#worklog .form-grid select')?.value;
         if (job !== '래들 바닥') return;
         const target = document.querySelector('#worklog .log-cycle[data-cycle="1"][data-round="2"]');
@@ -1079,47 +1132,17 @@
       window.addEventListener('hashchange', () => setTimeout(applyFieldScenario, 120));
     })();
   </script>
-<script>
-  // 작업명에 따라 현장 센서 표시값을 바꿔, 작업별 조건 차이를 대시보드와 작업일지에 함께 전달합니다.
-  (() => {
-    const conditions = {
-      '래들 벽체': { temperature: '31.0℃', humidity: '78%', refresh: '30초 전 갱신' },
-      '래들 바닥': { temperature: '28.0℃', humidity: '63%', refresh: '45초 전 갱신' },
-      '턴디쉬 카바': { temperature: '24.0℃', humidity: '53%', refresh: '20초 전 갱신' },
-      '승온 버너': { temperature: '26.0℃', humidity: '57%', refresh: '1분 전 갱신' }
-    };
-    const dashboard = document.getElementById('dashboard');
-    const select = document.getElementById('dashboardJob');
-    if (!dashboard || !select) return;
-    function syncEnvironment() {
-      const condition = conditions[select.value] || conditions['래들 벽체'];
-      const sensors = dashboard.querySelectorAll('.sensor b');
-      if (sensors[0]) sensors[0].textContent = condition.temperature;
-      if (sensors[1]) sensors[1].textContent = condition.humidity;
-      const info = dashboard.querySelectorAll('.info-grid .info')[1];
-      if (info) info.innerHTML = '<small>작업환경 자동 감지</small><b>' + condition.temperature + ' · ' + condition.humidity + '</b> <span>' + condition.refresh + '</span>';
-      const worklogFields = document.querySelectorAll('#worklog .form-grid .field input');
-      if (worklogFields[1]) worklogFields[1].value = condition.temperature;
-      if (worklogFields[2]) worklogFields[2].value = condition.humidity;
-    }
-    select.addEventListener('change', () => setTimeout(syncEnvironment, 60));
-    syncEnvironment();
-  })();
-</script>
-<script>
-  // 저장 완료 후 배합 이력 화면으로 이동하고, 방금 저장한 기록을 다시 불러옵니다.
-  (() => {
-    const saveButton = document.getElementById('saveLog');
-    if (!saveButton) return;
-    saveButton.addEventListener('click', () => {
-      if (window.__mixingSaveRedirecting) return;
-      window.__mixingSaveRedirecting = true;
-      setTimeout(() => {
-        location.hash = 'history';
-        location.reload();
-      }, 350);
-    });
-  })();
-</script>
+  <script>
+    // 화면은 학습 데이터가 없어도 운영 시스템의 연결 상태를 먼저 확인합니다.
+    // 실제 AI 학습은 별도 모델이 배포된 뒤 이 상태에서 활성화됩니다.
+    (() => {
+      const status = document.querySelector('.site-status');
+      if (!status || location.protocol === 'file:') return;
+      fetch('/system/status', { headers: { Accept: 'application/json' } })
+        .then(response => { if (!response.ok) throw new Error('status'); return response.json(); })
+        .then(data => { status.textContent = data.system_status === 'ready' ? '운영 시스템 연결 정상' : '운영 시스템 준비 중'; })
+        .catch(() => { status.textContent = '운영 시스템 연결 대기'; });
+    })();
+  </script>
 </body>
 </html>
