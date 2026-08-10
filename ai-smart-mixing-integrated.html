@@ -1352,24 +1352,44 @@ s="badge">JPG · PNG</span></div>
           const button = event.currentTarget;
           const message = panel.querySelector('#photoUploadMessage');
 
-          // 현장/바탕화면에서 직접 선택한 사진은 학습 데이터로만 등록합니다.
-          // 공개 데모 사진을 불러온 경우에만 AI 판정을 실행합니다.
+          // 직접 선택한 사진은 경화·균열 점수 분석 없이, 내화물 사진 적합성만 먼저 확인합니다.
           if (localFile) {
             const job = panel.querySelector('#photoJob').value;
             const cycle = panel.querySelector('#photoCycle').value;
             const round = panel.querySelector('#photoRound').value;
+            button.disabled = true;
+            message.style.display = 'block';
+            message.style.color = '#2871af';
+            message.textContent = 'AI가 학습 적합성만 확인하는 중입니다.';
+            let scopeApproved = false;
+            try {
+              const body = new FormData();
+              body.append('file', localFile, localFile.name);
+              const response = await fetch('/analyze', {method: 'POST', body});
+              const review = response.ok ? await response.json() : {};
+              scopeApproved = review.image_scope === true;
+            } catch (error) {
+              scopeApproved = false;
+            }
+            const recommendationTitle = scopeApproved ? 'AI 추천 · 학습 후보' : '부적합 · 학습 제외 권고';
+            const recommendationBody = scopeApproved
+              ? '내화물 작업면 사진으로 확인되었습니다. 작업자가 승인하면 학습 데이터에 반영됩니다.'
+              : '내화물 작업면으로 확인되지 않았습니다. 학습 반영을 막고 사진 제외 또는 재업로드를 권고합니다.';
+            const reviewActions = scopeApproved
+              ? '<button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button>'
+              : '<button type="button" class="button secondary" data-learning-reject>사진 제외</button>';
             const item = document.createElement('div');
             item.className = 'learn-item open';
             item.dataset.learningData = 'true';
-            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 대기 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green review-status">AI 추천 · 학습 후보</b></div></div><div class="improve"><b>AI 사전 추천</b><br>사진 형식과 등록 조건을 확인했습니다. 작업자가 승인하면 학습 데이터에 반영됩니다.<div class="learning-review-actions"><button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button></div></div></div></div></div>`;
+            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${
+round} · 학습 검토 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="${scopeApproved ? 'green' : 'red'} review-status">${recommendationTitle}</b></div></div><div class="improve"><b>AI 사전 적합성 확인</b><br>${recommendationBody}<div class="learning-review-actions">${reviewActions}</div></div></div></div></div>`;
             item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
             item.querySelector('.learn-title').addEventListener('click', () => {
               item.classList.toggle('open');
               item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
             });
-            item.querySelector('[data-learning-approve]').addEventListener('click', (approveEvent) => {
+            item.querySelector('[data-learning-approve]')?.addEventListener('click', (approveEvent) => {
               approveEvent.stopPropagation();
-
               item.querySelector('.review-status').textContent = '학습 반영 완료';
               item.querySelector('.review-status').className = 'green review-status';
               item.querySelector('.learning-review-actions').remove();
@@ -1382,9 +1402,10 @@ s="badge">JPG · PNG</span></div>
             });
             learning.querySelector('.learn-list').prepend(item);
             message.style.display = 'block';
-            message.style.color = '#108b65';
-            message.textContent = '학습 데이터 등록 완료 · AI 판정은 실행하지 않았습니다.';
+            message.style.color = scopeApproved ? '#108b65' : '#ca4858';
+            message.textContent = scopeApproved ? 'AI 추천 완료 · 작업자 승인 대기 중입니다.' : '부적합 사진 · 학습 반영을 차단했습니다.';
             name.textContent = `학습 데이터 등록: ${localFile.name}`;
+            button.disabled = false;
             input.value = '';
             return;
           }
@@ -1432,6 +1453,7 @@ s="badge">JPG · PNG</span></div>
       install();
       document.querySelectorAll('nav button[data-screen]').forEach((button) => {
         button.addEventListener('click', () => {
+
           const target = document.getElementById(button.dataset.screen);
           if (!target) return;
           document.querySelectorAll('.screen').forEach((screen) => screen.classList.remove('active'));
