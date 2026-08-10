@@ -76,6 +76,7 @@ def inspect_visual_features(raw: bytes) -> dict[str, float]:
         "crack_score": crack_score,
         "edge_density": round(edge_density, 4),
         "dark_ratio": round(dark_ratio, 4),
+        "bright_ratio": round(bright_ratio, 4),
         "texture_variation": round(laplacian_std, 2),
     }
 
@@ -84,6 +85,33 @@ def improvement_note(hardening: float, crack: float) -> str:
     if hardening > 10 or crack > 10:
         return "표면 상태 변화가 감지되었습니다. 해당 차수의 호퍼 대기시간, 수분량, 지연제 사용 여부를 작업일지와 대조해 확인하세요."
     return "뚜렷한 급속 경화·균열 의심 신호는 낮습니다. 같은 촬영 거리와 조명으로 사진을 추가 확보해 모델 기준을 보강하세요."
+
+
+def classify_image_scope(raw: bytes) -> dict[str, object]:
+    """정상 내화물 참고 이미지와의 시각 특징 유사도로 분석 대상 여부를 먼저 확인한다."""
+    prepare_normal_images()
+    target = inspect_visual_features(raw)
+    references = []
+    for path in NORMAL_DIR.glob("*.*"):
+        try:
+            references.append(inspect_visual_features(path.read_bytes()))
+        except Exception:
+            continue
+    if not references:
+        return {"image_scope": True, "scope_confidence": 0.5, "scope_message": "참고 이미지가 없어 분석 대상 확인을 보류했습니다."}
+
+    keys = ("edge_density", "dark_ratio", "bright_ratio", "texture_variation")
+    scales = {"edge_density": 0.08, "dark_ratio": 0.35, "bright_ratio": 0.35, "texture_variation": 70.0}
+    distances = []
+    for reference in references:
+        distance = sum(abs(float(target[key]) - float(reference[key])) / scales[key] for key in keys) / len(keys)
+        distances.append(distance)
+    confidence = round(max(0.0, min(1.0, 1.0 - min(distances))), 2)
+    return {
+        "image_scope": confidence >= 0.38,
+        "scope_confidence": confidence,
+        "scope_message": "내화물 현장 이미지 특징과 비교했습니다." if confidence >= 0.38 else "내화물 현장 사진 특징과 충분히 일치하지 않아 분석을 중단했습니다.",
+    }
 
 
 @app.get("/health")
@@ -143,10 +171,27 @@ async def analyze(file: UploadFile = File(...)) -> dict:
         raise HTTPException(status_code=400, detail="이미지 파일은 1바이트 이상 15MB 이하로 올려주세요.")
 
     feature = inspect_visual_features(raw)
+    scope = classify_image_scope(raw)
+    if not scope["image_scope"]:
+        return {
+            "analysis_status": "분석 대상 아님",
+            "analysis_mode": "내화물 현장 사진 1차 확인",
+            "model_version": "PatchCore 학습 준비 · 이미지 범위 확인 v0.1",
+            "image_scope": False,
+            "scope_confidence": scope["scope_confidence"],
+            "hardening_score": None,
+            "crack_score": None,
+            "analysis_result": scope["scope_message"],
+            "improvement_note": "래들·턴디쉬·버너 등 부정형 내화물 작업면이 보이는 사진으로 다시 업로드하세요.",
+            "feature_summary": feature,
+            "analyzed_at": datetime.now(timezone.utc).isoformat(),
+        }
     return {
         "analysis_status": "시범 판정 완료",
         "analysis_mode": "기준 이미지 기반 시범 판정",
         "model_version": "PatchCore 학습 준비 · Visual baseline v0.1",
+        "image_scope": True,
+        "scope_confidence": scope["scope_confidence"],
         "hardening_score": feature["hardening_score"],
         "crack_score": feature["crack_score"],
         "analysis_result": "표면 질감·경계 패턴·명암 분포를 기준 이미지와 비교했습니다.",
