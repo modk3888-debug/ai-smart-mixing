@@ -100,6 +100,17 @@ def classify_image_scope(raw: bytes) -> dict[str, object]:
     if not references:
         return {"image_scope": True, "scope_confidence": 0.5, "scope_message": "참고 이미지가 없어 분석 대상 확인을 보류했습니다."}
 
+    # 밝은 배경이 넓고 질감 경계가 적은 문서·홍보물·화면 캡처는
+    # 내화물 작업면과 특징이 일부 겹칠 수 있으므로 분석 대상에서 제외한다.
+    # 정상 참고 내화물 이미지는 어두운 표면 질감과 높은 경계 밀도를 가진다.
+    document_like = target["bright_ratio"] >= 0.45 and target["edge_density"] <= 0.14
+    if document_like:
+        return {
+            "image_scope": False,
+            "scope_confidence": 0.05,
+            "scope_message": "문서·홍보물·화면 캡처 형태로 보여 내화물 작업면 분석을 중단했습니다.",
+        }
+
     keys = ("edge_density", "dark_ratio", "bright_ratio", "texture_variation")
     scales = {"edge_density": 0.08, "dark_ratio": 0.35, "bright_ratio": 0.35, "texture_variation": 70.0}
     distances = []
@@ -229,3 +240,4 @@ def presentation_asset(asset_name: str) -> FileResponse:
     if asset_name not in SITE_ASSETS:
         raise HTTPException(status_code=404, detail="요청한 파일을 찾을 수 없습니다.")
     return FileResponse(WORKSPACE_ROOT / asset_name)
+
