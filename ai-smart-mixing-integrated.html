@@ -22,10 +22,6 @@
   .detail-edit-note{min-height:64px;resize:vertical;margin-top:8px}
   .cycle-row .detail-edit-input{font-size:12px;padding:6px}
 </style>
-  <style>
-    .learning-review-actions{display:flex;gap:8px;margin-top:10px}
-    .learning-review-actions button{width:auto;padding:8px 12px;font-size:12px}
-  </style>
 </head>
 <body>
   <header class="app-header"><div class="brand">AI 스마트 믹싱 <small>REFRACTORY FIELD SYSTEM</small></div><nav><button class="active" data-screen="process">공정 순서</button><button data-screen="dashboard">대시보드</button><button data-screen="worklog">작업일지 및 특이사항</button><button data-screen="history">배합 이력</button><button data-screen="learning">AI 이미지 학습</button></nav><span class="site-status">운영 시스템 확인 중</span></header>
@@ -87,7 +83,7 @@
     document.getElementById('saveLog').textContent='저장';
     document.getElementById('saveLog').addEventListener('click',function(){captureSavedWorklog();this.textContent='완료';setTimeout(()=>this.textContent='저장',1000)});
     document.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',()=>{document.querySelectorAll('.history-item').forEach(x=>x.classList.remove('selected'));item.classList.add('selected');document.getElementById('detailJob').textContent=item.dataset.job;document.getElementById('detailMaterial').textContent=item.dataset.material;document.getElementById('detailAmount').textContent=item.dataset.amount;document.getElementById('detailEnv').textContent=item.dataset.env;document.getElementById('detailDate').textContent=item.dataset.date+' · '+item.dataset.result;document.getElementById('detailNote').textContent=item.dataset.note}));
-    document.querySelectorAll('.learn-title').forEach(button=>button.addEventListener('click',()=>{const item=button.parentElement;const status=button.dataset.statusDate||button.querySelector('span').textContent.split('·')[0].trim();button.dataset.statusDate=status;item.classList.toggle('open');button.querySelector('span').textContent=status+' · '+(item.classList.contains('open')?'접기':'펼치기')}));
+    document.querySelectorAll('.learn-title').forEach(button=>button.addEventListener('click',()=>{const item=button.parentElement;item.classList.toggle('open');button.querySelector('span').textContent=item.classList.contains('open')?'접기':'펼치기'}));
     (function(){
       const learningSide=document.querySelector('#learning .side');
       const learningList=document.querySelector('#learning .learn-list');
@@ -126,8 +122,7 @@
     (function () {
       const learningSide = document.querySelector('#learning .side');
       const learningList = document.querySelector('#learning .learn-list');
-       // 레거시 업로드 패널은 비활성화하고, 아래의 단일 승인 흐름만 사용합니다.
-       if (!learningSide || !learningList || true) return;
+      if (!learningSide || !learningList) return;
 
       const uploadPanel = document.createElement('section');
       uploadPanel.className = 'panel learning-upload-panel';
@@ -154,13 +149,14 @@
       const emptyPreview = document.getElementById('learningPhotoEmpty');
       const fileName = document.getElementById('learningPhotoName');
       const message = document.getElementById('photoUploadMessage');
-      let photoData = '';
+      let photoData = ''; let selectedFile = null;
 
       input.addEventListener('change', function () {
         const file = this.files && this.files[0];
         message.style.display = 'none';
         if (!file) { photoData = ''; preview.style.display = 'none'; emptyPreview.style.display = 'grid'; fileName.textContent = '선택된 파일이 없습니다.'; return; }
         if (!file.type.startsWith('image/')) { this.value = ''; photoData = ''; preview.style.display = 'none'; emptyPreview.style.display = 'grid'; fileName.textContent = '이미지 파일(JPG, PNG, WEBP)만 선택할 수 있습니다.'; return; }
+        selectedFile = file;
         fileName.textContent = '선택된 파일: ' + file.name;
         const reader = new FileReader();
         reader.onload = function (event) { photoData = event.target.result; preview.src = photoData; emptyPreview.style.display = 'none'; preview.style.display = 'block'; };
@@ -180,6 +176,7 @@
           const blob = await response.blob();
           const demoFile = new File([blob], 'refractory-bricks-lining-demo.jpg', { type: blob.type || 'image/jpeg' });
           window.aiSmartMixingDemoFile = demoFile;
+          selectedFile = demoFile;
           photoData = URL.createObjectURL(blob);
           preview.src = photoData;
           emptyPreview.style.display = 'none';
@@ -193,18 +190,30 @@
         }
       });
 
-      document.getElementById('addLearningPhoto').addEventListener('click', function () {
-        // 등록은 아래 Supabase/AI 판정 흐름에서만 수행합니다.
-        // 이 레거시 핸들러가 먼저 목록에 넣으면 판정 전 사진이 학습 데이터로 보입니다.
-        return;
+      document.getElementById('addLearningPhoto').addEventListener('click', async function () {
         if (!photoData) { fileName.textContent = '먼저 현장 사진 파일을 선택하세요.'; return; }
+        const file = selectedFile || window.aiSmartMixingDemoFile;
+        if (!file) { fileName.textContent = '선택한 사진을 읽지 못했습니다. 다시 선택하세요.'; return; }
+        const form = new FormData();
+        form.append('file', file, file.name);
+        const check = await fetch('/analyze', { method: 'POST', body: form });
+        const analysis = check.ok ? await check.json() : {};
+        const feature = analysis.feature_summary || {};
+        const documentLike = Number(feature.bright_ratio) >= 0.45 && Number(feature.edge_density) <= 0.14;
+        if (analysis.image_scope !== true || documentLike) {
+          message.style.display = 'block';
+          message.style.color = '#ca4858';
+          message.textContent = '부적합 사진 · 내화물 작업면이 아니어서 학습 반영을 차단했습니다.';
+          fileName.textContent = '분석 대상이 아닌 사진입니다. 작업면 사진을 다시 선택하세요.';
+          return;
+        }
         const job = document.getElementById('photoJob').value;
         const cycle = document.getElementById('photoCycle').value;
         const round = document.getElementById('photoRound').value;
         const item = document.createElement('div');
         item.className = 'learn-item open';
         item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 현장 업로드 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>작업환경</small><b>자동 연동 예정</b></div><div class="detail"><small>분석 상태</small><b class="green">학습 대기</b></div></div><p><b>AI 분석 예정</b><br>등록된 현장 사진을 PatchCore 이상 탐지 모델의 검토·학습 데이터로 추가했습니다.</p><div class="improve"><b>다음 단계</b><br>관리자가 사진 상태와 작업 조건을 검토한 뒤 재학습 데이터에 반영합니다.</div></div></div></div>`;
-        item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
+        item.querySelector('.uploaded-image').src = photoData;
         const title = item.querySelector('.learn-title');
         title.addEventListener('click', function () { item.classList.toggle('open'); title.querySelector('span').textContent = item.classList.contains('open') ? '접기' : '펼치기'; });
         learningList.prepend(item);
@@ -249,8 +258,7 @@
       document.addEventListener('click', async function (event) {
         if (event.target.id !== 'addLearningPhoto') return;
         const fileInput = document.getElementById('learningPhotoInput');
-        const localFile = (fileInput && fileInput.files && fileInput.files[0]) || null;
-        const file = localFile || window.aiSmartMixingDemoFile;
+        const file = (fileInput && fileInput.files && fileInput.files[0]) || window.aiSmartMixingDemoFile;
         if (!file) return;
 
         const message = document.getElementById('photoUploadMessage');
@@ -259,39 +267,6 @@
         const job = document.getElementById('photoJob').value;
         const cycle = document.getElementById('photoCycle').value;
         const round = document.getElementById('photoRound').value;
-
-        // 직접 선택한 현장 사진은 판정 API로 보내지 않고 학습 대기 데이터로만 등록합니다.
-        if (localFile) {
-          const item = document.createElement('div');
-          item.className = 'learn-item open';
-          item.dataset.learningData = 'true';
-          item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 대기 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green review-status">AI 추천 · 학습 후보</b></div></div><div class="improve"><b>AI 사전 추천</b><br>사진 형식과 등록 조건을 확인했습니다. 작업자가 승인하면 학습 데이터에 반영됩니다.<div class="learning-review-actions"><button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button></div></div></div></div></div>`;
-          item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
-          item.querySelector('.learn-title').addEventListener('click', () => {
-            item.classList.toggle('open');
-            item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
-          });
-          item.querySelector('[data-learning-approve]').addEventListener('click', (approveEvent) => {
-            approveEvent.stopPropagation();
-            item.querySelector('.review-status').textContent = '학습 반영 완료';
-            item.querySelector('.review-status').className = 'green review-status';
-            item.querySelector('.learning-review-actions').remove();
-            message.textContent = '작업자 승인 완료 · 학습 데이터에 반영되었습니다.';
-          });
-          item.querySelector('[data-learning-reject]').addEventListener('click', (rejectEvent) => {
-            rejectEvent.stopPropagation();
-            item.remove();
-            message.textContent = '학습 데이터에서 제외했습니다.';
-          });
-          document.querySelector('#learning .learn-list')?.prepend(item);
-          message.style.display = 'block';
-          message.style.color = '#108b65';
-          message.textContent = '학습 데이터 등록 완료 · AI 판정은 실행하지 않았습니다.';
-          fileName.textContent = `학습 데이터 등록: ${localFile.name}`;
-          fileInput.value = '';
-          return;
-        }
-
         const temperature = 31;
         const humidity = 78;
         const roundNo = Number(String(round).replace(/[^0-9]/g, '')) || 1;
@@ -335,14 +310,10 @@
             if (!analysisResponse.ok) throw new Error(await analysisResponse.text());
             analysis = await analysisResponse.json();
           } catch (analysisError) {
-            analysis = {
-              image_scope: false,
-              analysis_result: 'AI 이미지 판정 서버에 연결되지 않아 등록을 중단했습니다.'
-            };
             console.warn('AI 분석 서버 응답 대기:', analysisError);
           }
 
-          if (analysis.image_scope !== true) {
+          if (analysis.image_scope === false) {
             await fetch(`${SUPABASE_URL}/storage/v1/object/refractory-images/${path}`, {
               method: 'DELETE',
               headers
@@ -379,36 +350,6 @@
             body: JSON.stringify(record)
           });
           if (!insertResponse.ok) throw new Error(await insertResponse.text());
-
-          const learningList = document.querySelector('#learning .learn-list');
-          if (learningList) {
-            const item = document.createElement('div');
-            item.className = 'learn-item open';
-            item.dataset.learningApproved = 'true';
-            item.innerHTML = `
-              <button class="learn-title" type="button"><b></b><span>접기</span></button>
-              <div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div>
-                <div class="detail-grid">
-                  <div class="detail"><small>작업명</small><b></b></div>
-                  <div class="detail"><small>사이클 · 차수</small><b></b></div>
-                  <div class="detail"><small>작업환경</small><b>${temperature}℃ · ${humidity}%</b></div>
-                  <div class="detail"><small>분석 상태</small><b class="green"></b></div>
-                </div>
-                <div class="improve"><b>AI 판정 결과</b><br></div>
-              </div></div></div>`;
-            item.querySelector('.learn-title b').textContent = `${job} · ${cycle} ${round} · 현장 업로드 이미지`;
-            item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
-            item.querySelectorAll('.detail b')[0].textContent = job;
-            item.querySelectorAll('.detail b')[1].textContent = `${cycle} · ${round}`;
-            item.querySelectorAll('.detail b')[3].textContent = analysis.analysis_status || '시범 판정 완료';
-            item.querySelector('.improve').appendChild(document.createTextNode(`경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%\n${analysis.improvement_note || ''}`));
-            const title = item.querySelector('.learn-title');
-            title.addEventListener('click', () => {
-              item.classList.toggle('open');
-              title.querySelector('span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
-            });
-            learningList.prepend(item);
-          }
 
           message.textContent = `Supabase 저장 완료 · ${analysis.analysis_status} · 경화 의심 ${analysis.hardening_score ?? '-'}% / 균열 의심 ${analysis.crack_score ?? '-'}%`;
           message.style.display = 'block';
@@ -1254,197 +1195,6 @@
           }
         }, 100);
       });
-    })();
-  </script>
-  <script>
-    // 업로드 패널은 화면 전환 시에도 항상 준비되도록 보강합니다.
-    (() => {
-      const install = () => {
-        const learning = document.querySelector('#learning');
-        const hero = learning?.querySelector('.hero');
-        if (!learning || !hero) return;
-        const cleanUnapprovedItems = () => {
-          learning.querySelectorAll('.learn-list .learn-item').forEach((item) => {
-            const text = item.textContent;
-            const legacyUpload = text.includes('현장 업로드 이미지') && item.dataset.learningApproved !== 'true';
-            const legacyApproved = text.includes('학습 반영 완료') && text.includes('AI 사전 추천');
-            if (legacyUpload || legacyApproved) item.remove();
-          });
-        };
-        cleanUnapprovedItems();
-        const learningList = learning.querySelector('.learn-list');
-        if (learningList && learningList.dataset.guardAttached !== 'true') {
-          learningList.dataset.guardAttached = 'true';
-          new MutationObserver(cleanUnapprovedItems).observe(learningList, {childList: true});
-        }
-        if (learning.querySelector('#learningPhotoInput')) return;
-        const panel = document.createElement('section');
-        panel.className = 'panel learning-upload-panel';
-        panel.innerHTML = `
-          <div class="panel-head"><div><h2>현장 사진 업로드</h2><p>급속 경화 의심 사진을 등록해 AI 분석 대상 여부를 먼저 확인합니다.</p></div><span class="badge">JPG · PNG</span></div>
-          <div class="panel-body"><div class="photo-upload">
-            <label for="learningPhotoInput">사진 파일 선택</label>
-            <input id="learningPhotoInput" type="file" accept="image/png,image/jpeg,image/webp">
-            <div id="learningPhotoName" class="file-name">선택된 파일이 없습니다.</div>
-            <div class="photo-preview-box"><div id="learningPhotoEmpty" class="photo-preview-empty">사진을 선택하면<br>여기에 미리 보입니다.</div><img id="learningPhotoPreview" class="photo-upload-preview" alt="업로드 사진 미리보기"></div>
-            <div class="upload-fields"><select id="photoJob"><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option><option>승온 버너</option></select><select id="photoCycle"><option>1사이클</option><option>2사이클</option><option>3사이클</option></select><select id="photoRound"><option>1차</option><option>2차</option><option>3차</option></select></div>
-            <button id="loadDemoPhoto" class="button secondary" type="button">공개 데모 사진 불러오기</button>
-            <button id="addLearningPhoto" class="button" type="button">AI 학습 데이터에 사진 추가</button>
-            <div id="photoUploadMessage" class="upload-message">판정 통과 후 학습 데이터에 추가됩니다.</div>
-          </div></div>`;
-        hero.insertAdjacentElement('afterend', panel);
-        const input = panel.querySelector('#learningPhotoInput');
-        const preview = panel.querySelector('#learningPhotoPreview');
-        const empty = panel.querySelector('#learningPhotoEmpty');
-        const name = panel.querySelector('#learningPhotoName');
-        input.addEventListener('change', () => {
-          const file = input.files?.[0];
-          if (!file) return;
-          window.aiSmartMixingSelectedPreview = URL.createObjectURL(file);
-          preview.src = window.aiSmartMixingSelectedPreview;
-          preview.style.display = 'block';
-          empty.style.display = 'none';
-          name.textContent = `선택된 파일: ${file.name}`;
-        });
-        panel.querySelector('#loadDemoPhoto').addEventListener('click', async () => {
-          try {
-            const response = await fetch('/demo-image');
-            if (!response.ok) throw new Error('공개 데모 사진을 불러오지 못했습니다.');
-            const blob = await response.blob();
-            const file = new File([blob], 'refractory-bricks-lining-demo.jpg', {type: blob.type || 'image/jpeg'});
-            window.aiSmartMixingDemoFile = file;
-            window.aiSmartMixingSelectedPreview = URL.createObjectURL(blob);
-            preview.src = window.aiSmartMixingSelectedPreview;
-            preview.style.display = 'block';
-            empty.style.display = 'none';
-            name.textContent = '공개 데모 사진 선택됨';
-          } catch (error) {
-            name.textContent = error.message;
-          }
-        });
-        panel.querySelector('#addLearningPhoto').addEventListener('click', async (event) => {
-          event.stopImmediatePropagation();
-          const localFile = input.files?.[0] || null;
-          const file = localFile || window.aiSmartMixingDemoFile;
-          if (!file) {
-            name.textContent = '먼저 현장 사진 파일을 선택하세요.';
-            return;
-          }
-          const button = event.currentTarget;
-          const message = panel.querySelector('#photoUploadMessage');
-
-          // 직접 선택한 사진은 경화·균열 점수 분석 없이, 내화물 사진 적합성만 먼저 확인합니다.
-          if (localFile) {
-            const job = panel.querySelector('#photoJob').value;
-            const cycle = panel.querySelector('#photoCycle').value;
-            const round = panel.querySelector('#photoRound').value;
-            button.disabled = true;
-            message.style.display = 'block';
-            message.style.color = '#2871af';
-            message.textContent = 'AI가 학습 적합성만 확인하는 중입니다.';
-            let scopeApproved = false;
-            try {
-              const body = new FormData();
-              body.append('file', localFile, localFile.name);
-              const response = await fetch('/analyze', {method: 'POST', body});
-              const review = response.ok ? await response.json() : {};
-              const feature = review.feature_summary || {};
-              const documentLike = Number(feature.bright_ratio) >= 0.45 && Number(feature.edge_density) <= 0.14;
-              scopeApproved = review.image_scope === true && !documentLike;
-            } catch (error) {
-              scopeApproved = false;
-            }
-            const recommendationTitle = scopeApproved ? 'AI 추천 · 학습 후보' : '부적합 · 학습 제외 권고';
-            const recommendationBody = scopeApproved
-              ? '내화물 작업면 사진으로 확인되었습니다. 작업자가 승인하면 학습 데이터에 반영됩니다.'
-              : '내화물 작업면으로 확인되지 않았습니다. 학습 반영을 막고 사진 제외 또는 재업로드를 권고합니다.';
-            const reviewActions = scopeApproved
-              ? '<button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button>'
-              : '<button type="button" class="button secondary" data-learning-reject>사진 제외</button>';
-            const item = document.createElement('div');
-            item.className = 'learn-item open';
-            item.dataset.learningData = 'true';
-            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 검토 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="${scopeApproved ? 'green' : 'red'} review-status">${recommendationTitle}</b></div></div><div class="improve"><b>AI 사전 적합성 확인</b><br>${recommendationBody}<div class="learning-review-actions">${reviewActions}</div></div></div></div></div>`;
-            item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
-            item.querySelector('.learn-title').addEventListener('click', () => {
-              item.classList.toggle('open');
-              item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
-            });
-            item.querySelector('[data-learning-approve]')?.addEventListener('click', (approveEvent) => {
-              approveEvent.stopPropagation();
-              item.querySelector('.review-status').textContent = '학습 반영 완료';
-              item.querySelector('.review-status').className = 'green review-status';
-              item.querySelector('.learning-review-actions').remove();
-              message.textContent = '작업자 승인 완료 · 학습 데이터에 반영되었습니다.';
-            });
-            item.querySelector('[data-learning-reject]').addEventListener('click', (rejectEvent) => {
-              rejectEvent.stopPropagation();
-              item.remove();
-              message.textContent = '학습 데이터에서 제외했습니다.';
-            });
-            learning.querySelector('.learn-list').prepend(item);
-            message.style.display = 'block';
-            message.style.color = scopeApproved ? '#108b65' : '#ca4858';
-            message.textContent = scopeApproved ? 'AI 추천 완료 · 작업자 승인 대기 중입니다.' : '부적합 사진 · 학습 반영을 차단했습니다.';
-            name.textContent = `학습 데이터 등록: ${localFile.name}`;
-            button.disabled = false;
-            input.value = '';
-            return;
-          }
-
-          button.disabled = true;
-          message.style.display = 'block';
-          message.style.color = '#2871af';
-          message.textContent = 'AI가 사진의 내화물 범위를 확인하는 중입니다.';
-          try {
-            const body = new FormData();
-            body.append('file', file, file.name);
-            const response = await fetch('/analyze', {method: 'POST', body});
-            if (!response.ok) throw new Error('AI 판정 서버에 연결되지 않았습니다.');
-            const analysis = await response.json();
-            const feature = analysis.feature_summary || {};
-            const documentLike = Number(feature.bright_ratio) >= 0.45 && Number(feature.edge_density) <= 0.14;
-            if (analysis.image_scope !== true || documentLike) {
-              message.style.color = '#ca4858';
-              message.textContent = `분석 중단 · ${analysis.analysis_result || '내화물 현장 사진이 아닙니다.'}`;
-              name.textContent = '분석 대상이 아닌 사진입니다.';
-              return;
-            }
-            const job = panel.querySelector('#photoJob').value;
-            const cycle = panel.querySelector('#photoCycle').value;
-            const round = panel.querySelector('#photoRound').value;
-            const item = document.createElement('div');
-            item.className = 'learn-item open';
-            item.dataset.learningApproved = 'true';
-            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 현장 업로드 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green">${analysis.analysis_status || '시범 판정 완료'}</b></div></div><div class="improve"><b>AI 판정 결과</b><br>경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%<br>${analysis.improvement_note || ''}</div></div></div></div>`;
-            item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
-            item.querySelector('.learn-title').addEventListener('click', () => {
-              item.classList.toggle('open');
-              item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
-            });
-            learning.querySelector('.learn-list').prepend(item);
-            message.style.color = '#108b65';
-            message.textContent = `AI 판정 완료 · 경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%`;
-            name.textContent = `등록 완료: ${file.name}`;
-          } catch (error) {
-            message.style.color = '#ca4858';
-            message.textContent = `등록 중단 · ${error.message}`;
-          } finally {
-            button.disabled = false;
-          }
-        }, true);
-      };
-      install();
-      document.querySelectorAll('nav button[data-screen]').forEach((button) => {
-        button.addEventListener('click', () => {
-          const target = document.getElementById(button.dataset.screen);
-          if (!target) return;
-          document.querySelectorAll('.screen').forEach((screen) => screen.classList.remove('active'));
-          target.classList.add('active');
-          install();
-        });
-      });
-      window.addEventListener('hashchange', install);
     })();
   </script>
 </body>
