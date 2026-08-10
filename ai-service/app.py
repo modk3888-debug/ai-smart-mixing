@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import io
 import shutil
+from urllib.request import Request, urlopen
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -16,7 +17,7 @@ import cv2
 import numpy as np
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from PIL import Image
 
 APP_ROOT = Path(__file__).resolve().parent
@@ -90,10 +91,46 @@ def health() -> dict:
     sample_count = prepare_normal_images()
     return {
         "status": "ok",
-        "mode": "기준 이미지 기반 시범 판정",
+        "mode": "운영 시스템 연동 대기",
+        "analysis_mode": "기준 이미지 기반 시범 판정",
         "normal_image_count": sample_count,
         "patchcore_ready": sample_count >= 30 and (MODEL_DIR / "patchcore").exists(),
+        "capabilities": {
+            "work_order_storage": "supabase",
+            "cycle_storage": "supabase",
+            "image_storage": "supabase_storage",
+            "ai_training": "not_started",
+            "plc_connection": "not_connected",
+        },
     }
+
+
+@app.get("/system/status")
+def system_status() -> dict:
+    """사이트가 운영 모드에서 어떤 기능을 사용할 수 있는지 표시한다."""
+    sample_count = prepare_normal_images()
+    return {
+        "system_status": "ready",
+        "message": "작업 데이터 저장과 AI 분석 연결 구조가 준비되었습니다.",
+        "database": "supabase 연결은 사이트에서 수행",
+        "storage": "refractory-images 버킷 사용",
+        "analysis": "학습 전 시범 판정",
+        "patchcore": "학습 이미지와 모델 배포 후 활성화",
+        "normal_image_count": sample_count,
+    }
+
+
+@app.get("/demo-image")
+def demo_image():
+    """공개 데모 이미지의 브라우저 CORS 차단을 피하기 위한 안전한 프록시입니다."""
+    source = "https://upload.wikimedia.org/wikipedia/commons/0/00/Refractory_bricks_lining.jpg"
+    try:
+        request = Request(source, headers={"User-Agent": "AI-Smart-Mixing-Demo/1.0"})
+        with urlopen(request, timeout=12) as response:
+            content = response.read()
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail="공개 데모 이미지를 불러오지 못했습니다.") from exc
+    return Response(content=content, media_type="image/jpeg", headers={"Cache-Control": "public, max-age=3600"})
 
 
 @app.post("/analyze")
