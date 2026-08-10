@@ -296,6 +296,18 @@
             console.warn('AI 분석 서버 응답 대기:', analysisError);
           }
 
+          if (analysis.image_scope === false) {
+            await fetch(`${SUPABASE_URL}/storage/v1/object/refractory-images/${path}`, {
+              method: 'DELETE',
+              headers
+            }).catch(() => {});
+            message.textContent = `분석 중단 · ${analysis.analysis_result}`;
+            message.style.display = 'block';
+            message.style.color = '#ca4858';
+            fileName.textContent = '분석 대상이 아닌 사진입니다.';
+            return;
+          }
+
           const record = {
             image_path: path,
             job_name: job,
