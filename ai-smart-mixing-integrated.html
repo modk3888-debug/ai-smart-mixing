@@ -135,7 +135,8 @@ G CONTROL</div><h1>래들 벽체 · AI 추천 조건</h1><p>자동 수집된 현
     (function () {
       const learningSide = document.querySelector('#learning .side');
       const learningList = document.querySelector('#learning .learn-list');
-      if (!learningSide || !learningList) return;
+       // 레거시 업로드 패널은 비활성화하고, 아래의 단일 승인 흐름만 사용합니다.
+       if (!learningSide || !learningList || true) return;
 
       const uploadPanel = document.createElement('section');
       uploadPanel.className = 'panel learning-upload-panel';
@@ -175,9 +176,9 @@ G CONTROL</div><h1>래들 벽체 · AI 추천 조건</h1><p>자동 수집된 현
         reader.readAsDataURL(file);
       });
 
-      document.getElementById('loadDemoPhoto').addEventListener('click', async function () {
- 
-       const demoUrl = 'https://upload.wikimedia.org/wikipedia/commons/0/00/Refractory_bricks_lining.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled';
+      document.getElementById('loa
+dDemoPhoto').addEventListener('click', async function () {
+        const demoUrl = 'https://upload.wikimedia.org/wikipedia/commons/0/00/Refractory_bricks_lining.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled';
         const demoButton = this;
         demoButton.disabled = true;
         demoButton.textContent = '공개 사진 불러오는 중...';
@@ -257,9 +258,9 @@ G CONTROL</div><h1>래들 벽체 · AI 추천 조건</h1><p>자동 수집된 현
 
       document.addEventListener('click', async function (event) {
         if (event.target.id !== 'addLearningPhoto') return;
-        const fileInput = document.getElementById('learningPhotoInput');
- 
-       const localFile = (fileInput && fileInput.files && fileInput.files[0]) || null;
+        const 
+fileInput = document.getElementById('learningPhotoInput');
+        const localFile = (fileInput && fileInput.files && fileInput.files[0]) || null;
         const file = localFile || window.aiSmartMixingDemoFile;
         if (!file) return;
 
@@ -342,9 +343,9 @@ G CONTROL</div><h1>래들 벽체 · AI 추천 조건</h1><p>자동 수집된 현
               method: 'POST',
               body: analysisBody
             });
-            if (!analysisResponse.ok) throw new Error(await analysisResponse.text());
-    
-        analysis = await analysisResponse.json();
+            if (!analysisRespo
+nse.ok) throw new Error(await analysisResponse.text());
+            analysis = await analysisResponse.json();
           } catch (analysisError) {
             analysis = {
               image_scope: false,
@@ -433,9 +434,9 @@ G CONTROL</div><h1>래들 벽체 · AI 추천 조건</h1><p>자동 수집된 현
             resultBox.innerHTML = '<b>AI 시범 판정 결과</b><br>';
             const resultText = document.createTextNode(`경화 의심 ${analysis.hardening_score}% · 균열 의심 ${analysis.crack_score}%\n${analysis.improvement_note}`);
             resultBox.appendChild(resultText);
-            latestContent.appendChild(resultBox);
-            const status = latestContent.querySe
-lector('.detail-grid .detail:last-child b');
+            latestContent.appendChild(
+resultBox);
+            const status = latestContent.querySelector('.detail-grid .detail:last-child b');
             if (status) status.textContent = analysis.analysis_status;
           }
         } catch (error) {
@@ -517,9 +518,9 @@ lector('.detail-grid .detail:last-child b');
         const infos = dashboard.querySelectorAll('.info-grid .info');
         infos[0].innerHTML = '<small>내화물 종류 · 원료 LOT</small><b>' + job.material + '</b> <span>' + job.lot + '</span>';
         infos[2].innerHTML = '<small>AI 권장 총 수분량</small><b>' + cycles.reduce((sum, cycle) => sum + cycle.water, 0).toFixed(1) + 'L</b> <span>회차별 분할 투입</span>';
-        const cycleBox = dashboard.querySelector('.cycles');
-        cycleBox.innerHTML = '<div class="cycle-head"><s
-pan>차수</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + groupedCycles(cycles, ({ cycle, index }) => {
+        const cycleBox = dashboard.querySelector('.cycles
+');
+        cycleBox.innerHTML = '<div class="cycle-head"><span>차수</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + groupedCycles(cycles, ({ cycle, index }) => {
           const useRetarder = Boolean(cycle.retarder);
           const note = cycle.note || (useRetarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
           return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><span>' + cycle.water.toFixed(1) + 'L</span><span>' + job.mixing + '분</span><span>' + cycle.wait + '분</span><span><i class="pill ' + (useRetarder ? 'use' : 'no') + '">' + (useRetarder ? '사용' : '미사용') + '</i> <i class="' + (useRetarder ? 'risk-high' : 'risk-low') + '">' + cycle.risk + '%</i></span></div><div class="cycle-note-history"><b>' + cycle.round + '차 특이사항</b><span>' + note + '</span></div></div>';
@@ -580,8 +581,8 @@ pan>차수</span><span>투입량</span><span>권장 수분</span><span>믹싱시
         render(select.value);
         applyRecommendation(recommendationFor(select.value));
       });
-      document.getElementById('approve').addEventListener('click', () => transferRecommendati
-on(select.value));
+      document.getElementById('ap
+prove').addEventListener('click', () => transferRecommendation(select.value));
       const savedRecommendation = sessionStorage.getItem('aiSmartMixingRecommendation');
       let restoredRecommendation = false;
       if (savedRecommendation) {
@@ -666,10 +667,10 @@ on(select.value));
       const savedHistory = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
       savedHistory.forEach(record => {
         const item = document.createElement('div');
-        item.className = 'history-item';
+        item.className = '
+history-item';
         item.dataset.job = record.job;
-      
-  item.dataset.material = record.material;
+        item.dataset.material = record.material;
         item.dataset.date = record.date;
         item.dataset.amount = record.amount;
         item.dataset.env = record.env;
@@ -726,8 +727,8 @@ on(select.value));
           return {...cycle, cycle: cycleNumber, round: roundNumber, mixing, wait, risk, retarder: typeof cycle.retarder === 'boolean' ? cycle.retarder : risk > 10};
         });
         const cycleGroups = actualCycles.reduce((groups, cycle, index) => { const key = cycle.cycle || (Math.floor(index / 3) + 1); (groups[key] ||= []).push({cycle,index}); return groups; }, {});
-        const cycleHtml = Object.entries(cycleGroups).map(([cycleNumber, entries]) => '<section class="cycle-group"><div class="cycle-group-head"><b>' + cycleNumber + '사이클</b><span>' + entries.reduce((sum, entry) => sum + Number(entry.cycle.amount || 0), 0).toLocaleString('ko-KR') + 'kg · ' + entries.length
- + '회 믹싱</span></div>' + entries.map(({cycle,index}) => {
+        const cycleHtml = Object.entries(cycleGroups).map(([cycleNumber, entries]) => '<section class="cycle-group"><div class="cycle-group-head"><b>' + cycleNumber + '사이클</b><span>' + entries.reduce((sum, entry) => sum + Number(entry.cycle.amount 
+|| 0), 0).toLocaleString('ko-KR') + 'kg · ' + entries.length + '회 믹싱</span></div>' + entries.map(({cycle,index}) => {
           const wait = Number(cycle.wait)||0;
           const risk = Number(cycle.risk)||Math.min(30, Math.round(5 + wait * .35));
           const retarder = Boolean(cycle.retarder);
@@ -798,8 +799,8 @@ on(select.value));
         title.innerHTML = '<div><b>' + job + '</b><small>' + jobRecords[0].material + ' · 작업 이력 ' + jobRecords.length + '건</small></div><span>' + (index === 0 ? '접기 ▲' : '이력 보기 ▼') + '</span>';
         const recordBox = document.createElement('div');
         recordBox.className = 'job-history-records';
-        recordBox.innerHTML = '<div class="job-history-record-head"><span>작업일</span><span>작업자</span><span>총 투입량</span><span>작업환경</span><span>결과</sp
-an></div>';
+        recordBox.innerHTML = '<div class="job-history-record-head"><span>작업일</span><sp
+an>작업자</span><span>총 투입량</span><span>작업환경</span><span>결과</span></div>';
         jobRecords.forEach((record, recordIndex) => {
           const row = document.createElement('button');
           row.type = 'button';
@@ -900,8 +901,8 @@ an></div>';
             var status = document.createElement('span');
             var retarder = select.value === '사용';
             var risk = Number(cycle.risk) || 0;
-            status.innerHTML = '<i class="pill ' + (retarder ? 'use'
- : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i>';
+        
+    status.innerHTML = '<i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i>';
             select.replaceWith(status);
           }
           var noteInput = block.querySelector('.detail-edit-input[data-role="note"]');
@@ -994,10 +995,10 @@ an></div>';
         const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
           method: 'POST',
           headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ data: { source: 'ai-smart-mixing-worklog' } })
+          body: JSON.stringify({ data: { source: 'ai-smart-mi
+xing-worklog' } })
         });
-        const session = await
- response.json();
+        const session = await response.json();
         if (!response.ok || !session.access_token) throw new Error('현장 세션을 만들 수 없습니다.');
         localStorage.setItem('ai-smart-mixing-field-session', JSON.stringify(session));
         return session;
@@ -1088,8 +1089,8 @@ an></div>';
                 status: '작업 저장 완료'
               })
             });
-            if (!workOrderResponse.ok) throw new Error(await workOrder
-Response.text());
+          
+  if (!workOrderResponse.ok) throw new Error(await workOrderResponse.text());
             const workOrders = await workOrderResponse.json();
             const workOrderId = workOrders[0]?.id;
             if (workOrderId && Array.isArray(record.cycles) && record.cycles.length) {
@@ -1190,9 +1191,9 @@ Response.text());
           table.querySelectorAll('.log-cycle').forEach(cycle => {
             const row = cycle.querySelector('.log-row');
             if (!row || row.querySelector('input[data-wait-input]')) return;
-            const wait = document.createElement('input');
-            wait.dataset.w
-aitInput = 'true';
+            const wait =
+ document.createElement('input');
+            wait.dataset.waitInput = 'true';
             wait.value = (Number(cycle.dataset.wait) || 0) + ' 분';
             row.insertBefore(wait, row.querySelector('select'));
           });
@@ -1299,9 +1300,9 @@ aitInput = 'true';
           new MutationObserver(cleanUnapprovedItems).observe(learningList, {childList: true});
         }
         if (learning.querySelector('#learningPhotoInput')) return;
-        const panel = document.createElement('section');
-        panel.cla
-ssName = 'panel learning-upload-panel';
+        const 
+panel = document.createElement('section');
+        panel.className = 'panel learning-upload-panel';
         panel.innerHTML = `
           <div class="panel-head"><div><h2>현장 사진 업로드</h2><p>급속 경화 의심 사진을 등록해 AI 분석 대상 여부를 먼저 확인합니다.</p></div><span class="badge">JPG · PNG</span></div>
           <div class="panel-body"><div class="photo-upload">
@@ -1381,9 +1382,9 @@ ssName = 'panel learning-upload-panel';
             const reviewActions = scopeApproved
               ? '<button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button>'
               : '<button type="button" class="button secondary" data-learning-reject>사진 제외</button>';
+
             const item = document.createElement('div');
-    
-        item.className = 'learn-item open';
+            item.className = 'learn-item open';
             item.dataset.learningData = 'true';
             item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 검토 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="${scopeApproved ? 'green' : 'red'} review-status">${recommendationTitle}</b></div></div><div class="improve"><b>AI 사전 적합성 확인</b><br>${recommendationBody}<div class="learning-review-actions">${reviewActions}</div></div></div></div></div>`;
             item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
@@ -1447,10 +1448,10 @@ ssName = 'panel learning-upload-panel';
             name.textContent = `등록 완료: ${file.name}`;
           } catch (error) {
             message.style.color = '#ca4858';
-            message.textContent = `등록 중단 · ${error.message}`;
+            message.textContent = `등록 중단 · ${error.message}`
+;
           } finally {
             button.disabled = false;
-
           }
         }, true);
       };
