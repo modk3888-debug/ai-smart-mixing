@@ -1197,5 +1197,20 @@
       });
     })();
   </script>
+
+  <script>
+    // 이전 업로드 흐름에서 남은 미승인 학습 검토 항목은 새 화면에서 제거합니다.
+    (() => {
+      const removeLegacyReviewItems = () => {
+        document.querySelectorAll('#learning .learn-item').forEach((item) => {
+          const title = item.querySelector('.learn-title b')?.textContent || '';
+          if (title.includes('학습 검토 이미지')) item.remove();
+        });
+      };
+      removeLegacyReviewItems();
+      const list = document.querySelector('#learning .learn-list');
+      if (list) new MutationObserver(removeLegacyReviewItems).observe(list, {childList: true});
+    })();
+  </script>
 </body>
 </html>
