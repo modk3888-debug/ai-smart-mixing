@@ -1156,8 +1156,8 @@
           if (state.includes('저장 완료')) {
             clearInterval(timer);
             setTimeout(() => {
-              openScreen('history');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              location.hash = 'history';
+              location.reload();
             }, 120);
           } else if (Date.now() - startedAt > 6000) {
             clearInterval(timer);
