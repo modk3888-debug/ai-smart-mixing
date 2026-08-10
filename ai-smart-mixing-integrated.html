@@ -1289,6 +1289,54 @@ atus || location.protocol === 'file:') return;
             name.textContent = error.message;
           }
         });
+        panel.querySelector('#addLearningPhoto').addEventListener('click', async (event) => {
+          event.stopImmediatePropagation();
+          const file = input.files?.[0] || window.aiSmartMixingDemoFile;
+          if (!file) {
+            name.textContent = '먼저 현장 사진 파일을 선택하세요.';
+            return;
+          }
+          const button = event.currentTarget;
+          const message = panel.querySelector('#photoUploadMessage');
+          button.disabled = true;
+          message.style.display = 'block';
+          message.style.colo
+r = '#2871af';
+          message.textContent = 'AI가 사진의 내화물 범위를 확인하는 중입니다.';
+          try {
+            const body = new FormData();
+            body.append('file', file, file.name);
+            const response = await fetch('/analyze', {method: 'POST', body});
+            if (!response.ok) throw new Error('AI 판정 서버에 연결되지 않았습니다.');
+            const analysis = await response.json();
+            if (analysis.image_scope === false) {
+              message.style.color = '#ca4858';
+              message.textContent = `분석 중단 · ${analysis.analysis_result || '내화물 현장 사진이 아닙니다.'}`;
+              name.textContent = '분석 대상이 아닌 사진입니다.';
+              return;
+            }
+            const job = panel.querySelector('#photoJob').value;
+            const cycle = panel.querySelector('#photoCycle').value;
+            const round = panel.querySelector('#photoRound').value;
+            const item = document.createElement('div');
+            item.className = 'learn-item open';
+            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 현장 업로드 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green">${analysis.analysis_status || '시범 판정 완료'}</b></div></div><div class="improve"><b>AI 판정 결과</b><br>경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%<br>${analysis.improvement_note || ''}</div></div></div></div>`;
+            item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
+            item.querySelector('.learn-title').addEventListener('click', () => {
+              item.classList.toggle('open');
+              item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
+            });
+            learning.querySelector('.learn-list').prepend(item);
+            message.style.color = '#108b65';
+            message.textContent = `AI 판정 완료 · 경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%`;
+            name.textContent = `등록 완료: ${file.name}`;
+          } catch (error) {
+            message.style.color = '#ca4858';
+            message.textContent = `등록 중단 · ${error.message}`;
+          } finally {
+            button.disabled = false;
+          }
+        }, true);
       };
       install();
       document.querySelectorAll('nav button[data-screen]').forEach((button) => {
