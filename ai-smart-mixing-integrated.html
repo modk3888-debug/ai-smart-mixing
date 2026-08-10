@@ -157,6 +157,7 @@
         if (!file) { photoData = ''; preview.style.display = 'none'; emptyPreview.style.display = 'grid'; fileName.textContent = '선택된 파일이 없습니다.'; return; }
         if (!file.type.startsWith('image/')) { this.value = ''; photoData = ''; preview.style.display = 'none'; emptyPreview.style.display = 'grid'; fileName.textContent = '이미지 파일(JPG, PNG, WEBP)만 선택할 수 있습니다.'; return; }
         selectedFile = file;
+        window.aiSmartMixingDemoFile = null;
         fileName.textContent = '선택된 파일: ' + file.name;
         const reader = new FileReader();
         reader.onload = function (event) { photoData = event.target.result; preview.src = photoData; emptyPreview.style.display = 'none'; preview.style.display = 'block'; };
@@ -192,6 +193,13 @@
 
       document.getElementById('addLearningPhoto').addEventListener('click', async function () {
         this.dataset.uploadGuardHandled = 'true';
+        if (selectedFile && selectedFile === window.aiSmartMixingDemoFile) {
+          message.style.display = 'block';
+          message.style.color = '#ca4858';
+          message.textContent = '공개 데모 사진은 학습 데이터로 추가하지 않습니다. 실제 내화물 작업면 사진을 선택하세요.';
+          fileName.textContent = '공개 데모 사진은 참고용으로만 사용할 수 있습니다.';
+          return;
+        }
         if (!photoData) { fileName.textContent = '먼저 현장 사진 파일을 선택하세요.'; return; }
         const file = selectedFile || window.aiSmartMixingDemoFile;
         if (!file) { fileName.textContent = '선택한 사진을 읽지 못했습니다. 다시 선택하세요.'; return; }
@@ -1219,15 +1227,10 @@
   <script>
     // 이전 업로드 흐름에서 남은 잘못된 동적 항목은 새 화면에서 제거합니다.
     (() => {
-      const removeLegacyReviewItems = () => {
-        document.querySelectorAll('#learning .learn-item').forEach((item) => {
-          const title = item.querySelector('.learn-title b')?.textContent || '';
-          if (title.includes('학습 검토 이미지') || title.includes('현장 업로드 이미지')) item.remove();
-        });
-      };
-      removeLegacyReviewItems();
-      const list = document.querySelector('#learning .learn-list');
-      if (list) new MutationObserver(removeLegacyReviewItems).observe(list, {childList: true});
+      document.querySelectorAll('#learning .learn-item').forEach((item) => {
+        const title = item.querySelector('.learn-title b')?.textContent || '';
+        if (title.includes('학습 검토 이미지') || title.includes('현장 업로드 이미지')) item.remove();
+      });
     })();
   </script>
 </body>
