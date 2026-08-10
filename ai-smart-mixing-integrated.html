@@ -592,6 +592,8 @@
         cycles: (() => { try { return JSON.parse(item.dataset.cycles || '[]'); } catch (_) { return []; } })(),
         overallNote: item.dataset.overallnote || ''
       }));
+      const dateValue = value => String(value || '').replace(/\./g, '-');
+      records.sort((a, b) => dateValue(b.date).localeCompare(dateValue(a.date)));
       const grouped = records.reduce((groups, record) => {
         (groups[record.job] ||= []).push(record);
         return groups;
