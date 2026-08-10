@@ -1144,5 +1144,27 @@
         .catch(() => { status.textContent = '운영 시스템 연결 대기'; });
     })();
   </script>
+  <script>
+    // 저장 결과가 확정되면 작업일지에서 배합 이력 화면으로 자동 이동합니다.
+    (() => {
+      const saveButton = document.getElementById('saveLog');
+      if (!saveButton) return;
+      saveButton.addEventListener('click', () => {
+        const startedAt = Date.now();
+        const timer = setInterval(() => {
+          const state = document.getElementById('logState')?.textContent || '';
+          if (state.includes('저장 완료')) {
+            clearInterval(timer);
+            setTimeout(() => {
+              openScreen('history');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 120);
+          } else if (Date.now() - startedAt > 6000) {
+            clearInterval(timer);
+          }
+        }, 100);
+      });
+    })();
+  </script>
 </body>
 </html>
