@@ -1548,6 +1548,7 @@ d && !document.getElementById('detailWorker')) {
               item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
             });
             learning.querySelector('.learn-list').prepend(item);
+            if (window.aiSmartMixingCountNewLearning) window.aiSmartMixingCountNewLearning();
             message.style.color = '#108b65';
             message.textContent = `AI 판정 완료 · 경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%`;
             name.textContent = `등록 완료: ${file.name}`;
@@ -1612,6 +1613,10 @@ d && !document.getElementById('detailWorker')) {
           }
         });
       }
+      window.aiSmartMixingCountNewLearning = function () {
+        localStorage.setItem(approvedCountKey, String(approvedLearningCount() + 1));
+        updateLearningCount();
+      };
       updateLearningCount();
       document.querySelectorAll('#learning .detail').forEach((el) => {
         const label = el.querySelector('small');
@@ -1652,7 +1657,7 @@ d && !document.getElementById('detailWorker')) {
           item.querySelector('.review-status').textContent = '학습 반영 완료';
           item.querySelector('.learning-review-actions').remove();
           if (!item.dataset.approvedCounted) {
-            localStorage.setItem(approvedCountKey, String(approvedLearningCount() + 1));
+            window.aiSmartMixingCountNewLearning();
             item.dataset.approvedCounted = 'true';
             updateLearningCount();
           }
