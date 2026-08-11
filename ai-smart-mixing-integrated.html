@@ -1591,6 +1591,11 @@
       const message = document.getElementById('photoUploadMessage');
       const fileName = document.getElementById('learningPhotoName');
       if (!addButton || !list) return;
+      document.querySelectorAll('#learning .badge').forEach((el) => { el.textContent = '등록 학습 데이터 3건'; });
+      document.querySelectorAll('#learning .detail').forEach((el) => {
+        const label = el.querySelector('small');
+        if (label && label.textContent.includes('학습 이미지')) { label.textContent = '등록 데이터'; const value = el.querySelector('b'); if (value) value.textContent = '3건'; }
+      });
 
       function selectedFile() {
         return (input && input.files && input.files[0]) || window.aiSmartMixingDemoFile || null;
