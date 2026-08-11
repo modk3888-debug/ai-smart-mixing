@@ -1803,5 +1803,39 @@
 })();
 </script>
 
+
+<style>
+#manual-sensor-controls{margin-top:14px;padding:14px;border:1px solid #cfe1f1;border-radius:12px;background:linear-gradient(135deg,#fff,#f3f9ff)}
+#manual-sensor-controls h3{margin:0 0 4px;font-size:14px;color:#173a5d}
+#manual-sensor-controls p{margin:0 0 10px;color:#6b8198;font-size:11px}
+#manual-sensor-controls .manual-fields{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
+#manual-sensor-controls label{display:block;color:#64809a;font-size:10px;font-weight:700;margin-bottom:4px}
+#manual-sensor-controls input{width:100%;padding:9px;border:1px solid #aacbe5;border-radius:8px;background:#fff;color:#173a5d;font:inherit;font-size:13px}
+#manual-sensor-controls button{border:0;border-radius:8px;padding:10px 13px;background:#176fc6;color:#fff;font:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}
+#manual-sensor-controls button.secondary{background:#edf5ff;color:#1762a8}
+#manual-sensor-controls .manual-message{grid-column:1/-1;color:#108b65;font-size:11px;font-weight:700;min-height:16px}
+@media(max-width:720px){#manual-sensor-controls .manual-fields{grid-template-columns:1fr 1fr}.manual-fields button{grid-column:1/-1;width:100%}}
+</style>
+<script id="manual-sensor-controls">
+(function(){
+  var dashboard=document.getElementById('dashboard');
+  if(!dashboard) return;
+  var anchor=dashboard.querySelector('.sensor-grid');
+  if(!anchor || document.getElementById('manual-sensor-controls')) return;
+  var panel=document.createElement('section');
+  panel.id='manual-sensor-controls';
+  panel.innerHTML='<h3>발표용 환경값 입력</h3><p>온도·습도를 바꾸면 AI 추천 조건이 즉시 다시 계산됩니다.</p><div class="manual-fields"><div><label for="manual-temperature">작업장 온도 (℃)</label><input id="manual-temperature" type="number" min="-20" max="80" step="0.1" value="31"></div><div><label for="manual-humidity">상대습도 (%)</label><input id="manual-humidity" type="number" min="0" max="100" step="0.1" value="78"></div><button id="apply-manual-sensor" type="button">환경값 적용</button><button id="reset-demo-sensor" class="secondary" type="button">자동 데모로 전환</button><div class="manual-message" id="manual-sensor-message"></div></div>';
+  anchor.parentNode.insertBefore(panel,anchor);
+  var temp=panel.querySelector('#manual-temperature'), hum=panel.querySelector('#manual-humidity'), msg=panel.querySelector('#manual-sensor-message');
+  function message(text,color){msg.textContent=text;msg.style.color=color||'#108b65';}
+  function send(source){
+    var t=Number(temp.value), h=Number(hum.value);
+    if(!Number.isFinite(t)||t<-20||t>80||!Number.isFinite(h)||h<0||h>100){message('온도 -20~80℃, 습도 0~100% 범위로 입력하세요.','#b04747');return;}
+    fetch('/sensor-ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({temperature:t,humidity:h,source:source})}).then(function(r){if(!r.ok)throw new Error('input failed');return r.json()}).then(function(data){temp.value=Number(data.temperature).toFixed(1);hum.value=Number(data.humidity).toFixed(1);message(source==='demo-sensor'?'자동 데모 센서로 전환했습니다.':'입력값 적용 완료 · 추천 조건을 다시 계산했습니다.');}).catch(function(){message('환경값 서버 반영에 실패했습니다.','#b04747');});
+  }
+  panel.querySelector('#apply-manual-sensor').addEventListener('click',function(){send('manual-input')});
+  panel.querySelector('#reset-demo-sensor').addEventListener('click',function(){send('demo-sensor')});
+})();
+</script>
 </body>
 </html>
