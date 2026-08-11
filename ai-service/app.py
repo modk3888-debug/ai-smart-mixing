@@ -15,7 +15,7 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import Body, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from PIL import Image
@@ -40,6 +40,66 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+
+SENSOR_STATE = {
+    "temperature": 31.0,
+    "humidity": 78.0,
+    "source": "demo-sensor",
+    "updated_at": datetime.now(timezone.utc).isoformat(),
+}
+
+
+def recommendation_for_environment(temperature: float, humidity: float) -> dict:
+    risk = round(max(5.0, min(30.0, 6.0 + max(0.0, temperature - 25.0) * 0.65 + max(0.0, humidity - 55.0) * 0.12)), 1)
+    water = round(max(24.0, min(28.0, 26.0 + max(0.0, temperature - 30.0) * 0.18 - max(0.0, humidity - 70.0) * 0.04)), 1)
+    mixing_minutes = 4 if risk >= 18 else 5
+    return {
+        "risk": risk,
+        "recommended_water_l": water,
+        "mixing_minutes": mixing_minutes,
+        "retarder": risk > 10,
+    }
+
+
+@app.get("/sensor-state")
+def sensor_state() -> dict:
+    """PLC 전환 전 데모 센서 스트림. PLC 게이트웨이는 /sensor-ingest로 값을 보낸다."""
+    if SENSOR_STATE["source"] == "demo-sensor":
+        import math
+        import time
+        now = time.time()
+        SENSOR_STATE["temperature"] = round(30.5 + math.sin(now / 18.0) * 1.8, 1)
+        SENSOR_STATE["humidity"] = round(70.0 + math.sin(now / 25.0 + 0.8) * 8.0, 1)
+        SENSOR_STATE["updated_at"] = datetime.now(timezone.utc).isoformat()
+    temperature = float(SENSOR_STATE["temperature"])
+    humidity = float(SENSOR_STATE["humidity"])
+    return {
+        "source": SENSOR_STATE["source"],
+        "temperature": temperature,
+        "humidity": humidity,
+        "updated_at": SENSOR_STATE["updated_at"],
+        "recommendation": recommendation_for_environment(temperature, humidity),
+    }
+
+
+@app.post("/sensor-ingest")
+def sensor_ingest(payload: dict = Body(...)) -> dict:
+    """PLC/IoT 게이트웨이가 온도·습도를 전달하는 운영용 입력 API."""
+    try:
+        temperature = float(payload["temperature"])
+        humidity = float(payload["humidity"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail="temperature와 humidity가 필요합니다.") from exc
+    if not -20 <= temperature <= 100 or not 0 <= humidity <= 100:
+        raise HTTPException(status_code=400, detail="센서 범위를 확인하세요.")
+    SENSOR_STATE.update({
+        "temperature": round(temperature, 1),
+        "humidity": round(humidity, 1),
+        "source": str(payload.get("source", "plc-gateway")),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+    })
+    return sensor_state()
 
 
 def prepare_normal_images() -> int:
