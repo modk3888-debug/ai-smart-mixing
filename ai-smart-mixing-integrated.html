@@ -11,7 +11,1464 @@
   .job-selector{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:0 0 17px;padding:14px 16px;border:1px solid #cfe1f1;border-radius:14px;background:linear-gradient(135deg,#fff,#f3f9ff);box-shadow:0 8px 18px rgba(26,92,149,.06)}.job-selector-copy small{display:block;color:#6b8198;font-size:11px;margin-bottom:4px}.job-selector-copy b{font-size:15px;color:#153a60}.job-selector-control{display:grid;grid-template-columns:auto 220px;align-items:center;gap:9px}.job-selector-control label{font-size:12px;font-weight:800;color:#385a7a}.job-selector-control select{width:220px;padding:10px 34px 10px 12px;border:1px solid #aacbe5;border-radius:9px;background:#fff;color:#173a5d;font:inherit;font-size:13px;font-weight:800;cursor:pointer}.job-selector-control select:focus{outline:3px solid #b9e2ff;border-color:#277fd0}.info-grid{gap:12px;margin-top:18px}.info{position:relative;min-height:96px;padding:15px 16px 14px;border-color:#d7e5f0;background:linear-gradient(135deg,#fff,#f7fbff);box-shadow:0 5px 13px rgba(37,93,139,.04)}.info:before{content:"";position:absolute;left:16px;top:14px;width:3px;height:12px;border-radius:3px;background:linear-gradient(#46a5e8,#6958dd)}.info small{padding-left:9px;margin-bottom:9px;color:#64809a;font-weight:700;letter-spacing:-.1px}.info b{display:block;font-size:17px;line-height:1.25;color:#143654;letter-spacing:-.4px;word-break:keep-all}.info span{display:block;margin-top:5px;color:#4d7191;font-size:11px;line-height:1.35;font-weight:700}.info:nth-child(2):before{background:linear-gradient(#2cbf9e,#239ee8)}.info:nth-child(3):before{background:linear-gradient(#7d63df,#4595e6)}.info:nth-child(4):before{background:linear-gradient(#ee9a44,#efcc5e)}.job-history-groups{display:grid;gap:9px}.job-history-group{border:1px solid #dce8f2;border-radius:11px;overflow:hidden;background:#fff}.job-history-title{width:100%;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:14px 15px;border:0;background:#fff;text-align:left;color:#183b5b;font:inherit;cursor:pointer}.job-history-title:hover,.job-history-group.open .job-history-title{background:linear-gradient(135deg,#f1f8ff,#f7f5ff)}.job-history-title b{font-size:14px}.job-history-title small{display:block;margin-top:4px;color:#6e879f;font-size:11px}.job-history-title span{color:#1e70b8;font-size:11px;font-weight:800}.job-history-records{display:none;padding:8px 9px 9px;border-top:1px solid #e4edf4;background:#f8fbfe}.job-history-group.open .job-history-records{display:grid;gap:7px}.job-history-record{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:11px;align-items:center;width:100%;padding:11px 12px;border:1px solid transparent;border-radius:9px;background:#fff;color:#183b5b;font:inherit;text-align:left;cursor:pointer}.job-history-record:hover,.job-history-record.selected{border-color:#8ec3ee;background:#eff8ff}.job-history-record>small{display:block;color:#71889e;font-size:11px;font-weight:700;white-space:nowrap}.job-history-record>div b{display:block;color:#173a5d;font-size:13px;line-height:1.2}.job-history-record>div small{display:block;margin-top:4px;color:#6e879f;font-size:10px;line-height:1.2}.job-history-record .pill{font-size:9px;white-space:nowrap}@media(max-width:720px){.job-selector{align-items:stretch;flex-direction:column}.job-selector-control{grid-template-columns:1fr}.job-selector-control select{width:100%}.info{min-height:90px}.job-history-record{grid-template-columns:1fr auto;gap:6px}.job-history-record>small{grid-column:1/-1}.job-history-record .pill{justify-self:end}}
   .job-history-records{padding:0!important;gap:0!important}.job-history-record-head,.job-history-record{display:grid;grid-template-columns:105px 80px minmax(100px,1fr) minmax(110px,1fr) auto;gap:11px;align-items:center}.job-history-record-head{padding:9px 13px;background:#f1f6fa;color:#6c839a;font-size:10px;font-weight:800}.job-history-record{padding:13px!important;border:0!important;border-radius:0!important;border-top:1px solid #e6eef4!important}.job-history-record:hover,.job-history-record.selected{background:#eef8ff!important;box-shadow:inset 3px 0 #2380cd}.job-history-record>small{font-size:11px!important;color:#496d8d!important}.job-history-record>div b{font-size:13px!important}.job-history-record>div small{display:none!important}.job-history-record .history-worker,.job-history-record .history-env{display:block!important;margin:0!important;color:#507390!important;font-size:11px!important;font-weight:700!important}.job-history-record .pill{justify-self:end}#history .grid{display:flex;flex-direction:column;gap:17px}#history .grid>.side{order:1;display:block}#history .grid>.side .panel{width:100%}#history .detail-grid{grid-template-columns:repeat(5,1fr)}@media(max-width:1050px){#history .detail-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:720px){.job-history-record-head{display:none}.job-history-record{grid-template-columns:1fr auto!important;gap:5px!important}.job-history-record>small{grid-column:1/-1}.job-history-record .history-worker{grid-column:1/-1;font-size:10px!important}.job-history-record>div:before{content:"총 투입량";display:block;margin-bottom:3px;color:#7a92a7;font-size:10px}.job-history-record .history-env{grid-column:1/-1;font-size:10px!important}.job-history-record .history-worker:before{content:"작업자 · ";color:#7a92a7}.job-history-record .history-env:before{content:"작업환경 · ";color:#7a92a7}#history .detail-grid{grid-template-columns:1fr 1fr}}
   #learning .learning-upload-panel{margin:0 0 17px}.photo-preview-box{display:grid;place-items:center;position:relative;height:190px;margin:11px 0;border:1px dashed #9fc5e5;border-radius:10px;background:linear-gradient(135deg,#f9fcff,#eef7ff);overflow:hidden}.photo-preview-empty{display:grid;place-items:center;gap:6px;color:#66839c;font-size:12px;text-align:center}.photo-preview-empty:before{content:"▧";display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#e3f1ff;color:#287ac0;font-size:20px;font-weight:800}.photo-preview-box .photo-upload-preview{display:none;width:100%;height:100%;margin:0;border:0;border-radius:0;object-fit:contain;background:#fff}
-  .log-cycle{…30125 tokens truncated…);
+  .log-cycle{border-top:1px solid #e7eef4}.log-cycle .log-row{border-top:0}.cycle-note{display:flex;align-items:center;gap:9px;padding:0 11px 11px;background:#fbfdff}.cycle-note label{min-width:78px;color:#6b8198;font-size:11px;font-weight:800}.cycle-note input{width:100%;border:1px solid #dce6ef;border-radius:6px;padding:7px 8px;background:#fff;color:var(--ink);font:inherit;font-size:11px}@media(max-width:720px){.cycle-note{align-items:flex-start;flex-direction:column;gap:5px}.cycle-note label{min-width:0}}
+  .brand:before{content:"posco\A FUTURE M";white-space:pre-line;display:flex;align-items:center;width:58px;height:34px;padding-left:7px;border-radius:8px;background:#fff;border:1px solid #d4e4f1;color:#1661aa;font-size:9px;font-weight:900;line-height:1.05;letter-spacing:-.35px;box-shadow:0 4px 10px rgba(24,91,154,.08)}
+    .cycle-detail-block{border-top:1px solid #e6edf3}.cycle-detail-block:first-child{border-top:0}.cycle-detail-block .cycle-row{border-top:0}.cycle-note-history{display:flex;gap:8px;align-items:flex-start;padding:8px 11px 9px;background:#fffaf4;color:#73522f;font-size:11px;line-height:1.45}.cycle-note-history b{white-space:nowrap;color:#9a5a22}.cycle-note-history span{color:#765d45}
+  </style>
+<style>
+  .cycle-group{border:1px solid #dbe6ef;border-radius:10px;overflow:hidden;margin-top:10px;background:#fff}.cycle-group:first-of-type{margin-top:0}.cycle-group-head{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#eef6fc;color:var(--ink)}.cycle-group-head b{font-size:13px}.cycle-group-head span{font-size:11px;color:var(--muted)}.cycle-group .cycle-detail-block{border-top:1px solid #e6edf3}.cycle-group .cycle-detail-block:first-of-type{border-top:0}
+  .cycle-group{border-color:#e2e8ee;box-shadow:none}.cycle-group-head{background:#f6f8fa;border-bottom:1px solid #e8edf1}.cycle-group .cycle-row,.cycle-group .cycle-row.current{background:#fff!important;border-left:0!important;padding-left:11px!important}.cycle-note-history{background:#fbfcfd;color:#6d7f90;border-top:1px solid #edf1f4}.cycle-note-history b{color:#65788a}
+  .detail-edit-input{width:100%;min-width:0;border:1px solid #8ebee5;border-radius:7px;padding:7px 8px;background:#fff;color:var(--ink);font:inherit;font-size:13px}
+  .detail-edit-note{min-height:64px;resize:vertical;margin-top:8px}
+  .cycle-row .detail-edit-input{font-size:12px;padding:6px}
+</style>
+  <style>
+    .learning-review-actions{display:flex;gap:8px;margin-top:10px}
+    .learning-review-actions button{width:auto;padding:8px 12px;font-size:12px}
+  </style>
+  <style>
+    .history-delete{border:0;background:transparent;color:#9aaaba;font:inherit;font-size:11px;cursor:pointer;padding:5px 2px}
+    .history-delete:hover{color:var(--red)}
+    .job-history-record{grid-template-columns:105px 80px minmax(100px,1fr) minmax(110px,1fr) auto auto!important}
+    .learning-delete{margin-top:9px;border:0;border-radius:7px;padding:7px 10px;background:#f3f5f7;color:#687b8e;font:inherit;font-size:11px;cursor:pointer}
+    .learning-delete:hover{background:#fff0f1;color:var(--red)}
+    .learn-title .learning-delete{margin:0 0 0 10px;padding:3px 6px;background:transparent;color:#9aaaba}
+    .learn-title .learning-delete:hover{background:#fff0f1;color:var(--red)}
+    .learn-title>b{display:block!important;flex:1 1 auto;min-width:0;color:var(--ink)!important;visibility:visible!important;opacity:1!important}
+  </style>
+  </head>
+<body>
+  <header class="app-header"><div class="brand">AI 스마트 믹싱 <small>REFRACTORY FIELD SYSTEM</small></div><nav><button class="active" data-screen="process">공정 순서</button><button data-screen="dashboard">대시보드</button><button data-screen="worklog">작업일지 및 특이사항</button><button data-screen="history">배합 이력</button><button data-screen="learning">AI 이미지 학습</button></nav><span class="site-status">운영 시스템 확인 중</span></header>
+  <main>
+    <section class="screen active" id="process">
+      <div class="hero"><div><div class="eyebrow">END-TO-END SYSTEM</div><h1>작업환경부터 AI 학습까지<br>하나의 배합 운영 흐름으로 관리합니다.</h1><p>AI 스마트 믹싱은 환경·원료·배합·작업 결과를 회차 단위로 연결해 급속 경화 위험을 줄이는 현장 운영 시스템입니다.</p></div><div class="timestamp">시스템 상태<b>센서·PLC·데이터 저장 정상</b></div></div>
+      <div class="process-grid"><div class="process-card"><div class="number">01 · 자동 수집</div><b>작업환경·원료 확인</b><p>온도·습도 센서, 원료 LOT, 작업 지시서 정보를 자동으로 불러옵니다.</p><div class="tags"><span>온도·습도</span><span>원료 LOT</span><span>작업지시</span></div></div><div class="process-card"><div class="number">02 · AI 추천</div><b>회차별 배합 조건 계산</b><p>XGBoost가 수분량·믹싱시간·호퍼 대기시간·위험도·지연제 사용을 계산합니다.</p><div class="tags"><span>500kg 단위</span><span>위험도 5~30%</span><span>지연제 기준</span></div></div><div class="process-card"><div class="number">03 · 승인·실행</div><b>작업자 확인 후 믹싱</b><p>권장값을 검토하고 회차별 실제 수치와 특이사항을 남기며 작업합니다.</p><div class="tags"><span>안전 인터록</span><span>전자서명</span><span>PLC 연동</span></div></div><div class="process-card"><div class="number">04 · 이력 저장</div><b>배합 이력과 원인 추적</b><p>환경·원료·실제값·사진·결과를 한 작업 지시번호로 연결해 저장합니다.</p><div class="tags"><span>추적성</span><span>작업일지</span><span>이미지</span></div></div><div class="process-card"><div class="number">05 · AI 이미지 분석</div><b>급속 경화 징후 확인</b><p>현장 이미지에서 표면 경화·균열 패턴을 분석하고 개선 사안을 남깁니다.</p><div class="tags"><span>PatchCore</span><span>이상 탐지</span><span>개선 사안</span></div></div><div class="process-card"><div class="number">06 · 재학습</div><b>다음 추천 조건 개선</b><p>검증된 작업 결과와 이미지 데이터가 모델 성능 개선과 기준값 보정에 활용됩니다.</p><div class="tags"><span>모델 버전</span><span>성능 검증</span><span>재학습</span></div></div></div>
+      <div class="lower"><div class="mini"><h3>현장 적용 원칙</h3><p>AI는 추천·경고를 담당하고, 실제 설비 실행은 작업자 승인과 안전 인터록을 거쳐 진행합니다.</p></div><div class="mini"><h3>필수 연동 설비</h3><p>온습도 센서, 전자저울, 수분 유량계, 믹서 PLC, 호퍼 레벨센서를 연결합니다.</p></div><div class="mini"><h3>데이터 기준</h3><p>작업 지시번호, 원료 LOT, 회차별 실제값, 작업 결과와 이미지를 함께 보관합니다.</p></div></div>
+    </section>
+    <section class="screen" id="dashboard">
+      <div class="hero"><div><div class="eyebrow">LIVE MIXING CONTROL</div><h1>래들 벽체 · AI 추천 조건</h1><p>자동 수집된 현장 조건을 바탕으로 회차별 배합 조건을 추천하고, 승인 후 실제 작업으로 전달합니다.</p></div><div class="timestamp">작업 지시번호 WO-20851<b id="clock">2026.08.05 10:24:36</b></div></div>
+      <div class="summary"><div class="summary-card main"><small>현재 상태</small><b id="dashState">작업자 승인 대기</b></div><div class="summary-card"><small>계획 투입량</small><b>2,500kg</b></div><div class="summary-card"><small>총 믹싱 횟수</small><b>5회</b></div><div class="summary-card"><small>최대 위험도</small><b class="red">13%</b></div><div class="summary-card"><small>추천 신뢰도</small><b class="green">89%</b></div></div>
+      <div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 실행 흐름</h2><p>현장 데이터와 AI 추천값을 작업자 승인 후 회차별로 실행합니다.</p></div><span class="badge">XGBoost v2.4</span></div><div class="panel-body"><div class="flow"><div class="flow-step done"><small>01</small><b>환경·원료 수집</b></div><span class="arrow">→</span><div class="flow-step done"><small>02</small><b>AI 조건 계산</b></div><span class="arrow">→</span><div class="flow-step active"><small>03</small><b>작업자 승인</b></div><span class="arrow">→</span><div class="flow-step"><small>04</small><b>1차 믹싱 실행</b></div><span class="arrow">→</span><div class="flow-step"><small>05</small><b>실제값 저장</b></div></div><div class="info-grid"><div class="info"><small>내화물 종류 · 원료 LOT</small><b>저시멘트 캐스터블</b> <span>LC-260805-03</span></div><div class="info"><small>작업환경 자동 감지</small><b>31.0℃ · 78%</b> <span>30초 전 갱신</span></div><div class="info"><small>AI 권장 총 수분량</small><b>130.0L</b> <span>회차별 분할 투입</span></div><div class="info"><small>호퍼 운영 기준</small><b>최대 1,500kg</b> <span>1회 최대 500kg</span></div></div><div class="cycles"><div class="cycle-head"><span>회차</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div><div class="cycle-row current"><b>1차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>12분</span><span><i class="pill use">사용</i> <i class="risk-high">13%</i></span></div><div class="cycle-row"><b>2차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>6분</span><span><i class="pill use">사용</i> <i class="risk-high">11%</i></span></div><div class="cycle-row"><b>3차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>0분</span><span><i class="pill no">미사용</i> <i class="risk-low">8%</i></span></div><div class="cycle-row"><b>4차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>6분</span><span><i class="pill use">사용</i> <i class="risk-high">11%</i></span></div><div class="cycle-row"><b>5차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>0분</span><span><i class="pill no">미사용</i> <i class="risk-low">8%</i></span></div></div><div class="action-bar"><div><b>● 승인 전 확인 필요</b>1·2·4차는 위험도 10% 초과로 지연제 사용 조건이 포함되어 있습니다.</div><button class="button" id="approve">추천 조건 승인 · 작업일지로 전달</button></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>실시간 설비·환경</h2><p>센서 이상 시 작업 실행이 제한됩니다.</p></div></div><div class="panel-body"><div class="sensor-grid"><div class="sensor"><small>작업장 온도 <em>정상</em></small><b>31.0℃</b></div><div class="sensor"><small>상대습도 <em>정상</em></small><b>78%</b></div><div class="sensor"><small>전자저울 <em>연결</em></small><b>0kg</b></div><div class="sensor"><small>수분 유량계 <em>연결</em></small><b>0.0L</b></div><div class="sensor"><small>믹서 PLC <em>대기</em></small><b>READY</b></div><div class="sensor"><small>호퍼 적재량 <em>정상</em></small><b>0kg</b></div></div></div></section><section class="panel"><div class="panel-head"><div><h2>안전 인터록</h2><p>기준을 만족해야 작업을 진행합니다.</p></div><span class="badge">4 / 4 확인</span></div><div class="panel-body"><div class="guard-note">AI 추천은 작업 보조 기준입니다. 수분·시간·지연제 조건 변경 시 변경 사유와 승인자를 기록합니다.</div><div class="check">원료 LOT 및 유효기간 확인</div><div class="check">호퍼 적재량 1,500kg 이하</div><div class="check">1회 믹싱량 500kg 이하</div><div class="check">지연제 사용 조건 확인</div></div></section></aside></div>
+    </section>
+    <section class="screen" id="worklog"><div class="hero"><div><div class="eyebrow">WORK LOG</div><h1>작업일지 및 특이사항</h1><p>대시보드에서 승인한 AI 추천값을 기준으로 회차별 실제 작업값과 특이사항을 기록합니다.</p></div><div class="timestamp">작업 상태<b id="logState">추천 조건 전달 대기</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 정보</h2><p>작업 지시와 환경 데이터는 자동 입력됩니다.</p></div><span class="badge">WO-20851</span></div><div class="panel-body"><div class="form-grid"><div class="field"><label>작업명</label><select><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option></select></div><div class="field"><label>내화물 종류</label><input value="저시멘트 캐스터블" readonly></div><div class="field"><label>작업장 온도</label><input value="31.0 ℃" readonly></div><div class="field"><label>상대습도</label><input value="78 %" readonly></div></div><div class="worklog-table"><div class="log-head"><span>회차</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div><div class="log-row"><b>1차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>사용</option><option>미사용</option></select></div><div class="log-row"><b>2차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>사용</option><option>미사용</option></select></div><div class="log-row"><b>3차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>미사용</option><option>사용</option></select></div></div><div class="field" style="margin-top:14px"><label>전체 특이사항</label><textarea placeholder="예: 1차 호퍼 대기시간 12분으로 지연제 사용 후 정상 작업 진행"></textarea></div><div class="save-row"><button class="button secondary">임시 저장</button><button class="button" id="saveLog">작업일지 저장</button></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>AI 추천 기준</h2><p>실제값과 비교해 학습 데이터로 반영됩니다.</p></div></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>권장 총 수분량</small><b>130.0L</b></div><div class="detail"><small>위험도 기준</small><b>5~30%</b></div><div class="detail"><small>지연제 기준</small><b>10% 초과</b></div><div class="detail"><small>적용 모델</small><b>XGBoost</b></div></div></div></section><section class="panel"><div class="panel-head"><div><h2>저장 항목</h2></div></div><div class="panel-body"><div class="check">회차별 실제 배합값</div><div class="check">호퍼 대기시간 및 지연제</div><div class="check">작업 결과 및 특이사항</div><div class="check">작업자·작업 시각·모델 버전</div></div></section></aside></div></section>
+    <section class="screen" id="history"><div class="hero"><div><div class="eyebrow">MIXING HISTORY</div><h1>배합 이력 및 상세 작업 내용</h1><p>작업명별 이력을 선택하면 환경 데이터와 회차별 실제 작업값을 즉시 확인할 수 있습니다.</p></div><div class="timestamp">보관 정책<b>작업 지시번호 기반 추적</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 이력 목록</h2><p>선택한 작업의 상세 내용이 우측에 표시됩니다.</p></div><span class="badge">전체 12건</span></div><div class="panel-body"><div class="history-list" id="historyList"><div class="history-item selected" data-job="래들 벽체" data-material="저시멘트 캐스터블" data-date="2026.08.05" data-amount="2,500kg" data-env="31.0℃ · 78%" data-result="정상 완료" data-note="1·2·4차 지연제 사용 조건으로 진행. 특이사항 없이 완료."><small>2026.08.05</small><div><b>래들 벽체</b><small>저시멘트 캐스터블 · 2,500kg</small></div><span class="pill use">정상 완료</span></div><div class="history-item" data-job="래들 바닥" data-material="고알루미나 캐스터블" data-date="2026.08.02" data-amount="3,500kg" data-env="28.0℃ · 63%" data-result="정상 완료" data-note="1차 대기시간 증가로 지연제 사용. 이후 회차는 기준값으로 진행."><small>2026.08.02</small><div><b>래들 바닥</b><small>고알루미나 캐스터블 · 3,500kg</small></div><span class="pill use">정상 완료</span></div><div class="history-item" data-job="턴디쉬 카바" data-material="저시멘트 캐스터블" data-date="2026.07.30" data-amount="1,250kg" data-env="25.0℃ · 55%" data-result="정상 완료" data-note="대기시간 짧아 지연제 미사용. 권장 수분량과 동일하게 작업."><small>2026.07.30</small><div><b>턴디쉬 카바</b><small>저시멘트 캐스터블 · 1,250kg</small></div><span class="pill no">정상 완료</span></div></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>상세 작업 내용</h2><p id="detailDate">2026.08.05 · 정상 완료</p></div><button class="button secondary">수정</button></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>작업명</small><b id="detailJob">래들 벽체</b></div><div class="detail"><small>내화물 종류</small><b id="detailMaterial">저시멘트 캐스터블</b></div><div class="detail"><small>총 투입량</small><b id="detailAmount">2,500kg</b></div><div class="detail"><small>작업환경</small><b id="detailEnv">31.0℃ · 78%</b></div></div><div class="cycles"><div class="cycle-head"><span>회차</span><span>투입량</span><span>수분</span><span>믹싱</span><span>대기</span><span>지연제 / 위험도</span></div><div class="cycle-row"><b>1차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>12분</span><span><i class="pill use">사용</i> <i class="risk-high">13%</i></span></div><div class="cycle-row"><b>2차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>6분</span><span><i class="pill use">사용</i> <i class="risk-high">11%</i></span></div><div class="cycle-row"><b>3차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>0분</span><span><i class="pill no">미사용</i> <i class="risk-low">8%</i></span></div></div><div class="improve"><b>전체 특이사항</b><br><span id="detailNote">1·2·4차 지연제 사용 조건으로 진행. 특이사항 없이 완료.</span></div></div></section></aside></div></section>
+    <section class="screen" id="learning"><div class="hero"><div><div class="eyebrow">AI IMAGE LEARNING</div><h1>이미지 기반 이상 징후 학습</h1><p>급속 경화 의심 이미지를 작업 조건과 함께 저장하고, 분석 결과와 개선 사안을 AI 재학습 데이터로 적용합니다.</p></div><div class="timestamp">분석 모델<b>PatchCore 이상 탐지</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>적용된 학습 데이터</h2><p>항목을 선택하면 이미지와 작업 조건, 분석 결과를 확인할 수 있습니다.</p></div><span class="badge">학습 이미지 128장</span></div><div class="panel-body"><div class="learn-list"><div class="learn-item"><button class="learn-title"><b>래들 벽체 · 1사이클 1차 · 표면 경화 의심</b><span>2026.08.05 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-ladle-wall.jpg" alt="래들 벽체 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>500kg</b></div><div class="detail"><small>환경</small><b>31℃ · 78%</b></div><div class="detail"><small>호퍼 대기</small><b>12분</b></div><div class="detail"><small>지연제</small><b>사용</b></div></div><p><b>AI 분석 결과</b><br>표면 경화 의심도 18%, 균열 의심도 7%로 정상 범위 내의 건조 흔적이 확인되었습니다.</p><div class="improve"><b>개선 사안</b><br>AI 추천 조건을 준수한 작업이므로 수분량 변경보다 실제 호퍼 대기시간과 지연제 투입 시점을 함께 비교해 다음 추천값을 보정합니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>래들 바닥 · 2사이클 2차 · 균열 패턴 확인</b><span>2026.08.02 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-ladle-bottom.jpg" alt="래들 바닥 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>500kg</b></div><div class="detail"><small>환경</small><b>28℃ · 63%</b></div><div class="detail"><small>호퍼 대기</small><b>8분</b></div><div class="detail"><small>지연제</small><b>사용</b></div></div><p><b>AI 분석 결과</b><br>국부 균열 의심도 14%로 판정되었으며, 급속 경화 패턴과의 유사도는 낮습니다.</p><div class="improve"><b>개선 사안</b><br>실제 수분량과 믹싱시간 편차 여부를 확인하고, 현장 이미지 촬영 거리·조도를 표준화해 학습 품질을 높입니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>턴디쉬 카바 · 1사이클 3차 · 정상 작업 이미지</b><span>2026.07.30 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-tundish-cover.jpg" alt="턴디쉬 카바 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>250kg</b></div><div class="detail"><small>환경</small><b>25℃ · 55%</b></div><div class="detail"><small>호퍼 대기</small><b>0분</b></div><div class="detail"><small>지연제</small><b>미사용</b></div></div><p><b>AI 분석 결과</b><br>표면 상태가 정상 범위이며 기준 이미지로 재학습에 반영됩니다.</p><div class="improve"><b>개선 사안</b><br>정상 이미지도 작업 조건과 함께 누적해 이상 이미지와의 비교 정확도를 높입니다.</div></div></div></div></div></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>이미지 학습 적용 기준</h2><p>분석 결과는 단독 판단이 아닌 현장 데이터와 함께 반영됩니다.</p></div></div><div class="panel-body"><div class="check">작업명·사이클·차수 입력</div><div class="check">환경·대기시간 자동 연동</div><div class="check">분석 결과와 개선 사안 기록</div><div class="check">관리자 검토 후 재학습 적용</div></div></section><section class="panel"><div class="panel-head"><div><h2>모델 상태</h2></div></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>분석 모델</small><b>PatchCore</b></div><div class="detail"><small>학습 이미지</small><b>128장</b></div><div class="detail"><small>최근 학습</small><b>오늘</b></div><div class="detail"><small>검토 상태</small><b class="green">정상</b></div></div></div></section></aside></div></section>
+  </main>
+  <script>
+    const navButtons=[...document.querySelectorAll('nav button')];
+    const screens=[...document.querySelectorAll('.screen')];
+    function openScreen(id){screens.forEach(s=>s.classList.toggle('active',s.id===id));navButtons.forEach(b=>b.classList.toggle('active',b.dataset.screen===id));history.replaceState(null,'','#'+id)}
+    navButtons.forEach(b=>b.addEventListener('click',()=>{
+      if(b.dataset.screen==='history'){
+        const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||'[]');
+        const applied=Number(sessionStorage.getItem('aiSmartMixingHistoryAppliedCount')||0);
+        if(saved.length>applied){location.hash='history';location.reload();return}
+      }
+      openScreen(b.dataset.screen)
+    }));
+    if(location.hash&&document.getElementById(location.hash.slice(1)))openScreen(location.hash.slice(1));
+    else openScreen('process');
+    setInterval(()=>document.getElementById('clock').textContent=new Date().toLocaleString('ko-KR',{hour12:false}),1000);
+    document.getElementById('approve').addEventListener('click',function(){const button=this;button.textContent='작업일지에 조건 전달 완료';document.getElementById('dashState').textContent='1차 믹싱 준비 완료';document.getElementById('logState').textContent='AI 추천 조건 전달 완료';setTimeout(()=>{openScreen('worklog');button.textContent='추천 조건 승인 · 작업일지로 전달';},450)});
+    function captureSavedWorklog(){
+      const worklog=document.getElementById('worklog');
+      if(!worklog)return;
+      const fields=[...worklog.querySelectorAll('.form-grid .field')];
+      const value=label=>{const field=fields.find(item=>item.querySelector('label')?.textContent.trim()===label);return field?.querySelector('input,select')?.value||''};
+      const rows=[...worklog.querySelectorAll('.worklog-table .log-row')];
+      const cycles=rows.map((row,index)=>{const inputs=[...row.querySelectorAll('input')];const cycleBox=row.closest('.log-cycle');const numeric=value=>Number(String(value||'').replace(/[^\d.]/g,''))||0;const cycleNo=Number(cycleBox?.dataset.cycle)||Math.floor(index/3)+1;const roundNo=Number(cycleBox?.dataset.round)||index%3+1;return {index:index+1,cycleNo,roundNo,amount:numeric(row.querySelector('span')?.textContent),water:numeric(inputs[0]?.value),mixing:numeric(inputs[1]?.value),wait:numeric(cycleBox?.dataset.wait),risk:numeric(cycleBox?.dataset.risk),retarder:(row.querySelector('select')?.value||'').includes('사용')&&!((row.querySelector('select')?.value||'').includes('미사용'))};});
+      const amount=cycles.reduce((sum,cycle)=>sum+cycle.amount,0);
+      const cycleNotes=[...worklog.querySelectorAll('.cycle-note input')].map(input=>input.value.trim());
+      const notes=cycleNotes.map((note,index)=>note?`${index+1}차: ${note}`:'').filter(Boolean);
+      const overall=worklog.querySelector('textarea')?.value.trim();
+      if(overall)notes.push(`전체: ${overall}`);
+      const now=new Date();
+      const date=`${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+      const record={job:value('작업명'),material:value('내화물 종류'),amount:`${amount.toLocaleString('ko-KR')}kg`,env:`${value('작업장 온도')} · ${value('상대습도')}`,date,worker:'현장 작업자',result:'저장 완료',cycles,cycleNotes,overallNote:overall||'',note:notes.join(' / ')||'회차별 실제 작업값 저장'};
+      record.clientKey=`${date}-${record.job}-${record.worker}-${record.amount}`;
+      const saved=JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory')||'[]');
+      const existingIndex=saved.findIndex(item=>item.clientKey===record.clientKey);
+      if(existingIndex>=0) saved.splice(existingIndex,1);
+      saved.unshift(record);
+      sessionStorage.setItem('aiSmartMixingSavedHistory',JSON.stringify(saved));
+      sessionStorage.removeItem('aiSmartMixingRemoteHydrated');
+      sessionStorage.setItem('aiSmartMixingHistoryAppliedCount',String(saved.length-1));
+    }
+    document.getElementById('saveLog').textContent='저장';
+    document.getElementById('saveLog').addEventListener('click',function(){captureSavedWorklog();this.textContent='완료';setTimeout(()=>this.textContent='저장',1000)});
+    document.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',()=>{document.querySelectorAll('.history-item').forEach(x=>x.classList.remove('selected'));item.classList.add('selected');document.getElementById('detailJob').textContent=item.dataset.job;document.getElementById('detailMaterial').textContent=item.dataset.material;document.getElementById('detailAmount').textContent=item.dataset.amount;document.getElementById('detailEnv').textContent=item.dataset.env;document.getElementById('detailDate').textContent=item.dataset.date+' · '+item.dataset.result;document.getElementById('detailNote').textContent=item.dataset.note}));
+    document.querySelectorAll('.learn-title').forEach(button=>button.addEventListener('click',()=>{const item=button.parentElement;const status=button.dataset.statusDate||button.querySelector('span').textContent.split('·')[0].trim();button.dataset.statusDate=status;item.classList.toggle('open');button.querySelector('span').textContent=status+' · '+(item.classList.contains('open')?'접기':'펼치기')}));
+    (function(){
+      const learningSide=document.querySelector('#learning .side');
+      const learningList=document.querySelector('#learning .learn-list');
+      if(!learningSide||!learningList||true)return;
+      const upload=document.createElement('section');
+      upload.className='panel';
+      upload.innerHTML='<div class="panel-head"><div><h2>현장 이미지 등록</h2><p>사이트 안에서 이미지를 선택해 분석·학습 데이터로 추가합니다.</p></div></div><div class="panel-body"><div class="upload-panel"><h3>급속 경화 의심 이미지 선택</h3><p>이미지를 선택한 뒤 작업 조건과 함께 학습 데이터 목록에 추가하세요.</p><div class="upload-fields"><select id="uploadJob"><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option><option>승온 버너</option></select><select id="uploadCycle"><option>1사이클</option><option>2사이클</option><option>3사이클</option></select><select id="uploadRound"><option>1차</option><option>2차</option><option>3차</option></select></div><div class="select-gallery"><button type="button" class="select-image selected" data-src="learning-ladle-wall.jpg" data-name="래들 벽체"><img src="learning-ladle-wall.jpg" alt="래들 벽체"><span>래들 벽체</span></button><button type="button" class="select-image" data-src="learning-ladle-bottom.jpg" data-name="래들 바닥"><img src="learning-ladle-bottom.jpg" alt="래들 바닥"><span>래들 바닥</span></button><button type="button" class="select-image" data-src="learning-tundish-cover.jpg" data-name="턴디쉬 카바"><img src="learning-tundish-cover.jpg" alt="턴디쉬 카바"><span>턴디쉬 카바</span></button></div><div id="selectedFile" class="selected-file">선택된 이미지: 래들 벽체</div><div class="upload-actions"><button id="uploadButton" class="button" type="button">학습 데이터 추가</button></div><div id="uploadMessage" class="upload-message">이미지가 적용된 학습 데이터 목록에 추가되었습니다.</div></div></div>';
+      learningSide.prepend(upload);
+      const uploadButton=document.getElementById('uploadButton');
+      let selectedImage={src:'learning-ladle-wall.jpg',name:'래들 벽체'};
+      document.querySelectorAll('.select-image').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.select-image').forEach(x=>x.classList.remove('selected'));button.classList.add('selected');selectedImage={src:button.dataset.src,name:button.dataset.name};document.getElementById('selectedFile').textContent='선택된 이미지: '+selectedImage.name;}));
+      uploadButton.addEventListener('click',function(){
+          const job=document.getElementById('uploadJob').value;
+          const cycle=document.getElementById('uploadCycle').value;
+          const round=document.getElementById('uploadRound').value;
+          const item=document.createElement('div');
+          item.className='learn-item open';
+          const title=document.createElement('button');
+          title.className='learn-title';
+          title.type='button';
+          title.innerHTML='<b></b><span>접기</span>';
+          title.querySelector('b').textContent=job+' · '+cycle+' '+round+' · '+selectedImage.name+' 이미지';
+          const detail=document.createElement('div');
+          detail.className='learn-detail';
+          detail.innerHTML='<div class="image-layout"><img class="uploaded-image" alt="업로드한 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b></b></div><div class="detail"><small>사이클 · 차수</small><b></b></div><div class="detail"><small>작업환경</small><b>31℃ · 78%</b></div><div class="detail"><small>분석 상태</small><b class="green">분석 대기</b></div></div><p><b>AI 분석 예정</b><br>표면 경화·균열 패턴을 PatchCore 모델로 분석하고 작업환경·호퍼 대기시간과 함께 학습 데이터로 저장합니다.</p><div class="improve"><b>다음 단계</b><br>이미지 분석 후 결과와 개선 사안을 검토하고, 관리자 승인 시 재학습 데이터에 반영합니다.</div></div></div>';
+          detail.querySelector('img').src=selectedImage.src;
+          detail.querySelectorAll('.detail b')[0].textContent=job;
+          detail.querySelectorAll('.detail b')[1].textContent=cycle+' · '+round;
+          title.addEventListener('click',()=>{item.classList.toggle('open');title.querySelector('span').textContent=item.classList.contains('open')?'접기':'펼치기';});
+          learningList.prepend(item);
+          document.getElementById('uploadMessage').style.display='block';
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      const learningSide = document.querySelector('#learning .side');
+      const learningList = document.querySelector('#learning .learn-list');
+       // 레거시 업로드 패널은 비활성화하고, 아래의 단일 승인 흐름만 사용합니다.
+       if (!learningSide || !learningList || true) return;
+
+      const uploadPanel = document.createElement('section');
+      uploadPanel.className = 'panel learning-upload-panel';
+      uploadPanel.innerHTML = `
+        <div class="panel-head"><div><h2>현장 사진 업로드</h2><p>급속 경화 의심 사진을 직접 등록해 AI 학습 데이터에 추가합니다.</p></div><span class="badge">JPG · PNG</span></div>
+        <div class="panel-body"><div class="photo-upload">
+          <label for="learningPhotoInput">사진 파일 선택</label>
+          <input id="learningPhotoInput" type="file" accept="image/png,image/jpeg,image/webp">
+          <div id="learningPhotoName" class="file-name">선택된 파일이 없습니다.</div>
+          <div class="photo-preview-box"><div id="learningPhotoEmpty" class="photo-preview-empty">사진을 선택하면<br>이곳에서 미리 볼 수 있습니다.</div><img id="learningPhotoPreview" class="photo-upload-preview" alt="업로드 사진 미리보기"></div>
+          <div class="upload-fields">
+            <select id="photoJob"><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option><option>승온 버너</option></select>
+            <select id="photoCycle"><option>1사이클</option><option>2사이클</option><option>3사이클</option></select>
+            <select id="photoRound"><option>1차</option><option>2차</option><option>3차</option></select>
+          </div>
+          <button id="loadDemoPhoto" class="button secondary" type="button">공개 데모 사진 불러오기</button>
+          <button id="addLearningPhoto" class="button" type="button">AI 학습 데이터에 사진 추가</button>
+          <div id="photoUploadMessage" class="upload-message">사진이 학습 데이터 목록에 추가되었습니다.</div>
+        </div></div>`;
+      document.querySelector('#learning .hero').insertAdjacentElement('afterend', uploadPanel);
+
+      const input = document.getElementById('learningPhotoInput');
+      const preview = document.getElementById('learningPhotoPreview');
+      const emptyPreview = document.getElementById('learningPhotoEmpty');
+      const fileName = document.getElementById('learningPhotoName');
+      const message = document.getElementById('photoUploadMessage');
+      let photoData = '';
+
+      input.addEventListener('change', function () {
+        const file = this.files && this.files[0];
+        message.style.display = 'none';
+        if (!file) { photoData = ''; preview.style.display = 'none'; emptyPreview.style.display = 'grid'; fileName.textContent = '선택된 파일이 없습니다.'; return; }
+        if (!file.type.startsWith('image/')) { this.value = ''; photoData = ''; preview.style.display = 'none'; emptyPreview.style.display = 'grid'; fileName.textContent = '이미지 파일(JPG, PNG, WEBP)만 선택할 수 있습니다.'; return; }
+        fileName.textContent = '선택된 파일: ' + file.name;
+        const reader = new FileReader();
+        reader.onload = function (event) { photoData = event.target.result; preview.src = photoData; emptyPreview.style.display = 'none'; preview.style.display = 'block'; };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById('loadDemoPhoto').addEventListener('click', async function () {
+        const demoUrl = 'https://upload.wikimedia.org/wikipedia/commons/0/00/Refractory_bricks_lining.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled';
+        const demoButton = this;
+        demoButton.disabled = true;
+        demoButton.textContent = '공개 사진 불러오는 중...';
+        message.style.display = 'none';
+        try {
+          let response = await fetch(demoUrl, { mode: 'cors' });
+          if (!response.ok && location.protocol !== 'file:') response = await fetch('/demo-image');
+          if (!response.ok) throw new Error('공개 사진을 가져오지 못했습니다.');
+          const blob = await response.blob();
+          const demoFile = new File([blob], 'refractory-bricks-lining-demo.jpg', { type: blob.type || 'image/jpeg' });
+          window.aiSmartMixingDemoFile = demoFile;
+          photoData = URL.createObjectURL(blob);
+          preview.src = photoData;
+          emptyPreview.style.display = 'none';
+          preview.style.display = 'block';
+          fileName.textContent = '공개 데모 사진 선택됨 · Refractory bricks lining (CC BY-SA 3.0)';
+        } catch (error) {
+          fileName.textContent = '공개 사진을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.';
+        } finally {
+          demoButton.disabled = false;
+          demoButton.textContent = '공개 데모 사진 불러오기';
+        }
+      });
+
+      document.getElementById('addLearningPhoto').addEventListener('click', function () {
+        // 등록은 아래 Supabase/AI 판정 흐름에서만 수행합니다.
+        // 이 레거시 핸들러가 먼저 목록에 넣으면 판정 전 사진이 학습 데이터로 보입니다.
+        return;
+        if (!photoData) { fileName.textContent = '먼저 현장 사진 파일을 선택하세요.'; return; }
+        const job = document.getElementById('photoJob').value;
+        const cycle = document.getElementById('photoCycle').value;
+        const round = document.getElementById('photoRound').value;
+        const item = document.createElement('div');
+        item.className = 'learn-item open';
+        item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 현장 업로드 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>작업환경</small><b>자동 연동 예정</b></div><div class="detail"><small>분석 상태</small><b class="green">학습 대기</b></div></div><p><b>AI 분석 예정</b><br>등록된 현장 사진을 PatchCore 이상 탐지 모델의 검토·학습 데이터로 추가했습니다.</p><div class="improve"><b>다음 단계</b><br>관리자가 사진 상태와 작업 조건을 검토한 뒤 재학습 데이터에 반영합니다.</div></div></div></div>`;
+        item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
+        const title = item.querySelector('.learn-title');
+        title.addEventListener('click', function () { item.classList.toggle('open'); title.querySelector('span').textContent = item.classList.contains('open') ? '접기' : '펼치기'; });
+        learningList.prepend(item);
+        message.style.display = 'block';
+      });
+    })();
+  </script>
+  <script>
+    /* Supabase 실제 저장 연동: 관리자 키는 사용하지 않고, 업로드별 익명 작업자 세션으로 권한을 분리합니다. */
+    (function () {
+      const SUPABASE_URL = 'https://cpmstjyhrioppiiiiptn.supabase.co';
+      const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_vvktuYaLHgh362rxjJ7QPw_ysMsKO0l';
+      const materialByJob = {
+        '래들 벽체': '저시멘트 캐스터블',
+        '래들 바닥': '고알루미나 캐스터블',
+        '턴디쉬 카바': '저시멘트 캐스터블',
+        '승온 버너': '알루미나 캐스터블'
+      };
+      async function getFieldSession() {
+        const stored = JSON.parse(localStorage.getItem('ai-smart-mixing-field-session') || 'null');
+        let storedExp = Number(stored?.expires_at || 0);
+        if (!storedExp && stored?.access_token) { try { storedExp = Number(JSON.parse(atob(stored.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp || 0); } catch (_) {} }
+        if (stored && stored.access_token && stored.user && (!storedExp || storedExp * 1000 > Date.now() + 60000)) return stored;
+        localStorage.removeItem('ai-smart-mixing-field-session');
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+          method: 'POST',
+          headers: {
+            apikey: SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ data: { source: 'ai-smart-mixing-field' } })
+        });
+        const session = await response.json();
+        if (!response.ok || !session.access_token || !session.user) {
+          throw new Error(session.msg || session.message || '현장 작업자 세션을 시작하지 못했습니다.');
+        }
+        localStorage.setItem('ai-smart-mixing-field-session', JSON.stringify(session));
+        return session;
+      }
+
+      document.addEventListener('click', async function (event) {
+        if (event.target.id !== 'addLearningPhoto') return;
+        // 현재 패널의 단일 분석·저장 흐름이 처리하므로 레거시 중복 핸들러는 실행하지 않는다.
+        return;
+        const fileInput = document.getElementById('learningPhotoInput');
+        const localFile = (fileInput && fileInput.files && fileInput.files[0]) || null;
+        const file = localFile || window.aiSmartMixingDemoFile;
+        if (!file) return;
+
+        const message = document.getElementById('photoUploadMessage');
+        const fileName = document.getElementById('learningPhotoName');
+        const button = event.target;
+        const job = document.getElementById('photoJob').value;
+        const cycle = document.getElementById('photoCycle').value;
+        const round = document.getElementById('photoRound').value;
+
+        // 직접 선택한 현장 사진은 판정 API로 보내지 않고 학습 대기 데이터로만 등록합니다.
+        if (localFile) {
+          const item = document.createElement('div');
+          item.className = 'learn-item open';
+          item.dataset.learningData = 'true';
+          item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 대기 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green review-status">AI 추천 · 학습 후보</b></div></div><div class="improve"><b>AI 사전 추천</b><br>사진 형식과 등록 조건을 확인했습니다. 작업자가 승인하면 학습 데이터에 반영됩니다.<div class="learning-review-actions"><button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button></div></div></div></div></div>`;
+          item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
+          item.querySelector('.learn-title').addEventListener('click', () => {
+            item.classList.toggle('open');
+            item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
+          });
+          item.querySelector('[data-learning-approve]').addEventListener('click', (approveEvent) => {
+            approveEvent.stopPropagation();
+            item.querySelector('.review-status').textContent = '학습 반영 완료';
+            item.querySelector('.review-status').className = 'green review-status';
+            item.querySelector('.learning-review-actions').remove();
+            message.textContent = '작업자 승인 완료 · 학습 데이터에 반영되었습니다.';
+          });
+          item.querySelector('[data-learning-reject]').addEventListener('click', (rejectEvent) => {
+            rejectEvent.stopPropagation();
+            item.remove();
+            message.textContent = '학습 데이터에서 제외했습니다.';
+          });
+          document.querySelector('#learning .learn-list')?.prepend(item);
+          message.style.display = 'block';
+          message.style.color = '#108b65';
+          message.textContent = '학습 데이터 등록 완료 · AI 판정은 실행하지 않았습니다.';
+          fileName.textContent = `학습 데이터 등록: ${localFile.name}`;
+          fileInput.value = '';
+          return;
+        }
+
+        const temperature = 31;
+        const humidity = 78;
+        const roundNo = Number(String(round).replace(/[^0-9]/g, '')) || 1;
+        const cycleNo = Number(String(cycle).replace(/[^0-9]/g, '')) || 1;
+        const hopperWait = roundNo === 1 ? 12 : roundNo === 2 ? 6 : 0;
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+
+        button.disabled = true;
+        button.textContent = 'Supabase에 저장 중...';
+        try {
+          const session = await getFieldSession();
+          const user = session.user;
+          const path = `${user.id}/${Date.now()}-${safeName}`;
+          const headers = {
+            apikey: SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${session.access_token}`
+          };
+          const uploadResponse = await fetch(
+            `${SUPABASE_URL}/storage/v1/object/refractory-images/${path}`,
+            { method: 'POST', headers: { ...headers, 'Content-Type': file.type, 'x-upsert': 'false' }, body: file }
+          );
+          if (!uploadResponse.ok) throw new Error(await uploadResponse.text());
+
+          let analysis = {
+            analysis_status: 'AI 분석 대기',
+            model_version: 'PatchCore 분석 서버 연결 대기',
+            hardening_score: null,
+            crack_score: null,
+            analysis_result: '분석 서버에 연결하지 못해 사진과 작업 조건만 저장했습니다.',
+            improvement_note: '분석 서버 상태를 확인한 뒤 다시 분석해 주세요.'
+          };
+          try {
+            const analysisBody = new FormData();
+            analysisBody.append('file', file, file.name);
+            const localPreview = location.protocol === 'file:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+            const analysisApi = window.AI_SMART_MIXING_ANALYSIS_API || (localPreview ? 'http://127.0.0.1:8000' : location.origin);
+            const analysisResponse = await fetch(`${analysisApi}/analyze`, {
+              method: 'POST',
+              body: analysisBody
+            });
+            if (!analysisResponse.ok) throw new Error(await analysisResponse.text());
+            analysis = await analysisResponse.json();
+          } catch (analysisError) {
+            analysis = {
+              image_scope: false,
+              analysis_result: 'AI 이미지 판정 서버에 연결되지 않아 등록을 중단했습니다.'
+            };
+            console.warn('AI 분석 서버 응답 대기:', analysisError);
+          }
+
+          if (analysis.image_scope !== true) {
+            await fetch(`${SUPABASE_URL}/storage/v1/object/refractory-images/${path}`, {
+              method: 'DELETE',
+              headers
+            }).catch(() => {});
+            message.textContent = `분석 중단 · ${analysis.analysis_result}`;
+            message.style.display = 'block';
+            message.style.color = '#ca4858';
+            fileName.textContent = '분석 대상이 아닌 사진입니다.';
+            return;
+          }
+
+          const record = {
+            image_path: path,
+            job_name: job,
+            material_type: materialByJob[job] || '미분류',
+            cycle_no: String(cycleNo),
+            round_no: String(roundNo),
+            batch_kg: roundNo === 3 ? 250 : 500,
+            temperature_c: temperature,
+            humidity_pct: humidity,
+            hopper_wait_min: hopperWait,
+            retarder_used: hopperWait > 0,
+            analysis_status: analysis.analysis_status,
+            hardening_score: analysis.hardening_score,
+            crack_score: analysis.crack_score,
+            analysis_result: analysis.analysis_result,
+            improvement_note: analysis.improvement_note,
+            model_version: analysis.model_version,
+            user_id: user.id
+          };
+          const insertResponse = await fetch(`${SUPABASE_URL}/rest/v1/image_inspections`, {
+            method: 'POST',
+            headers: { ...headers, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+            body: JSON.stringify(record)
+          });
+          if (!insertResponse.ok) throw new Error(await insertResponse.text());
+
+          const learningList = document.querySelector('#learning .learn-list');
+          if (learningList) {
+            const item = document.createElement('div');
+            item.className = 'learn-item open';
+            item.dataset.learningApproved = 'true';
+            item.innerHTML = `
+              <button class="learn-title" type="button"><b></b><span>접기</span></button>
+              <div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div>
+                <div class="detail-grid">
+                  <div class="detail"><small>작업명</small><b></b></div>
+                  <div class="detail"><small>사이클 · 차수</small><b></b></div>
+                  <div class="detail"><small>작업환경</small><b>${temperature}℃ · ${humidity}%</b></div>
+                  <div class="detail"><small>분석 상태</small><b class="green"></b></div>
+                </div>
+                <div class="improve"><b>AI 판정 결과</b><br></div>
+              </div></div></div>`;
+            item.querySelector('.learn-title b').textContent = `${job} · ${cycle} ${round} · 현장 업로드 이미지`;
+            item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
+            item.querySelectorAll('.detail b')[0].textContent = job;
+            item.querySelectorAll('.detail b')[1].textContent = `${cycle} · ${round}`;
+            item.querySelectorAll('.detail b')[3].textContent = analysis.analysis_status || '시범 판정 완료';
+            item.querySelector('.improve').appendChild(document.createTextNode(`경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%\n${analysis.improvement_note || ''}`));
+            const title = item.querySelector('.learn-title');
+            title.addEventListener('click', () => {
+              item.classList.toggle('open');
+              title.querySelector('span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
+            });
+            learningList.prepend(item);
+          }
+
+          message.textContent = `Supabase 저장 완료 · ${analysis.analysis_status} · 경화 의심 ${analysis.hardening_score ?? '-'}% / 균열 의심 ${analysis.crack_score ?? '-'}%`;
+          message.style.display = 'block';
+          fileName.textContent = `저장 완료: ${file.name}`;
+          const latestItem = document.querySelector('#learning .learn-list .learn-item');
+          const latestContent = latestItem && latestItem.querySelector('.learn-detail .image-layout > div');
+          if (latestContent && analysis.hardening_score !== null) {
+            latestContent.querySelector('.improve')?.remove();
+            const resultBox = document.createElement('div');
+            resultBox.className = 'improve';
+            resultBox.innerHTML = '<b>AI 시범 판정 결과</b><br>';
+            const resultText = document.createTextNode(`경화 의심 ${analysis.hardening_score}% · 균열 의심 ${analysis.crack_score}%\n${analysis.improvement_note}`);
+            resultBox.appendChild(resultText);
+            latestContent.appendChild(resultBox);
+            const status = latestContent.querySelector('.detail-grid .detail:last-child b');
+            if (status) status.textContent = analysis.analysis_status;
+          }
+        } catch (error) {
+          console.error(error);
+          message.textContent = `저장 실패: ${error.message || '권한 또는 네트워크를 확인하세요.'}`;
+          message.style.display = 'block';
+          message.style.color = '#ca4858';
+        } finally {
+          button.disabled = false;
+          button.textContent = 'AI 학습 데이터에 사진 추가';
+        }
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      const dashboard = document.getElementById('dashboard');
+      if (!dashboard) return;
+
+      const jobs = {
+        '래들 벽체': { material: '저시멘트 캐스터블', amount: 2500, lot: 'LC-260805-03', water: 26, mixing: 5, baseRisk: 6, reliability: 89 },
+        '래들 바닥': { material: '고알루미나 캐스터블', amount: 3500, lot: 'HA-260805-12', water: 25, mixing: 5, baseRisk: 7, reliability: 87 },
+        '턴디쉬 카바': { material: '저시멘트 캐스터블', amount: 1250, lot: 'LC-260805-21', water: 24, mixing: 4, baseRisk: 5, reliability: 92 },
+        '승온 버너': { material: '알루미나 캐스터블', amount: 1750, lot: 'AL-260805-08', water: 25, mixing: 4, baseRisk: 6, reliability: 90 }
+      };
+
+      const hero = dashboard.querySelector('.hero');
+      const picker = document.createElement('div');
+      picker.className = 'job-selector';
+      picker.innerHTML = '<div class="job-selector-copy"><small>작업 지시 선택</small><b>작업명을 선택하면 AI 추천 조건을 새로 계산합니다.</b></div><div class="job-selector-control"><label for="dashboardJob">작업명</label><select id="dashboardJob"></select></div>';
+      hero.insertAdjacentElement('afterend', picker);
+      const select = picker.querySelector('select');
+      Object.keys(jobs).forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        select.append(option);
+      });
+
+      function formatKg(value) { return value.toLocaleString('ko-KR') + 'kg'; }
+      function buildCycles(job) {
+        const rows = [];
+        let remaining = job.amount;
+        while (remaining > 0) { rows.push(Math.min(500, remaining)); remaining -= 500; }
+        return rows.map((amount, index) => {
+          const cycle = Math.floor(index / 3) + 1;
+          const round = (index % 3) + 1;
+          const cycleLength = Math.min(3, rows.length - ((cycle - 1) * 3));
+          const wait = (cycleLength - round) * job.mixing;
+          const risk = Math.min(30, Math.round(job.baseRisk + wait * 0.35));
+          const scenario = job.amount === 3500 && cycle === 1 && round === 2
+            ? { wait: 9, risk: 12, retarder: true, note: '\uD638\uD37C \uBC30\uCD9C \uAC8C\uC774\uD2B8 \uC810\uAC80\uC73C\uB85C \uC774\uC1A1\uC774 4\uBD84 \uC9C0\uC5F0\uB428. \uD638\uD37C \uB300\uAE30 9\uBD84 \uD6C4 \uC9C0\uC5F0\uC81C \uC0AC\uC6A9.' }
+            : null;
+          return { amount, wait, risk, water: +(job.water * amount / 500).toFixed(1), cycle, round, scenario, retarder: scenario ? scenario.retarder : risk > 10, note: scenario ? scenario.note : null };
+        });
+      }
+      function groupedCycles(cycles, renderRow) {
+        const groups = cycles.reduce((result, cycle, index) => {
+          const key = cycle.cycle || (Math.floor(index / 3) + 1);
+          (result[key] ||= []).push({ cycle, index });
+          return result;
+        }, {});
+        return Object.entries(groups).map(([cycleNumber, entries]) => {
+          const total = entries.reduce((sum, entry) => sum + Number(entry.cycle.amount || 0), 0);
+          return '<section class="cycle-group"><div class="cycle-group-head"><b>' + cycleNumber + '사이클</b><span>' + total.toLocaleString('ko-KR') + 'kg · ' + entries.length + '회 믹싱</span></div>' + entries.map(renderRow).join('') + '</section>';
+        }).join('');
+      }
+      function render(name) {
+        const job = jobs[name];
+        const cycles = buildCycles(job);
+        const maxRisk = Math.max(...cycles.map(cycle => cycle.risk));
+        dashboard.querySelector('.hero h1').textContent = name + ' · AI 추천 조건';
+        dashboard.querySelector('.summary-card:nth-child(2) b').textContent = formatKg(job.amount);
+        dashboard.querySelector('.summary-card:nth-child(3) b').textContent = cycles.length + '회';
+        const riskSummary = dashboard.querySelector('.summary-card:nth-child(4) b');
+        riskSummary.textContent = maxRisk + '%';
+        riskSummary.className = maxRisk > 10 ? 'red' : 'green';
+        dashboard.querySelector('.summary-card:nth-child(5) b').textContent = job.reliability + '%';
+        const infos = dashboard.querySelectorAll('.info-grid .info');
+        infos[0].innerHTML = '<small>내화물 종류 · 원료 LOT</small><b>' + job.material + '</b> <span>' + job.lot + '</span>';
+        infos[2].innerHTML = '<small>AI 권장 총 수분량</small><b>' + cycles.reduce((sum, cycle) => sum + cycle.water, 0).toFixed(1) + 'L</b> <span>회차별 분할 투입</span>';
+        const cycleBox = dashboard.querySelector('.cycles');
+        cycleBox.innerHTML = '<div class="cycle-head"><span>차수</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + groupedCycles(cycles, ({ cycle, index }) => {
+          const useRetarder = Boolean(cycle.retarder);
+          const note = cycle.note || (useRetarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
+          return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><span>' + cycle.water.toFixed(1) + 'L</span><span>' + job.mixing + '분</span><span>' + cycle.wait + '분</span><span><i class="pill ' + (useRetarder ? 'use' : 'no') + '">' + (useRetarder ? '사용' : '미사용') + '</i> <i class="' + (useRetarder ? 'risk-high' : 'risk-low') + '">' + cycle.risk + '%</i></span></div><div class="cycle-note-history"><b>' + cycle.round + '차 특이사항</b><span>' + note + '</span></div></div>';
+        });
+        const notice = dashboard.querySelector('.action-bar div');
+        const used = cycles.filter(cycle => cycle.retarder).map(cycle => cycle.cycle + '사이클 ' + cycle.round + '차');
+        notice.innerHTML = used.length ? '<b>● 승인 전 확인 필요</b>' + used.join(' · ') + '에 위험도 10% 초과로 지연제 사용 조건이 포함되어 있습니다.' : '<b>● 정상 조건</b>모든 사이클·차수가 위험도 10% 이하로 지연제 사용 없이 작업할 수 있습니다.';
+      }
+      function transferRecommendation(name) {
+        const job = jobs[name];
+        const cycles = buildCycles(job);
+        const temperature = dashboard.querySelectorAll('.sensor b')[0].textContent;
+        const humidity = dashboard.querySelectorAll('.sensor b')[1].textContent;
+        const recommendation = { name, material: job.material, amount: job.amount, mixing: job.mixing, temperature, humidity, cycles };
+        sessionStorage.setItem('aiSmartMixingRecommendation', JSON.stringify(recommendation));
+        applyRecommendation(recommendation);
+      }
+      function applyRecommendation(recommendation) {
+        const worklog = document.getElementById('worklog');
+        if (!worklog || !recommendation) return;
+        const fields = worklog.querySelectorAll('.form-grid .field');
+        const jobSelect = fields[0].querySelector('select');
+        jobSelect.innerHTML = '<option>' + recommendation.name + '</option>';
+        jobSelect.disabled = true;
+        fields[1].querySelector('input').value = recommendation.material;
+        fields[2].querySelector('input').value = recommendation.temperature;
+        fields[3].querySelector('input').value = recommendation.humidity;
+        // 작업명을 바꾸면 이전 작업의 전체 특이사항을 남기지 않고 새 추천값으로 다시 작성합니다.
+        const overallNote = worklog.querySelector('textarea');
+        if (overallNote) overallNote.value = '';
+        const worklogTable = worklog.querySelector('.worklog-table');
+        worklogTable.innerHTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + groupedCycles(recommendation.cycles, ({ cycle }) => {
+          const retarder = Boolean(cycle.retarder);
+          const note = cycle.note || (retarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
+          return '<div class="log-cycle" data-cycle="' + cycle.cycle + '" data-round="' + cycle.round + '" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '" data-retarder="' + retarder + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input value="' + note + '"></div></div>';
+        });
+        worklog.querySelector('.panel-head .badge').textContent = 'AI 추천 · ' + formatKg(recommendation.amount);
+        const aiValues = worklog.querySelectorAll('.side .detail b');
+        if (aiValues[0]) aiValues[0].textContent = recommendation.cycles.reduce((sum, cycle) => sum + cycle.water, 0).toFixed(1) + 'L';
+        if (aiValues[1]) aiValues[1].textContent = '5~30%';
+        if (aiValues[2]) aiValues[2].textContent = '10% 초과 시 사용';
+        document.getElementById('logState').textContent = 'AI 추천 조건 전달 완료 · ' + recommendation.name;
+      }
+      function recommendationFor(name) {
+        const job = jobs[name];
+        const cycles = buildCycles(job);
+        return {
+          name,
+          material: job.material,
+          amount: job.amount,
+          mixing: job.mixing,
+          temperature: dashboard.querySelectorAll('.sensor b')[0].textContent,
+          humidity: dashboard.querySelectorAll('.sensor b')[1].textContent,
+          cycles
+        };
+      }
+      select.addEventListener('change', () => {
+        render(select.value);
+        applyRecommendation(recommendationFor(select.value));
+      });
+      document.getElementById('approve').addEventListener('click', () => transferRecommendation(select.value));
+      const savedRecommendation = sessionStorage.getItem('aiSmartMixingRecommendation');
+      let restoredRecommendation = false;
+      if (savedRecommendation) {
+        try {
+          const parsed = JSON.parse(savedRecommendation);
+          const savedTotal = (parsed.cycles || []).reduce((sum, cycle) => sum + Number(cycle.amount || 0), 0);
+          if (parsed.name && jobs[parsed.name] && savedTotal === Number(parsed.amount)) {
+            applyRecommendation(parsed);
+            restoredRecommendation = true;
+          } else {
+            const fresh = recommendationFor(select.value);
+            sessionStorage.setItem('aiSmartMixingRecommendation', JSON.stringify(fresh));
+            applyRecommendation(fresh);
+            restoredRecommendation = true;
+          }
+        } catch (error) { sessionStorage.removeItem('aiSmartMixingRecommendation'); }
+      }
+      render(select.value);
+      if (!restoredRecommendation) applyRecommendation(recommendationFor(select.value));
+    })();
+  </script>
+  <script>
+    (function () {
+      const list = document.getElementById('historyList');
+      if (!list || list.children.length >= 12) return;
+      const records = [
+        ['2026.07.28', '래들 벽체', '저시멘트 캐스터블', '2,500kg', '29.0℃ · 69%', '정상 완료', '1차 호퍼 대기시간 20분으로 지연제 사용 후 작업 완료.'],
+        ['2026.07.22', '래들 벽체', '저시멘트 캐스터블', '2,500kg', '27.0℃ · 61%', '정상 완료', '계획 투입량 2,500kg에 맞춰 500kg씩 5회 분할 믹싱으로 완료. 추가 투입 없음.'],
+        ['2026.07.17', '래들 바닥', '고알루미나 캐스터블', '3,500kg', '30.0℃ · 71%', '정상 완료', '1·2차 대기시간이 길어 지연제를 사용하고 나머지 회차는 기준 조건으로 완료.'],
+        ['2026.07.11', '승온 버너', '알루미나 캐스터블', '1,750kg', '26.0℃ · 57%', '정상 완료', '4회 분할 작업. 모든 회차에서 호퍼 대기시간 기준을 만족함.'],
+        ['2026.07.03', '턴디쉬 카바', '저시멘트 캐스터블', '1,250kg', '24.0℃ · 53%', '정상 완료', '3회 분할 믹싱. 지연제 미사용 조건으로 정상 완료.'],
+        ['2026.06.27', '래들 벽체', '저시멘트 캐스터블', '2,500kg', '32.0℃ · 74%', '정상 완료', '고온 환경으로 1·2·3차 지연제 사용 후 작업성 정상 확인.'],
+        ['2026.06.18', '래들 바닥', '고알루미나 캐스터블', '3,500kg', '28.0℃ · 66%', '정상 완료', '총 7회 믹싱으로 진행. 1차 회차에서 대기시간 증가 이력 기록.'],
+        ['2026.06.11', '승온 버너', '알루미나 캐스터블', '1,750kg', '25.0℃ · 59%', '정상 완료', '권장 수분량 및 믹싱시간 기준을 준수해 특이사항 없이 완료.'],
+        ['2026.06.03', '턴디쉬 카바', '저시멘트 캐스터블', '1,250kg', '23.0℃ · 50%', '정상 완료', '3차 250kg 분할 조건으로 작업. 호퍼 대기시간 0분으로 기록됨.']
+      ];
+      function showDetail(item) {
+        document.querySelectorAll('.history-item').forEach(entry => entry.classList.remove('selected'));
+        item.classList.add('selected');
+        document.getElementById('detailJob').textContent = item.dataset.job;
+        document.getElementById('detailMaterial').textContent = item.dataset.material;
+        document.getElementById('detailAmount').textContent = item.dataset.amount;
+        document.getElementById('detailEnv').textContent = item.dataset.env;
+        document.getElementById('detailDate').textContent = item.dataset.date + ' · ' + item.dataset.result;
+        document.getElementById('detailNote').textContent = item.dataset.note;
+      }
+      records.forEach(record => {
+        const [date, job, material, amount, env, result, note] = record;
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.dataset.job = job;
+        item.dataset.material = material;
+        item.dataset.date = date;
+        item.dataset.amount = amount;
+        item.dataset.env = env;
+        item.dataset.result = result;
+        item.dataset.note = note;
+        item.innerHTML = '<small>' + date + '</small><div><b>' + job + '</b><small>' + material + ' · ' + amount + '</small></div><span class="pill use">' + result + '</span>';
+        item.addEventListener('click', () => showDetail(item));
+        list.append(item);
+      });
+      const countBadge = document.querySelector('#history .panel-head .badge');
+      if (countBadge) countBadge.textContent = '전체 ' + list.children.length + '건';
+    })();
+  </script>
+  <script>
+    (function () {
+      const list = document.getElementById('historyList');
+      if (!list) return;
+      const workerByDate = {
+        '2026.08.05': '이민호', '2026.08.02': '김도윤', '2026.07.30': '박지훈',
+        '2026.07.28': '최현우', '2026.07.22': '이민호', '2026.07.17': '서지훈',
+        '2026.07.11': '박지훈', '2026.07.03': '김도윤', '2026.06.27': '최현우',
+        '2026.06.18': '이민호', '2026.06.11': '서지훈', '2026.06.03': '박지훈'
+      };
+      const resultByDate = {
+        '2026.08.05': '정상 완료', '2026.08.02': '조건 조정 완료', '2026.07.30': '정상 완료',
+        '2026.07.28': '지연제 사용 완료', '2026.07.22': '재확인 완료', '2026.07.17': '조건 조정 완료',
+        '2026.07.11': '정상 완료', '2026.07.03': '정상 완료', '2026.06.27': '지연제 사용 완료',
+        '2026.06.18': '대기시간 조정 완료', '2026.06.11': '정상 완료', '2026.06.03': '재확인 완료'
+      };
+      const savedHistory = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+      savedHistory.forEach(record => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.dataset.job = record.job;
+        item.dataset.material = record.material;
+        item.dataset.date = record.date;
+        item.dataset.amount = record.amount;
+        item.dataset.env = record.env;
+        item.dataset.result = record.result;
+        item.dataset.note = record.note;
+        item.dataset.cyclenotes = JSON.stringify(record.cycleNotes || []);
+        item.dataset.overallnote = record.overallNote || '';
+        item.dataset.cycles = JSON.stringify(record.cycles || []);
+        item.dataset.worker = record.worker;
+        item.innerHTML = '<small>' + record.date + '</small><div><b>' + record.job + '</b><small>' + record.material + ' · ' + record.amount + '</small></div><span class="pill use">' + record.result + '</span>';
+        list.append(item);
+      });
+      if (savedHistory.length) {
+        sessionStorage.setItem('aiSmartMixingHistoryAppliedCount', String(savedHistory.length));
+        const countBadge = document.querySelector('#history .panel-head .badge');
+        if (countBadge) countBadge.textContent = '전체 ' + list.querySelectorAll('.history-item').length + '건';
+      }
+      const records = [...list.querySelectorAll('.history-item')].map(item => ({
+        job: item.dataset.job, material: item.dataset.material, date: item.dataset.date,
+        amount: item.dataset.amount, env: item.dataset.env, result: item.dataset.result || resultByDate[item.dataset.date], note: item.dataset.note,
+        worker: item.dataset.worker || workerByDate[item.dataset.date] || '이민호',
+        cycleNotes: (() => { try { return JSON.parse(item.dataset.cyclenotes || '[]'); } catch (_) { return []; } })(),
+        cycles: (() => { try { return JSON.parse(item.dataset.cycles || '[]'); } catch (_) { return []; } })(),
+        overallNote: item.dataset.overallnote || ''
+      }));
+      const dateValue = value => String(value || '').replace(/\./g, '-');
+      const historyKey = record => [record.date, record.job, record.worker, record.amount].join('|');
+      const deletedHistory = new Set(JSON.parse(localStorage.getItem('aiSmartMixingDeletedHistory') || '[]'));
+      records.splice(0, records.length, ...records.filter(record => !deletedHistory.has(historyKey(record))));
+      records.sort((a, b) => dateValue(b.date).localeCompare(dateValue(a.date)));
+      const grouped = records.reduce((groups, record) => {
+        (groups[record.job] ||= []).push(record);
+        return groups;
+      }, {});
+      function renderCycleDetails(record) {
+        const cycleBox = document.querySelector('#history .cycles');
+        if (!cycleBox) return;
+        const totalAmount = Number(record.amount.replace(/[^\d]/g, ''));
+        const waterPer500 = record.material.includes('저시멘트') ? 26 : 25;
+        const mixingTime = totalAmount === 1250 || record.material.includes('알루미나 캐스터블') ? 4 : 5;
+        const batches = [];
+        let remaining = totalAmount;
+        while (remaining > 0) {
+          const batchAmount = Math.min(500, remaining);
+          batches.push({ amount: batchAmount, water: +(waterPer500 * batchAmount / 500).toFixed(1) });
+          remaining -= batchAmount;
+        }
+        const fallbackCycles = batches.map((batch,index) => { const cycle=Math.floor(index/3)+1; const round=(index%3)+1; const cycleLength=Math.min(3,batches.length-((cycle-1)*3)); const wait=(cycleLength-round)*mixingTime; const risk=Math.min(30,Math.round(5+wait*.35)); return {amount:batch.amount,water:batch.water,mixing:mixingTime,wait,risk,retarder:risk>10,cycle,round}; });
+        const mergedCycles = Array.isArray(record.cycles) && record.cycles.length ? record.cycles.map((cycle,index) => ({...fallbackCycles[index],...cycle,amount:Number(cycle.amount)||fallbackCycles[index].amount,water:Number(cycle.water)||fallbackCycles[index].water,mixing:Number(cycle.mixing)||fallbackCycles[index].mixing,retarder:typeof cycle.retarder === 'boolean' ? cycle.retarder : fallbackCycles[index].retarder,cycle:cycle.cycle||fallbackCycles[index].cycle,round:cycle.round||fallbackCycles[index].round})) : fallbackCycles;
+        const cycleCounts = mergedCycles.reduce((counts, cycle, index) => { const key = Number(cycle.cycle) || (Math.floor(index / 3) + 1); counts[key] = (counts[key] || 0) + 1; return counts; }, {});
+        const actualCycles = mergedCycles.map((cycle, index) => {
+          const cycleNumber = Number(cycle.cycle) || (Math.floor(index / 3) + 1);
+          const roundNumber = Number(cycle.round) || (index % 3) + 1;
+          const mixing = Number(cycle.mixing) || mixingTime;
+          const wait = Math.max(0, (cycleCounts[cycleNumber] - roundNumber) * mixing);
+          const risk = Math.min(30, Math.round(5 + wait * 0.35));
+          return {...cycle, cycle: cycleNumber, round: roundNumber, mixing, wait, risk, retarder: typeof cycle.retarder === 'boolean' ? cycle.retarder : risk > 10};
+        });
+        const cycleGroups = actualCycles.reduce((groups, cycle, index) => { const key = cycle.cycle || (Math.floor(index / 3) + 1); (groups[key] ||= []).push({cycle,index}); return groups; }, {});
+        const cycleHtml = Object.entries(cycleGroups).map(([cycleNumber, entries]) => '<section class="cycle-group"><div class="cycle-group-head"><b>' + cycleNumber + '사이클</b><span>' + entries.reduce((sum, entry) => sum + Number(entry.cycle.amount || 0), 0).toLocaleString('ko-KR') + 'kg · ' + entries.length + '회 믹싱</span></div>' + entries.map(({cycle,index}) => {
+          const wait = Number(cycle.wait)||0;
+          const risk = Number(cycle.risk)||Math.min(30, Math.round(5 + wait * .35));
+          const retarder = Boolean(cycle.retarder);
+          const note = record.cycleNotes?.[index] || '';
+          const displayNote = note || (retarder ? '호퍼 대기 ' + wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
+          const noteHtml = '<div class="cycle-note-history"><b>' + (cycle.round || (index % 3 + 1)) + '차 특이사항</b><span>' + displayNote + '</span></div>';
+          return '<div class="cycle-detail-block"><div class="cycle-row' + ((cycle.round || (index % 3 + 1)) === 1 ? ' current' : '') + '"><b>' + (cycle.round || (index % 3 + 1)) + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
+        }).join('') + '</section>').join('');
+        cycleBox.innerHTML = '<div class="cycle-head"><span>차수</span><span>투입량</span><span>실제 수분</span><span>실제 믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + cycleHtml;
+      }
+      function renderBatchBreakdown(record) {
+        const amount = Number(record.amount.replace(/[^\d]/g, ''));
+        const fullBatches = Math.floor(amount / 500);
+        const remainder = amount % 500;
+        const parts = [];
+        if (fullBatches) parts.push('500kg × ' + fullBatches + '회');
+        if (remainder) parts.push(remainder + 'kg × 1회');
+        const totalRounds = fullBatches + (remainder ? 1 : 0);
+        let breakdown = document.getElementById('detailBatchBreakdown');
+        const cycleBox = document.querySelector('#history .cycles');
+        if (!breakdown && cycleBox) {
+          breakdown = document.createElement('div');
+          breakdown.id = 'detailBatchBreakdown';
+          breakdown.className = 'improve';
+          cycleBox.parentNode.insertBefore(breakdown, cycleBox);
+        }
+        if (breakdown) {
+          breakdown.innerHTML = '<b>총 투입량 산정</b><br>' + parts.join(' + ') + ' = 총 ' + amount.toLocaleString('ko-KR') + 'kg (총 ' + totalRounds + '회 믹싱)';
+        }
+      }
+      function showDetail(record, row) {
+        window.__activeMixingRecord = record;
+        window.__activeMixingRow = row;
+        document.querySelectorAll('.job-history-record').forEach(item => item.classList.remove('selected'));
+        row.classList.add('selected');
+        document.getElementById('detailJob').textContent = record.job;
+        document.getElementById('detailMaterial').textContent = record.material;
+        document.getElementById('detailAmount').textContent = record.amount;
+        document.getElementById('detailEnv').textContent = record.env;
+        document.getElementById('detailWorker').textContent = record.worker;
+        document.getElementById('detailDate').textContent = record.date + ' · ' + record.result;
+        document.getElementById('detailNote').textContent = record.overallNote || (record.cycleNotes?.length ? '차수별 특이사항은 위 회차별 항목에서 확인할 수 있습니다.' : record.note);
+        renderBatchBreakdown(record);
+        renderCycleDetails(record);
+        document.querySelector('#history .grid > .side').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      list.className = 'job-history-groups';
+      list.innerHTML = '';
+      const detailGrid = document.querySelector('#history .detail-grid');
+      if (detailGrid && !document.getElementById('detailWorker')) {
+        const workerDetail = document.createElement('div');
+        workerDetail.className = 'detail';
+        workerDetail.innerHTML = '<small>작업자</small><b id="detailWorker"></b>';
+        detailGrid.append(workerDetail);
+      }
+      if (records[0]) {
+        window.__activeMixingRecord = records[0];
+        document.getElementById('detailWorker').textContent = records[0].worker;
+        renderBatchBreakdown(records[0]);
+        renderCycleDetails(records[0]);
+      }
+      Object.entries(grouped).forEach(([job, jobRecords], index) => {
+        const group = document.createElement('section');
+        group.className = 'job-history-group' + (index === 0 ? ' open' : '');
+        const title = document.createElement('button');
+        title.type = 'button';
+        title.className = 'job-history-title';
+        title.innerHTML = '<div><b>' + job + '</b><small>' + jobRecords[0].material + ' · 작업 이력 ' + jobRecords.length + '건</small></div><span>' + (index === 0 ? '접기 ▲' : '이력 보기 ▼') + '</span>';
+        const recordBox = document.createElement('div');
+        recordBox.className = 'job-history-records';
+        recordBox.innerHTML = '<div class="job-history-record-head"><span>작업일</span><span>작업자</span><span>총 투입량</span><span>작업환경</span><span>결과</span></div>';
+        jobRecords.forEach((record, recordIndex) => {
+          const row = document.createElement('div');
+          row.type = 'button';
+          row.tabIndex = 0;
+          row.setAttribute('role', 'button');
+          row.className = 'job-history-record' + (index === 0 && recordIndex === 0 ? ' selected' : '');
+          row.innerHTML = '<small>' + record.date + '</small><span class="history-worker">' + record.worker + '</span><div><b>' + record.amount + '</b></div><span class="history-env">' + record.env + '</span><span class="pill ' + (record.result === '정상 완료' ? 'use' : 'no') + '">' + record.result + '</span><button type="button" class="history-delete" title="이력 삭제">삭제</button>';
+          row.addEventListener('click', event => { if (!event.target.closest('.history-delete')) showDetail(record, row); });
+          row.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); showDetail(record, row); } });
+          row.querySelector('.history-delete').addEventListener('click', event => {
+            event.stopPropagation();
+            const currentDeleted = new Set(JSON.parse(localStorage.getItem('aiSmartMixingDeletedHistory') || '[]'));
+            currentDeleted.add(historyKey(record));
+            localStorage.setItem('aiSmartMixingDeletedHistory', JSON.stringify([...currentDeleted]));
+            const saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+            sessionStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(saved.filter(item => historyKey(item) !== historyKey(record))));
+            row.remove();
+            if (!recordBox.querySelector('.job-history-record')) group.remove();
+            const countBadge = document.querySelector('#history .panel-head .badge');
+            if (countBadge) countBadge.textContent = '전체 ' + document.querySelectorAll('#history .job-history-record').length + '건';
+          });
+          recordBox.append(row);
+        });
+        title.addEventListener('click', () => {
+          const opening = !group.classList.contains('open');
+          document.querySelectorAll('.job-history-group').forEach(other => {
+            other.classList.remove('open');
+            other.querySelector('.job-history-title span').textContent = '이력 보기 ▼';
+          });
+          if (opening) {
+            group.classList.add('open');
+            title.querySelector('span').textContent = '접기 ▲';
+          }
+        });
+        group.append(title, recordBox);
+        list.append(group);
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      var editButton = document.querySelector('#history .panel-head button.button.secondary');
+      if (!editButton) return;
+      editButton.id = 'detailEdit';
+      var editing = false;
+
+      function inputFor(value, role) {
+        var input = document.createElement('input');
+        input.className = 'detail-edit-input';
+        input.value = value;
+        input.dataset.role = role || '';
+        return input;
+      }
+
+      function startEdit() {
+        var record = window.__activeMixingRecord;
+        if (!record) return;
+        document.querySelectorAll('#history .detail-grid .detail b').forEach(function (element, index) {
+          element.replaceWith(inputFor(element.textContent.trim(), ['job', 'material', 'amount', 'env', 'worker'][index] || ''));
+        });
+        document.querySelectorAll('#history .cycle-detail-block').forEach(function (block, index) {
+          var row = block.querySelector('.cycle-row');
+          row.dataset.editIndex = index;
+          row.querySelectorAll('span').forEach(function (span, spanIndex) {
+            if (spanIndex < 4) {
+              span.replaceWith(inputFor(span.textContent.trim(), ['amount', 'water', 'mixing', 'wait'][spanIndex]));
+            } else {
+              var select = document.createElement('select');
+              select.className = 'detail-edit-input';
+              select.dataset.role = 'retarder';
+              select.innerHTML = '<option value="사용">사용</option><option value="미사용">미사용</option>';
+              select.value = span.querySelector('.pill.use') ? '사용' : '미사용';
+              span.replaceWith(select);
+            }
+          });
+          var note = block.querySelector('.cycle-note-history span');
+          if (note) note.replaceWith(inputFor(note.textContent.trim(), 'note'));
+        });
+        var overall = document.getElementById('detailNote');
+        if (overall) {
+          var area = document.createElement('textarea');
+          area.className = 'detail-edit-input detail-edit-note';
+          area.value = record.overallNote || '';
+          overall.replaceWith(area);
+        }
+        editing = true;
+        editButton.textContent = '저장';
+      }
+
+      function numberValue(value) {
+        return Number(String(value || '').replace(/[^\d.]/g, '')) || 0;
+      }
+
+      function restoreDetails(record) {
+        document.querySelectorAll('#history .detail-grid .detail .detail-edit-input').forEach(function (input) {
+          var value = document.createElement('b');
+          value.textContent = input.value;
+          input.replaceWith(value);
+        });
+        document.querySelectorAll('#history .cycle-detail-block').forEach(function (block, index) {
+          var row = block.querySelector('.cycle-row');
+          var values = row.querySelectorAll('.detail-edit-input');
+          var cycle = record.cycles?.[index] || {};
+          var displayValues = [values[0]?.value || ((cycle.amount || 0) + 'kg'), values[1]?.value || ((cycle.water || 0).toFixed(1) + 'L'), values[2]?.value || ((cycle.mixing || 0) + '분'), values[3]?.value || ((cycle.wait || 0) + '분')];
+          values.forEach(function (input, valueIndex) {
+            if (input.dataset.role === 'retarder') return;
+            var span = document.createElement('span');
+            span.textContent = displayValues[valueIndex];
+            input.replaceWith(span);
+          });
+          var select = row.querySelector('.detail-edit-input[data-role="retarder"]');
+          if (select) {
+            var status = document.createElement('span');
+            var retarder = select.value === '사용';
+            var risk = Number(cycle.risk) || 0;
+            status.innerHTML = '<i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i>';
+            select.replaceWith(status);
+          }
+          var noteInput = block.querySelector('.detail-edit-input[data-role="note"]');
+          if (noteInput) {
+            var note = document.createElement('span');
+            note.textContent = noteInput.value;
+            noteInput.replaceWith(note);
+          }
+        });
+        var overall = document.querySelector('.detail-edit-note');
+        if (overall) {
+          var noteText = document.createElement('span');
+          noteText.id = 'detailNote';
+          noteText.textContent = record.overallNote || record.note || '';
+          overall.replaceWith(noteText);
+        }
+      }
+
+      function saveEdit() {
+        var record = window.__activeMixingRecord;
+        var row = window.__activeMixingRow;
+        if (!record) return;
+        var fields = {};
+        document.querySelectorAll('#history .detail-edit-input[data-role]').forEach(function (element) {
+          if (!['amount', 'water', 'mixing', 'wait', 'retarder', 'note'].includes(element.dataset.role)) fields[element.dataset.role] = element.value.trim();
+        });
+        var cycleNotes = [];
+        var cycles = [...document.querySelectorAll('#history .cycle-detail-block')].map(function (block, index) {
+          var values = block.querySelectorAll('.detail-edit-input');
+          var note = block.querySelector('.detail-edit-input[data-role="note"]');
+          cycleNotes[index] = note ? note.value.trim() : '';
+          return {
+            index: index + 1,
+            amount: numberValue(values[0]?.value),
+            water: numberValue(values[1]?.value),
+            mixing: numberValue(values[2]?.value),
+            wait: numberValue(values[3]?.value),
+            risk: record.cycles?.[index]?.risk || 0,
+            retarder: block.querySelector('.detail-edit-input[data-role="retarder"]')?.value === '사용'
+          };
+        });
+        var overall = document.querySelector('.detail-edit-note')?.value.trim() || '';
+        record.job = fields.job || record.job;
+        record.material = fields.material || record.material;
+        record.amount = fields.amount || (cycles.reduce(function (sum, cycle) { return sum + cycle.amount; }, 0).toLocaleString('ko-KR') + 'kg');
+        record.env = fields.env || record.env;
+        record.worker = fields.worker || record.worker;
+        record.cycles = cycles;
+        record.cycleNotes = cycleNotes;
+        record.overallNote = overall;
+        record.note = overall || cycleNotes.filter(Boolean).join(' / ') || record.note;
+        var saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+        var match = saved.findIndex(function (item) { return item.date === record.date && item.job === (row?.querySelector('div b')?.textContent || record.job); });
+        if (match >= 0) saved[match] = Object.assign({}, saved[match], record);
+        sessionStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(saved));
+        if (row) {
+          row.querySelector('small').textContent = record.date;
+          row.querySelector('.history-worker').textContent = record.worker;
+          row.querySelector('div b').textContent = record.amount;
+          row.querySelector('.history-env').textContent = record.env;
+        }
+        editing = false;
+        editButton.textContent = '수정';
+        try {
+          restoreDetails(record);
+          if (document.querySelectorAll('#history .detail-edit-input').length) location.reload();
+        } catch (error) {
+          location.reload();
+        }
+      }
+
+      editButton.addEventListener('click', function () {
+        if (editing) saveEdit(); else startEdit();
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      const SUPABASE_URL = 'https://cpmstjyhrioppiiiiptn.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_vvktuYaLHgh362rxjJ7QPw_ysMsKO0l';
+      const saveButton = document.getElementById('saveLog');
+      if (!saveButton) return;
+
+      async function fieldSession() {
+        const cached = JSON.parse(localStorage.getItem('ai-smart-mixing-field-session') || 'null');
+        let cachedExp = Number(cached?.expires_at || 0);
+        if (!cachedExp && cached?.access_token) { try { cachedExp = Number(JSON.parse(atob(cached.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp || 0); } catch (_) {} }
+        if (cached?.access_token && cached.user && (!cachedExp || cachedExp * 1000 > Date.now() + 60000)) return cached;
+        localStorage.removeItem('ai-smart-mixing-field-session');
+        const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+          method: 'POST',
+          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: { source: 'ai-smart-mixing-worklog' } })
+        });
+        const session = await response.json();
+        if (!response.ok || !session.access_token) throw new Error('현장 세션을 만들 수 없습니다.');
+        localStorage.setItem('ai-smart-mixing-field-session', JSON.stringify(session));
+        return session;
+      }
+
+      async function hydrateHistoryFromDatabase() {
+        if (sessionStorage.getItem('aiSmartMixingRemoteHydrated') === '1') return;
+        try {
+          const session = await fieldSession();
+          const response = await fetch(`${SUPABASE_URL}/rest/v1/mixing_worklogs?select=*&order=created_at.desc&limit=50`, {
+            headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}` }
+          });
+          if (!response.ok) return;
+          const remote = await response.json();
+          if (!Array.isArray(remote) || !remote.length) {
+            sessionStorage.setItem('aiSmartMixingRemoteHydrated', '1');
+            return;
+          }
+          const local = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+          const merged = [...local];
+          remote.forEach(row => {
+            const created = row.created_at ? new Date(row.created_at) : new Date();
+            const date = `${created.getFullYear()}.${String(created.getMonth() + 1).padStart(2, '0')}.${String(created.getDate()).padStart(2, '0')}`;
+            const amount = `${Number(row.total_kg || 0).toLocaleString('ko-KR')}kg`;
+            const clientKey = row.client_key || `${date}-${row.job_name}-${row.worker_name}-${amount}`;
+            if (!merged.some(item => item.clientKey === clientKey)) merged.push({
+              clientKey, job: row.job_name, material: row.material_type || '미분류', amount,
+              env: `${row.temperature_c ?? '-'}℃ · ${row.humidity_pct ?? '-'}%`, date,
+              worker: row.worker_name || '현장 작업자', result: row.result || '저장 완료',
+              overallNote: row.overall_note || '', note: row.overall_note || '저장된 작업 이력',
+              cycles: row.cycles || [], cycleNotes: row.cycle_notes || []
+            });
+          });
+          sessionStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(merged));
+          sessionStorage.setItem('aiSmartMixingRemoteHydrated', '1');
+          if (merged.length !== local.length && location.hash === '#history') location.reload();
+        } catch (error) {
+          console.warn('배합 이력 원격 조회 대기:', error);
+        }
+      }
+
+      hydrateHistoryFromDatabase();
+
+      saveButton.addEventListener('click', function () {
+        setTimeout(async function () {
+          const saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+          const record = saved[0];
+          if (!record) return;
+          try {
+            const session = await fieldSession();
+            const temp = Number(String(record.env).match(/[\d.]+/)?.[0] || 0);
+            const humidity = Number(String(record.env).match(/[\d.]+/g)?.[1] || 0);
+            const clientKey = `${record.date}-${record.job}-${record.worker}-${record.amount}`;
+            const payload = {
+              client_key: clientKey,
+              job_name: record.job,
+              material_type: record.material,
+              total_kg: Number(String(record.amount).replace(/[^\d.]/g, '')) || 0,
+              temperature_c: temp,
+              humidity_pct: humidity,
+              worker_name: record.worker,
+              result: record.result,
+              overall_note: record.overallNote || record.note || '',
+              cycles: record.cycles || [],
+              cycle_notes: record.cycleNotes || [],
+              model_version: 'XGBoost · 현장 추천 v1.0'
+            };
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/mixing_worklogs`, {
+              method: 'POST',
+              headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' },
+              body: JSON.stringify(payload)
+            });
+            if (!response.ok) throw new Error(await response.text());
+
+            // 운영용 구조에도 작업 본체와 회차를 분리 저장합니다.
+            // AI 학습이 없어도 대시보드·작업일지·배합 이력이 같은 작업 ID를 공유합니다.
+            const workOrderResponse = await fetch(`${SUPABASE_URL}/rest/v1/work_orders?on_conflict=client_key`, {
+              method: 'POST',
+              headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=representation' },
+              body: JSON.stringify({
+                client_key: clientKey,
+                job_name: record.job,
+                material_type: record.material,
+                total_kg: Number(String(record.amount).replace(/[^\d.]/g, '')) || 0,
+                temperature_c: temp,
+                humidity_pct: humidity,
+                worker_name: record.worker,
+                status: '작업 저장 완료'
+              })
+            });
+            if (!workOrderResponse.ok) throw new Error(await workOrderResponse.text());
+            const workOrders = await workOrderResponse.json();
+            const workOrderId = workOrders[0]?.id;
+            if (workOrderId && Array.isArray(record.cycles) && record.cycles.length) {
+              const cycleRows = record.cycles.map(cycle => ({
+                work_order_id: workOrderId,
+                cycle_no: Number(cycle.cycleNo || 1),
+                round_no: Number(cycle.roundNo || cycle.index || 1),
+                amount_kg: Number(cycle.amount || 0),
+                actual_water_l: Number(cycle.water || 0),
+                actual_mixing_min: Number(cycle.mixing || 0),
+                hopper_wait_min: Number(cycle.wait || 0),
+                retarder_used: Boolean(cycle.retarder),
+                risk_pct: Number(cycle.risk || 0),
+                note: record.cycleNotes?.[Number(cycle.index || 1) - 1] || null
+              }));
+              const cycleResponse = await fetch(`${SUPABASE_URL}/rest/v1/mixing_cycles?on_conflict=work_order_id,cycle_no,round_no`, {
+                method: 'POST',
+                headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' },
+                body: JSON.stringify(cycleRows)
+              });
+              if (!cycleResponse.ok) throw new Error(await cycleResponse.text());
+            }
+            document.getElementById('logState').textContent = '저장 완료 · 서버 DB 동기화';
+          } catch (error) {
+            document.getElementById('logState').textContent = '저장 완료 · 로컬 기록 (DB 스키마 확인 필요)';
+            console.warn('서버 DB 동기화 대기:', error);
+          }
+        }, 80);
+      });
+    })();
+  </script>
+  <script>
+    // 승인 후 작업일지에는 현장 입력 예시를 회차 순서대로 표시합니다.
+    (function () {
+      const approve = document.getElementById('approve');
+      const worklog = document.getElementById('worklog');
+      if (!approve || !worklog) return;
+
+      function fillFieldData() {
+        const rows = [...worklog.querySelectorAll('.worklog-table .log-cycle')];
+        const usedRounds = [];
+        rows.forEach((cycle, index) => {
+          const row = cycle.querySelector('.log-row');
+          const inputs = row ? [...row.querySelectorAll('input')] : [];
+          const wait = Number(cycle.dataset.wait || 0);
+          const risk = Number(cycle.dataset.risk || 0);
+          // 대시보드 추천값을 작업일지에서 임의의 예시값으로 덮어쓰지 않습니다.
+          // applyRecommendation()이 전달한 수분량·믹싱시간을 그대로 유지합니다.
+          // 지연제 사용 여부는 작업일지에서 재계산하지 않고 대시보드 추천값을 따릅니다.
+          const useRetarder = cycle.dataset.retarder === 'true' || (cycle.dataset.retarder == null && risk > 10);
+          const select = row?.querySelector('select');
+          if (select) select.value = useRetarder ? '사용' : '미사용';
+          if (useRetarder) usedRounds.push((cycle.dataset.cycle || Math.floor(index / 3) + 1) + '사이클 ' + (cycle.dataset.round || (index % 3 + 1)) + '차');
+          const note = cycle.querySelector('.cycle-note input');
+          if (note && !note.value) {
+            note.value = useRetarder
+              ? '호퍼 대기 ' + wait + '분으로 지연제 사용. 믹싱 후 즉시 이송하고 유량계 상태를 확인함.'
+              : wait > 0
+                ? '호퍼 대기 ' + wait + '분, 지연제 미사용. 기준 시간 내 이송 완료.'
+                : '대기 없이 이송 완료. 수분량과 믹싱 상태 정상.';
+          }
+        });
+        const overall = worklog.querySelector('textarea');
+        if (overall && !overall.value) {
+          overall.value = usedRounds.length
+            ? usedRounds.join(' · ') + '에 지연제를 사용했습니다.'
+            : '전체 사이클·차수에서 지연제를 사용하지 않았습니다.';
+        }
+      }
+
+      approve.addEventListener('click', () => {
+        setTimeout(() => {
+          fillFieldData();
+          document.getElementById('worklog').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          worklog.querySelector('.worklog-table input')?.focus({ preventScroll: true });
+        }, 550);
+      });
+
+      document.getElementById('dashboardJob')?.addEventListener('change', () => setTimeout(fillFieldData, 30));
+    })();
+  </script>
+  <style>
+    .worklog-table .log-head,
+    .worklog-table .log-row { grid-template-columns: .6fr .8fr 1fr 1fr .8fr .8fr; }
+    .worklog-table .log-row input:nth-of-type(3) { min-width: 0; }
+  </style>
+  <script>
+    (() => {
+      function syncWorklogWaitColumn() {
+        document.querySelectorAll('.worklog-table').forEach(table => {
+          const head = table.querySelector('.log-head');
+          if (head && head.children.length === 5) {
+            const waitHead = document.createElement('span');
+            waitHead.textContent = '호퍼 대기시간';
+            head.insertBefore(waitHead, head.lastElementChild);
+          }
+          table.querySelectorAll('.log-cycle').forEach(cycle => {
+            const row = cycle.querySelector('.log-row');
+            if (!row || row.querySelector('input[data-wait-input]')) return;
+            const wait = document.createElement('input');
+            wait.dataset.waitInput = 'true';
+            wait.value = (Number(cycle.dataset.wait) || 0) + ' 분';
+            row.insertBefore(wait, row.querySelector('select'));
+          });
+          table.querySelectorAll('.log-row').forEach((row, index) => {
+            if (row.querySelector('input[data-wait-input]')) return;
+            const waits = [12, 6, 0, 6, 0];
+            const wait = document.createElement('input');
+            wait.dataset.waitInput = 'true';
+            wait.value = (waits[index] ?? 0) + ' 분';
+            row.insertBefore(wait, row.querySelector('select'));
+          });
+        });
+      }
+      syncWorklogWaitColumn();
+      document.addEventListener('input', event => {
+        const input = event.target;
+        if (!input.matches('.log-row input[data-wait-input]')) return;
+        const cycle = input.closest('.log-cycle');
+        if (cycle) cycle.dataset.wait = String(Number(input.value.replace(/[^\d.]/g, '')) || 0);
+      });
+      document.getElementById('approve')?.addEventListener('click', () => setTimeout(syncWorklogWaitColumn, 650));
+    })();
+  </script>
+  <script>
+    (() => {
+      // 실제 작업 중 발생한 예시 상황: 래들 바닥 1사이클 2차에서 호퍼 배출 게이트 점검으로 이송이 지연된 경우
+      function applyFieldScenario() {
+        const job = document.querySelector('#worklog .form-grid select')?.value;
+        if (job !== '래들 바닥') return;
+        const target = document.querySelector('#worklog .log-cycle[data-cycle="1"][data-round="2"]');
+        if (!target) return;
+        target.dataset.wait = '9';
+        target.dataset.risk = '12';
+        target.dataset.retarder = 'true';
+        const select = target.querySelector('select');
+        if (select) select.value = '사용';
+        const note = target.querySelector('.cycle-note input');
+        if (note && (!note.value || note.value.includes('기준 시간 내'))) {
+          note.value = '호퍼 배출 게이트 점검으로 이송이 4분 지연됨. 호퍼 대기 9분 후 지연제 사용.';
+        }
+        const overall = document.querySelector('#worklog textarea');
+        if (overall && (!overall.value || overall.value.includes('전체 사이클'))) {
+          overall.value = '1사이클 2차에서 호퍼 배출 게이트 점검으로 이송이 지연되어 지연제를 사용했습니다.';
+        }
+      }
+      document.getElementById('approve')?.addEventListener('click', () => setTimeout(applyFieldScenario, 700));
+      document.getElementById('dashboardJob')?.addEventListener('change', () => setTimeout(applyFieldScenario, 120));
+      window.addEventListener('hashchange', () => setTimeout(applyFieldScenario, 120));
+    })();
+  </script>
+  <script>
+    // 화면은 학습 데이터가 없어도 운영 시스템의 연결 상태를 먼저 확인합니다.
+    // 실제 AI 학습은 별도 모델이 배포된 뒤 이 상태에서 활성화됩니다.
+    (() => {
+      const status = document.querySelector('.site-status');
+      if (!status || location.protocol === 'file:') return;
+      fetch('/system/status', { headers: { Accept: 'application/json' } })
+        .then(response => { if (!response.ok) throw new Error('status'); return response.json(); })
+        .then(data => { status.textContent = data.system_status === 'ready' ? '운영 시스템 연결 정상' : '운영 시스템 준비 중'; })
+        .catch(() => { status.textContent = '운영 시스템 연결 대기'; });
+    })();
+  </script>
+  <script>
+    // 저장 결과가 확정되면 작업일지에서 배합 이력 화면으로 자동 이동합니다.
+    (() => {
+      const saveButton = document.getElementById('saveLog');
+      if (!saveButton) return;
+      saveButton.addEventListener('click', () => {
+        const startedAt = Date.now();
+        const timer = setInterval(() => {
+          const state = document.getElementById('logState')?.textContent || '';
+          if (state.includes('저장 완료')) {
+            clearInterval(timer);
+            setTimeout(() => {
+              location.hash = 'history';
+              location.reload();
+            }, 120);
+          } else if (Date.now() - startedAt > 6000) {
+            clearInterval(timer);
+          }
+        }, 100);
+      });
+    })();
+  </script>
+  <script>
+    // 업로드 패널은 화면 전환 시에도 항상 준비되도록 보강합니다.
+    (() => {
+      const install = () => {
+        const learning = document.querySelector('#learning');
+        const hero = learning?.querySelector('.hero');
+        if (!learning || !hero) return;
+        const cleanUnapprovedItems = () => {
+          learning.querySelectorAll('.learn-list .learn-item').forEach((item) => {
+            const text = item.textContent;
+            const legacyUpload = text.includes('현장 업로드 이미지') && item.dataset.learningApproved !== 'true';
+            const legacyApproved = text.includes('학습 반영 완료') && text.includes('AI 사전 추천');
+            if (legacyUpload || legacyApproved) item.remove();
+          });
+        };
+        cleanUnapprovedItems();
+        // 기존 삭제 테스트 항목은 한 번 복구한 뒤, 이후 새 삭제 동작은 그대로 유지한다.
+        if (localStorage.getItem('aiSmartMixingLearningRestoreV1') !== '1') {
+          localStorage.removeItem('aiSmartMixingDeletedLearning');
+          localStorage.setItem('aiSmartMixingLearningRestoreV1', '1');
+        }
+        const deletedLearning = new Set(JSON.parse(localStorage.getItem('aiSmartMixingDeletedLearning') || '[]'));
+        learning.querySelectorAll('.learn-list .learn-item').forEach((item) => {
+          if (item.dataset.learningData === 'true') return;
+          const title = item.querySelector('.learn-title b')?.textContent.trim() || '';
+          if (deletedLearning.has(title)) { item.remove(); return; }
+          const titleBar = item.querySelector('.learn-title');
+          if (!titleBar || titleBar.querySelector('.learning-delete')) return;
+          const deleteButton = document.createElement('span');
+          deleteButton.className = 'learning-delete';
+          deleteButton.setAttribute('role', 'button');
+          deleteButton.setAttribute('tabindex', '0');
+          deleteButton.textContent = '삭제';
+          deleteButton.title = '학습 데이터 삭제';
+          const dateLabel = titleBar.querySelector('span');
+          dateLabel?.insertAdjacentElement('afterend', deleteButton);
+          const deleteItem = (event) => {
+            event.stopPropagation();
+            const nextDeleted = new Set(JSON.parse(localStorage.getItem('aiSmartMixingDeletedLearning') || '[]'));
+            nextDeleted.add(title);
+            localStorage.setItem('aiSmartMixingDeletedLearning', JSON.stringify([...nextDeleted]));
+            item.remove();
+          };
+          deleteButton.addEventListener('click', deleteItem);
+          deleteButton.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') deleteItem(event); });
+        });
+        const learningList = learning.querySelector('.learn-list');
+        if (learningList && learningList.dataset.guardAttached !== 'true') {
+          learningList.dataset.guardAttached = 'true';
+          new MutationObserver(cleanUnapprovedItems).observe(learningList, {childList: true});
+        }
+        if (learning.querySelector('#learningPhotoInput')) return;
+        const panel = document.createElement('section');
+        panel.className = 'panel learning-upload-panel';
+        panel.innerHTML = `
+          <div class="panel-head"><div><h2>현장 사진 업로드</h2><p>급속 경화 의심 사진을 등록해 AI 분석 대상 여부를 먼저 확인합니다.</p></div><span class="badge">JPG · PNG</span></div>
+          <div class="panel-body"><div class="photo-upload">
+            <label for="learningPhotoInput">사진 파일 선택</label>
+            <input id="learningPhotoInput" type="file" accept="image/png,image/jpeg,image/webp">
+            <div id="learningPhotoName" class="file-name">선택된 파일이 없습니다.</div>
+            <div class="photo-preview-box"><div id="learningPhotoEmpty" class="photo-preview-empty">사진을 선택하면<br>여기에 미리 보입니다.</div><img id="learningPhotoPreview" class="photo-upload-preview" alt="업로드 사진 미리보기"></div>
+            <div class="upload-fields"><select id="photoJob"><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option><option>승온 버너</option></select><select id="photoCycle"><option>1사이클</option><option>2사이클</option><option>3사이클</option></select><select id="photoRound"><option>1차</option><option>2차</option><option>3차</option></select></div>
+            <button id="loadDemoPhoto" class="button secondary" type="button">공개 데모 사진 불러오기</button>
+          <button id="addLearningPhoto" class="button" type="button">AI 분석 시작</button>
+          <div id="photoUploadMessage" class="upload-message">사진을 분석한 뒤 결과를 확인하고 학습 반영 여부를 선택합니다.</div>
+          </div></div>`;
+        hero.insertAdjacentElement('afterend', panel);
+        const input = panel.querySelector('#learningPhotoInput');
+        const preview = panel.querySelector('#learningPhotoPreview');
+        const empty = panel.querySelector('#learningPhotoEmpty');
+        const name = panel.querySelector('#learningPhotoName');
+        input.addEventListener('change', () => {
+          const file = input.files?.[0];
+          if (!file) return;
+          window.aiSmartMixingSelectedPreview = URL.createObjectURL(file);
+          preview.src = window.aiSmartMixingSelectedPreview;
+          preview.style.display = 'block';
+          empty.style.display = 'none';
+          name.textContent = `선택된 파일: ${file.name}`;
+        });
+        panel.querySelector('#loadDemoPhoto').addEventListener('click', async () => {
+          try {
+            const response = await fetch('/demo-image');
+            if (!response.ok) throw new Error('공개 데모 사진을 불러오지 못했습니다.');
+            const blob = await response.blob();
+            const file = new File([blob], 'refractory-bricks-lining-demo.jpg', {type: blob.type || 'image/jpeg'});
+            window.aiSmartMixingDemoFile = file;
+            window.aiSmartMixingSelectedPreview = URL.createObjectURL(blob);
+            preview.src = window.aiSmartMixingSelectedPreview;
+            preview.style.display = 'block';
+            empty.style.display = 'none';
+            name.textContent = '공개 데모 사진 선택됨';
+          } catch (error) {
+            name.textContent = error.message;
+          }
+        });
+        panel.querySelector('#addLearningPhoto').addEventListener('click', async (event) => {
+          event.stopImmediatePropagation();
+          const localFile = input.files?.[0] || null;
+          const file = localFile || window.aiSmartMixingDemoFile;
+          if (!file) {
+            name.textContent = '먼저 현장 사진 파일을 선택하세요.';
+            return;
+          }
+          const button = event.currentTarget;
+          const message = panel.querySelector('#photoUploadMessage');
+
+          // 직접 선택한 사진은 경화·균열 점수 분석 없이, 내화물 사진 적합성만 먼저 확인합니다.
+          if (localFile) {
+            const job = panel.querySelector('#photoJob').value;
+            const cycle = panel.querySelector('#photoCycle').value;
+            const round = panel.querySelector('#photoRound').value;
+            button.disabled = true;
+            message.style.display = 'block';
+            message.style.color = '#2871af';
+            message.textContent = 'AI 분석 중입니다. 경화·균열 의심도를 계산합니다.';
+            let scopeApproved = false;
+            try {
+              const body = new FormData();
+              body.append('file', localFile, localFile.name);
+              const analysisUrl = window.location.port === '8765' ? 'http://127.0.0.1:8000/analyze' : '/analyze';
+              const response = await fetch(analysisUrl, {method: 'POST', body});
+              const review = response.ok ? await response.json() : {};
+              const feature = review.feature_summary || {};
+              const documentLike = Number(feature.bright_ratio) >= 0.45 && Number(feature.edge_density) <= 0.14;
+              scopeApproved = review.image_scope === true && !documentLike;
+              window.aiSmartMixingLastAnalysis = review;
+            } catch (error) {
+              scopeApproved = false;
+            }
+            const recommendationTitle = scopeApproved ? 'AI 추천 · 학습 후보' : '부적합 · 학습 제외 권고';
+            const recommendationBody = scopeApproved
+              ? '내화물 작업면 사진으로 확인되었습니다. 작업자가 승인하면 학습 데이터에 반영됩니다.'
+              : '내화물 작업면으로 확인되지 않았습니다. 학습 반영을 막고 사진 제외 또는 재업로드를 권고합니다.';
+            const reviewActions = scopeApproved
+              ? '<button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button>'
+              : '<button type="button" class="button secondary" data-learning-reject>사진 제외</button>';
+            const item = document.createElement('div');
+            item.className = 'learn-item open';
+            item.dataset.learningData = 'true';
+            const now = new Date();
+            const learningDate = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
+            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 검토 이미지</b><span>${learningDate} · 접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="${scopeApproved ? 'green' : 'red'} review-status">${recommendationTitle}</b></div></div><div class="improve"><b>AI 사전 적합성 확인</b><br>${recommendationBody}<div class="learning-review-actions">${reviewActions}</div></div></div></div></div>`;
+            const actualHardening = Number(window.aiSmartMixingLastAnalysis?.hardening_score);
+            const actualCrack = Number(window.aiSmartMixingLastAnalysis?.crack_score);
+            if (scopeApproved && Number.isFinite(actualHardening) && Number.isFinite(actualCrack)) {
+              const actualPanel = document.createElement('div');
+              actualPanel.className = 'improve ai-real-analysis';
+              actualPanel.innerHTML = `<b>AI 이미지 분석 결과</b><br>경화 의심도 ${actualHardening}% · 균열 의심도 ${actualCrack}%<br>${window.aiSmartMixingLastAnalysis.improvement_note || ''}`;
+              item.querySelector('.learn-detail > .image-layout > div').append(actualPanel);
+            }
+            item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
+            item.querySelector('.learn-title').dataset.statusDate = learningDate;
+            item.querySelector('.learn-title').addEventListener('click', () => {
+              item.classList.toggle('open');
+              item.querySelector('.learn-title span').textContent = `${learningDate} · ${item.classList.contains('open') ? '접기' : '펼치기'}`;
+            });
+            const titleDelete = document.createElement('span');
+            titleDelete.className = 'learning-delete';
+            titleDelete.setAttribute('role', 'button');
+            titleDelete.setAttribute('tabindex', '0');
+            titleDelete.textContent = '삭제';
+            titleDelete.title = '학습 데이터 삭제';
+            item.querySelector('.learn-title').append(titleDelete);
+            titleDelete.addEventListener('click', async (deleteEvent) => {
+              deleteEvent.stopPropagation();
+              if (!item.dataset.learningRecordId) { item.remove(); message.textContent = '학습 데이터에서 제외했습니다.'; return; }
+              titleDelete.textContent = '삭제 중';
+              try {
+                const deleteUrl = window.location.port === '8765' ? `http://127.0.0.1:8000/learning-images/${item.dataset.learningRecordId}` : `/learning-images/${item.dataset.learningRecordId}`;
+                const deleteResponse = await fetch(deleteUrl, {method: 'DELETE'});
+                if (!deleteResponse.ok) throw new Error('저장된 학습 데이터를 삭제하지 못했습니다.');
+                item.remove();
+                message.textContent = '학습 데이터가 삭제되었습니다.';
+              } catch (error) { titleDelete.textContent = '삭제'; message.textContent = `삭제 실패: ${error.message}`; }
+            });
+            item.querySelector('[data-learning-approve]')?.addEventListener('click', async (approveEvent) => {
+              approveEvent.stopPropagation();
+              const approveButton = approveEvent.currentTarget;
+              approveButton.disabled = true;
+              message.textContent = '학습 이미지와 분석 결과를 저장하는 중입니다.';
+              try {
+                const saveBody = new FormData();
                 saveBody.append('file', localFile, localFile.name);
                 saveBody.append('job_name', job);
                 saveBody.append('cycle', cycle);
