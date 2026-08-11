@@ -1549,6 +1549,9 @@ d && !document.getElementById('detailWorker')) {
             });
             learning.querySelector('.learn-list').prepend(item);
             if (window.aiSmartMixingCountNewLearning) window.aiSmartMixingCountNewLearning();
+            const savedLocalRecords = JSON.parse(localStorage.getItem('aiSmartMixingLocalLearning') || '[]');
+            savedLocalRecords.unshift({ id: `local-${Date.now()}`, job, cycle, round, fileName: file.name, approvedAt: new Date().toISOString() });
+            localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(savedLocalRecords.slice(0, 50)));
             message.style.color = '#108b65';
             message.textContent = `AI 판정 완료 · 경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%`;
             name.textContent = `등록 완료: ${file.name}`;
@@ -1599,7 +1602,8 @@ d && !document.getElementById('detailWorker')) {
       const baseLearningCount = 3;
       const approvedCountKey = 'aiSmartMixingApprovedLearningCount';
       function approvedLearningCount() {
-        return Math.max(0, Number(localStorage.getItem(approvedCountKey) || 0));
+        const records = JSON.parse(localStorage.getItem('aiSmartMixingLocalLearning') || '[]');
+        return records.length;
       }
       function updateLearningCount() {
         const total = baseLearningCount + approvedLearningCount();
@@ -1614,10 +1618,37 @@ d && !document.getElementById('detailWorker')) {
         });
       }
       window.aiSmartMixingCountNewLearning = function () {
-        localStorage.setItem(approvedCountKey, String(approvedLearningCount() + 1));
         updateLearningCount();
       };
+      function restoreLocalLearning() {
+        const records = JSON.parse(localStorage.getItem('aiSmartMixingLocalLearning') || '[]');
+        records.slice().reverse().forEach((record) => {
+          if (!record.id || list.querySelector(`[data-local-learning-id="${record.id}"]`)) return;
+          const item = document.createElement('div');
+          item.className = 'learn-item';
+          item.dataset.learningData = 'true';
+          item.dataset.localLearningId = record.id;
+          const savedDate = record.approvedAt ? new Date(record.approvedAt) : new Date();
+          const dateText = `${savedDate.getFullYear()}.${String(savedDate.getMonth() + 1).padStart(2, '0')}.${String(savedDate.getDate()).padStart(2, '0')}`;
+          item.innerHTML = `<button class="learn-title" type="button"><b>${record.job || '래들 벽체'} · ${record.cycle || '1사이클'} ${record.round || '1차'} · 등록 학습 이미지</b><span>${dateText} · 펼치기</span><span class="learning-delete" role="button" tabindex="0">삭제</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" src="learning-ladle-wall.jpg" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${record.job || '래들 벽체'}</b></div><div class="detail"><small>사이클 · 차수</small><b>${record.cycle || '1사이클'} · ${record.round || '1차'}</b></div><div class="detail"><small>분석 상태</small><b class="green">학습 반영 완료</b></div></div><div class="improve"><b>처리 결과</b><br>등록된 학습 데이터로 저장되었습니다.</div></div></div></div>`;
+          const title = item.querySelector('.learn-title');
+          const remove = () => {
+            const next = JSON.parse(localStorage.getItem('aiSmartMixingLocalLearning') || '[]').filter((entry) => entry.id !== record.id);
+            localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(next));
+            item.remove();
+            updateLearningCount();
+          };
+          title.addEventListener('click', (event) => {
+            if (event.target.classList.contains('learning-delete')) return;
+            item.classList.toggle('open');
+            title.querySelector('span:not(.learning-delete)').textContent = `${dateText} · ${item.classList.contains('open') ? '접기' : '펼치기'}`;
+          });
+          item.querySelector('.learning-delete').addEventListener('click', (event) => { event.stopPropagation(); remove(); });
+          list.prepend(item);
+        });
+      }
       updateLearningCount();
+      restoreLocalLearning();
       document.querySelectorAll('#learning .detail').forEach((el) => {
         const label = el.querySelector('small');
         if (label && label.textContent.includes('학습 이미지')) { label.textContent = '등록 데이터'; const value = el.querySelector('b'); if (value) value.textContent = '3건'; }
@@ -1666,7 +1697,8 @@ d && !document.getElementById('detailWorker')) {
         item.querySelector('[data-learning-reject]').addEventListener('click', (event) => {
           event.stopPropagation();
           item.remove();
-          if (message) { message.style.display = 'block'; message.style.color = '#b04747'; message.textContent = '학습 데이터에서 제외했습니다.'; }
+          if (message) { message.style.display = 'block'; message.style.color = '#b04747'; message.textContent = '학습 데이터에서 제외했습니다.
+'; }
         });
         list.prepend(item);
         if (message) { message.style.display = 'block'; message.style.color = '#108b65'; message.textContent = 'AI 분석 완료 · 학습 후보가 등록되었습니다.'; }
