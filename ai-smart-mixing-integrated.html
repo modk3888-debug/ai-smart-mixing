@@ -1547,13 +1547,13 @@
               item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
             });
             learning.querySelector('.learn-list').prepend(item);
-            if (window.aiSmartMixingCountNewLearning) window.aiSmartMixingCountNewLearning();
             const savedLocalRecords = JSON.parse(localStorage.getItem('aiSmartMixingLocalLearning') || '[]');
             const newLocalRecord = { id: `local-${Date.now()}`, job, cycle, round, fileName: file.name, approvedAt: new Date().toISOString() };
             const newRecordKey = [job, cycle, round, file.name, newLocalRecord.approvedAt.slice(0, 10)].join('|');
             const alreadySaved = savedLocalRecords.some((record) => [record.job || '', record.cycle || '', record.round || '', record.fileName || '', String(record.approvedAt || '').slice(0, 10)].join('|') === newRecordKey);
             if (!alreadySaved) savedLocalRecords.unshift(newLocalRecord);
             localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(savedLocalRecords.slice(0, 50)));
+            if (window.aiSmartMixingCountNewLearning) window.aiSmartMixingCountNewLearning();
             message.style.color = '#108b65';
             message.textContent = `AI 판정 완료 · 경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%`;
             name.textContent = `등록 완료: ${file.name}`;
