@@ -1493,11 +1493,11 @@
                 if (!exists) localLearning.unshift({ id: `local-${Date.now()}`, job, cycle, round, fileName: localFile.name, approvedAt, label: 'normal' });
                 localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(localLearning.slice(0, 50)));
               }
-              item.querySelector('.review-status').textContent = '학습 반영 완료';
+              item.querySelector('.review-status').textContent = '정상 기준 데이터 반영 완료';
               item.querySelector('.review-status').className = 'green review-status';
               item.querySelector('.learning-review-actions').remove();
               message.textContent = item.dataset.learningStorage === 'local'
-                ? '학습 반영 완료 · 현재 데모 화면에 적용되었습니다.'
+                ? '정상 기준 데이터로 반영했습니다.'
                 : '저장 완료 · 이미지와 분석 결과가 학습 데이터에 반영되었습니다.';
             });
             item.querySelector('[data-learning-reject]').addEventListener('click', (rejectEvent) => {
