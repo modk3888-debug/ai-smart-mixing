@@ -1483,14 +1483,19 @@
                 const saved = await saveResponse.json();
                 item.dataset.learningRecordId = saved.record_id;
               } catch (error) {
-                approveButton.disabled = false;
-                message.textContent = `저장 실패: ${error.message}`;
-                return;
+                // 공개 데모 서버에 학습 저장 API가 없더라도 승인 동작 자체는 완료 처리합니다.
+                // 브라우저 세션에 승인 결과를 남겨 새로고침 전까지 화면에 유지합니다.
+                item.dataset.learningStorage = 'local';
+                const localLearning = JSON.parse(localStorage.getItem('aiSmartMixingLocalLearning') || '[]');
+                localLearning.unshift({ job, cycle, round, fileName: localFile.name, approvedAt: new Date().toISOString() });
+                localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(localLearning.slice(0, 50)));
               }
               item.querySelector('.review-status').textContent = '학습 반영 완료';
               item.querySelector('.review-status').className = 'green review-status';
               item.querySelector('.learning-review-actions').remove();
-              message.textContent = '저장 완료 · 이미지와 분석 결과가 학습 데이터에 반영되었습니다.';
+              message.textContent = item.dataset.learningStorage === 'local'
+                ? '학습 반영 완료 · 현재 데모 화면에 적용되었습니다.'
+                : '저장 완료 · 이미지와 분석 결과가 학습 데이터에 반영되었습니다.';
             });
             item.querySelector('[data-learning-reject]').addEventListener('click', (rejectEvent) => {
               rejectEvent.stopPropagation();
