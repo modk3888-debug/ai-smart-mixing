@@ -1780,9 +1780,9 @@
         const use=risk>10;
         const result=row.querySelector('span:nth-child(6)');
         if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
-        const mix=row.querySelector('span:nth-child(4));
+        const mix=row.querySelector('span:nth-child(4)');
         if(mix) mix.textContent=(rec.mixing_minutes||5)+'분';
-        const water=row.querySelector('span:nth-child(3));
+        const water=row.querySelector('span:nth-child(3)');
         if(water) water.textContent=fmt(rec.recommended_water_l||26)+'L';
         return risk;
       });
