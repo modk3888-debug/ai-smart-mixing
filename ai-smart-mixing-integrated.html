@@ -1754,5 +1754,54 @@
       });
     })();
   </script>
+
+<script id="live-sensor-recommendation">
+(function(){
+  const dashboard=document.getElementById('dashboard');
+  if(!dashboard) return;
+  const rows=[...dashboard.querySelectorAll('.cycle-row')];
+  const offsets=[2,1,-2,1,-2];
+  const fmt=(n)=>Number(n).toFixed(1);
+  function setText(sel,value){const el=dashboard.querySelector(sel);if(el)el.textContent=value;}
+  async function refreshSensor(){
+    try{
+      const response=await fetch('/sensor-state',{cache:'no-store'});
+      if(!response.ok) throw new Error('sensor unavailable');
+      const data=await response.json();
+      const rec=data.recommendation||{};
+      const temp=Number(data.temperature), humidity=Number(data.humidity);
+      setText('.info:nth-child(2) b',fmt(temp)+'℃ · '+fmt(humidity)+'%');
+      setText('.info:nth-child(2) span',(data.source==='demo-sensor'?'데모 센서 스트림':'PLC 센서')+' · 방금 갱신');
+      setText('.info:nth-child(3) b',fmt(Number(rec.recommended_water_l||26)*5)+'L');
+      setText('.sensor-grid .sensor:nth-child(1) b',fmt(temp)+'℃');
+      setText('.sensor-grid .sensor:nth-child(2) b',fmt(humidity)+'%');
+      const calculated=rows.map((row,index)=>{
+        const risk=Math.max(5,Math.min(30,Math.round(Number(rec.risk||8)+(offsets[index]||0))));
+        const use=risk>10;
+        const result=row.querySelector('span:nth-child(6)');
+        if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
+        const mix=row.querySelector('span:nth-child(4));
+        if(mix) mix.textContent=(rec.mixing_minutes||5)+'분';
+        const water=row.querySelector('span:nth-child(3));
+        if(water) water.textContent=fmt(rec.recommended_water_l||26)+'L';
+        return risk;
+      });
+      const maxRisk=Math.max(...calculated);
+      setText('.summary-card:nth-child(4) b',maxRisk+'%');
+      setText('.action-bar b','● 센서값 반영 완료');
+      const action=dashboard.querySelector('.action-bar div');
+      if(action) action.innerHTML='<b>● 센서값 반영 완료</b>'+(maxRisk>10?'위험도 10% 초과 회차는 지연제 사용 조건으로 자동 변경되었습니다.':'현재 환경 기준 위험도 10% 이하입니다. 지연제는 미사용 조건입니다.');
+      const status=document.querySelector('.site-status');
+      if(status) status.textContent=data.source==='demo-sensor'?'센서 데모 연동 · 자동 갱신':'PLC 센서 연동 · 자동 갱신';
+    }catch(error){
+      const status=document.querySelector('.site-status');
+      if(status) status.textContent='센서 연결 대기';
+    }
+  }
+  refreshSensor();
+  window.setInterval(refreshSensor,5000);
+})();
+</script>
+
 </body>
 </html>
