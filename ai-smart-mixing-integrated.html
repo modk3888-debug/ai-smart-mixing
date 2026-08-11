@@ -1487,7 +1487,10 @@
                 // 브라우저 세션에 승인 결과를 남겨 새로고침 전까지 화면에 유지합니다.
                 item.dataset.learningStorage = 'local';
                 const localLearning = JSON.parse(localStorage.getItem('aiSmartMixingLocalLearning') || '[]');
-                localLearning.unshift({ job, cycle, round, fileName: localFile.name, approvedAt: new Date().toISOString() });
+                const approvedAt = new Date().toISOString();
+                const localKey = [job, cycle, round, localFile.name, approvedAt.slice(0, 10)].join('|');
+                const exists = localLearning.some((record) => [record.job || '', record.cycle || '', record.round || '', record.fileName || '', String(record.approvedAt || '').slice(0, 10)].join('|') === localKey);
+                if (!exists) localLearning.unshift({ id: `local-${Date.now()}`, job, cycle, round, fileName: localFile.name, approvedAt });
                 localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(localLearning.slice(0, 50)));
               }
               item.querySelector('.review-status').textContent = '학습 반영 완료';
@@ -1546,7 +1549,10 @@
             learning.querySelector('.learn-list').prepend(item);
             if (window.aiSmartMixingCountNewLearning) window.aiSmartMixingCountNewLearning();
             const savedLocalRecords = JSON.parse(localStorage.getItem('aiSmartMixingLocalLearning') || '[]');
-            savedLocalRecords.unshift({ id: `local-${Date.now()}`, job, cycle, round, fileName: file.name, approvedAt: new Date().toISOString() });
+            const newLocalRecord = { id: `local-${Date.now()}`, job, cycle, round, fileName: file.name, approvedAt: new Date().toISOString() };
+            const newRecordKey = [job, cycle, round, file.name, newLocalRecord.approvedAt.slice(0, 10)].join('|');
+            const alreadySaved = savedLocalRecords.some((record) => [record.job || '', record.cycle || '', record.round || '', record.fileName || '', String(record.approvedAt || '').slice(0, 10)].join('|') === newRecordKey);
+            if (!alreadySaved) savedLocalRecords.unshift(newLocalRecord);
             localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(savedLocalRecords.slice(0, 50)));
             message.style.color = '#108b65';
             message.textContent = `AI 판정 완료 · 경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%`;
@@ -1617,7 +1623,16 @@
         updateLearningCount();
       };
       function restoreLocalLearning() {
-        const records = JSON.parse(localStorage.getItem('aiSmartMixingLocalLearning') || '[]');
+        const rawRecords = JSON.parse(localStorage.getItem('aiSmartMixingLocalLearning') || '[]');
+        const seenRecords = new Set();
+        const records = rawRecords.filter((record) => {
+          const day = record.approvedAt ? String(record.approvedAt).slice(0, 10) : '';
+          const key = [record.job || '', record.cycle || '', record.round || '', record.fileName || '', day].join('|');
+          if (seenRecords.has(key)) return false;
+          seenRecords.add(key);
+          return true;
+        });
+        if (records.length !== rawRecords.length) localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(records));
         let recordsChanged = false;
         records.forEach((record, index) => {
           if (!record.id) { record.id = `legacy-${record.approvedAt || Date.now()}-${index}`; recordsChanged = true; }
