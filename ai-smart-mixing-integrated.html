@@ -7,7 +7,6 @@
   <style>
     :root{--navy:#102f55;--blue:#176fc6;--ink:#172d47;--muted:#6b8198;--line:#dbe6ef;--bg:#f3f7fb;--green:#108b65;--orange:#df7a1f;--red:#ca4858;--purple:#6652d7}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 92% 0,#e0f3ff 0,transparent 25%),var(--bg);color:var(--ink);font-family:Arial,"Malgun Gothic",sans-serif}.app-header{height:76px;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);box-shadow:0 4px 17px rgba(13,45,78,.06);display:flex;align-items:center;gap:38px;padding:0 max(24px,4vw);position:sticky;top:0;z-index:9;backdrop-filter:blur(10px)}.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;white-space:nowrap}.brand:before{content:"AI";display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#168ce2,#6650d7);color:#fff;font-size:10px;box-shadow:0 6px 13px #2467c735}.brand small{font-size:10px;color:#7790a8;letter-spacing:1px}nav{height:100%;display:flex;align-items:center;gap:5px;overflow:auto}nav button{height:43px;padding:0 14px;background:transparent;border:1px solid transparent;border-radius:7px;color:#63778d;font:inherit;font-size:13px;white-space:nowrap;cursor:pointer}nav button:hover{background:#f0f7ff;color:#1265b5;border-color:#dbeaff}nav button.active{background:linear-gradient(135deg,#176fca,#6449dc);color:#fff;font-weight:800;box-shadow:0 6px 13px #2d61c530}.site-status{margin-left:auto;color:var(--green);font-size:12px;font-weight:800;white-space:nowrap}.site-status:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#36c998;margin-right:6px;box-shadow:0 0 0 4px #36c99820}main{width:min(1280px,94vw);margin:28px auto 60px}.screen{display:none}.screen.active{display:block}.hero{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:19px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.7px;color:#2177be}.hero h1{font-size:31px;letter-spacing:-1.4px;margin:6px 0}.hero p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}.timestamp{padding:10px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:11px;color:var(--muted);text-align:right}.timestamp b{display:block;color:var(--ink);margin-top:3px}.grid{display:grid;grid-template-columns:1.45fr .8fr;gap:17px}.panel{background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 24px rgba(18,62,91,.07);overflow:hidden}.panel-head{padding:16px 18px;border-bottom:1px solid #e6eef4;display:flex;justify-content:space-between;align-items:center;gap:12px}.panel-head h2{font-size:17px;margin:0}.panel-head p{margin:4px 0 0;font-size:12px;color:var(--muted)}.panel-body{padding:17px 18px}.badge{padding:6px 8px;border-radius:7px;background:#eaf5ff;color:#1766af;font-size:11px;font-weight:800;white-space:nowrap}.summary{display:grid;grid-template-columns:1.25fr repeat(4,.75fr);gap:11px;margin-bottom:17px}.summary-card{padding:14px;border:1px solid var(--line);border-radius:13px;background:#fff;min-height:82px}.summary-card small{display:block;color:var(--muted);font-size:11px;margin-bottom:7px}.summary-card b{font-size:19px}.summary-card.main{background:linear-gradient(135deg,#12395f,#1d73bd);border:0;color:#fff}.summary-card.main small{color:#cbe8ff}.green{color:var(--green)}.red{color:var(--red)}.flow{display:flex;gap:7px;align-items:center;overflow:auto}.flow-step{min-width:132px;padding:11px;border:1px solid #e0eaf2;border-radius:10px;background:#fbfdff}.flow-step small{display:block;color:#7890a7;font-size:10px;font-weight:800;margin-bottom:4px}.flow-step b{font-size:12px}.flow-step.done{background:#f0fbf7;border-color:#c2ebda}.flow-step.active{background:#eaf5ff;border-color:#83bbe8}.arrow{color:#98afc2}.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.info{padding:12px;border:1px solid #e1ebf3;border-radius:10px;background:#fafcff}.info small{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}.info b{font-size:15px}.cycles{margin-top:14px;border:1px solid var(--line);border-radius:11px;overflow:hidden}.cycle-head,.cycle-row{display:grid;grid-template-columns:.58fr .8fr .9fr .8fr .8fr 1.15fr;gap:7px;align-items:center;padding:11px}.cycle-head{background:#eff5fa;color:#698098;font-size:10px;font-weight:800}.cycle-row{border-top:1px solid #e6edf3;font-size:12px}.cycle-row.current{background:#f4faff;border-left:3px solid var(--blue);padding-left:8px}.pill{display:inline-block;padding:4px 7px;border-radius:6px;font-size:10px;font-weight:800}.pill.use{background:#e9f3ff;color:#1265ae}.pill.no{background:#f0f3f6;color:#63778c}.risk-high{color:var(--red);font-weight:800}.risk-low{color:var(--green);font-weight:800}.action-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:15px;padding:13px;border-radius:10px;background:#fff7ee;color:#755229;font-size:12px;line-height:1.55}.action-bar b{display:block;color:#493d2c}.button{border:0;border-radius:8px;padding:11px 13px;background:var(--blue);color:#fff;font:inherit;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 5px 12px #176fc626}.button.secondary{background:#edf5ff;color:#1762a8;box-shadow:none}.button:disabled{background:#a5bbce;cursor:not-allowed}.side{display:grid;gap:17px}.sensor-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.sensor{padding:12px;border-radius:10px;border:1px solid #e1ebf4;background:#fafcff}.sensor small{display:block;color:var(--muted);font-size:10px;margin-bottom:7px}.sensor b{font-size:17px}.sensor em{float:right;color:var(--green);font-size:10px;font-weight:800;font-style:normal}.guard-note{padding:11px;background:#fff6ec;border-radius:9px;color:#74532f;font-size:12px;line-height:1.6}.check{margin-top:7px;padding:8px 9px;border-radius:8px;background:#f8fbff;font-size:12px}.check:before{content:"✓";display:inline-grid;place-items:center;width:17px;height:17px;margin-right:7px;border-radius:50%;background:#ddf5eb;color:var(--green);font-size:11px;font-weight:800}.event{padding:11px 0 11px 19px;border-bottom:1px dashed #dce7ef;position:relative}.event:before{content:"";width:8px;height:8px;border-radius:50%;background:#3b91d5;position:absolute;left:1px;top:17px}.event:last-child{border-bottom:0}.event time{display:block;color:#7890a7;font-size:10px;margin-bottom:3px}.event b{font-size:12px;display:block}.event span{color:var(--muted);font-size:11px;line-height:1.5}.lower{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:17px}.mini{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px}.mini h3{margin:0 0 9px;font-size:14px}.mini p{margin:0;color:var(--muted);font-size:12px;line-height:1.65}.process-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.process-card{padding:17px;border-radius:14px;border:1px solid var(--line);background:#fff;position:relative}.process-card b{display:block;font-size:16px;margin:5px 0}.process-card p{font-size:12px;color:var(--muted);line-height:1.7;margin:0}.number{font-size:11px;font-weight:800;color:#277bc2}.process-card .tags{margin-top:13px;display:flex;flex-wrap:wrap;gap:5px}.tags span{padding:5px 6px;border-radius:6px;background:#f1f7fd;color:#376284;font-size:10px}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}.field input,.field select,.field textarea{width:100%;border:1px solid #d8e4ef;border-radius:8px;padding:10px;background:#fbfdff;color:var(--ink);font:inherit;font-size:13px}.field textarea{height:72px;resize:vertical}.worklog-table{margin-top:15px;border:1px solid var(--line);border-radius:10px;overflow:hidden}.log-head,.log-row{display:grid;grid-template-columns:.6fr .8fr 1fr 1fr .8fr;gap:7px;padding:11px}.log-head{font-size:10px;font-weight:800;color:#6c8198;background:#eff5fa}.log-row{font-size:12px;border-top:1px solid #e7eef4}.log-row input{width:100%;border:1px solid #dce6ef;border-radius:6px;padding:6px;font:inherit;font-size:12px}.save-row{display:flex;justify-content:flex-end;gap:9px;margin-top:15px}.history-list{display:grid;gap:8px}.history-item{display:grid;grid-template-columns:105px 1fr auto;gap:13px;align-items:center;padding:13px;border:1px solid #e0eaf2;border-radius:10px;background:#fff;cursor:pointer}.history-item:hover,.history-item.selected{background:#f2f8ff;border-color:#92c3ea}.history-item small{display:block;color:var(--muted);font-size:11px}.history-item b{font-size:14px}.detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.detail{padding:11px;border-radius:9px;background:#f8fbfe;border:1px solid #e2ebf3}.detail small{display:block;color:var(--muted);font-size:10px;margin-bottom:5px}.detail b{font-size:14px}.image-layout{display:grid;grid-template-columns:260px 1fr;gap:16px}.image-layout img{width:100%;height:200px;object-fit:cover;border-radius:12px;background:#e8f1f9}.learn-list{display:grid;gap:7px}.learn-item{border:1px solid #e1ebf3;border-radius:10px;overflow:hidden}.learn-title{width:100%;padding:12px;border:0;background:#fff;text-align:left;color:var(--ink);font:inherit;cursor:pointer;display:flex;justify-content:space-between;align-items:center}.learn-title b{font-size:13px}.learn-title span{font-size:11px;color:var(--muted)}.learn-detail{display:none;padding:12px;border-top:1px solid #e4ecf3;background:#f8fbfe;font-size:12px;line-height:1.6;color:#536b82}.learn-item.open .learn-detail{display:block}.improve{margin-top:9px;padding:9px;border-radius:8px;background:#fff3eb;color:#9a4a1f}.hide{display:none}@media(max-width:1050px){.grid{grid-template-columns:1fr}.summary{grid-template-columns:repeat(3,1fr)}.summary-card.main{grid-column:span 2}.lower{grid-template-columns:1fr 1fr}.detail-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:720px){.app-header{padding:0 15px;gap:16px}.brand small,.site-status{display:none}nav button{padding:0 10px;font-size:12px}main{width:94vw}.hero{align-items:flex-start;flex-direction:column}.timestamp{text-align:left}.summary{grid-template-columns:1fr 1fr}.summary-card.main{grid-column:span 2}.info-grid,.form-grid,.process-grid,.lower{grid-template-columns:1fr}.cycle-head{display:none}.cycle-row{grid-template-columns:repeat(3,1fr);gap:10px}.cycle-row span:before{display:block;color:#7890a7;font-size:10px;margin-bottom:3px}.cycle-row span:nth-child(2):before{content:"투입량"}.cycle-row span:nth-child(3):before{content:"수분"}.cycle-row span:nth-child(4):before{content:"믹싱"}.cycle-row span:nth-child(5):before{content:"호퍼 대기"}.cycle-row span:nth-child(6):before{content:"지연제 / 위험도"}.action-bar{align-items:stretch;flex-direction:column}.button{width:100%}.log-head{display:none}.log-row{grid-template-columns:repeat(2,1fr)}.image-layout{grid-template-columns:1fr}.history-item{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr 1fr}}
   .upload-panel{margin-top:14px;padding:13px;border:1px dashed #91bee3;border-radius:10px;background:#f6fbff}.upload-panel h3{font-size:13px;margin:0 0 4px}.upload-panel p{font-size:11px;color:var(--muted);line-height:1.55;margin:0 0 10px}.upload-fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:9px}.upload-fields select{width:100%;border:1px solid #d6e4ef;border-radius:7px;padding:8px;background:#fff;color:var(--ink);font:inherit;font-size:11px}.select-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}.select-image{padding:0;border:1px solid #d3e2ee;border-radius:8px;overflow:hidden;background:#fff;cursor:pointer;text-align:left}.select-image:hover,.select-image.selected{border-color:#176fc6;box-shadow:0 4px 10px #176fc62a}.select-image img{display:block;width:100%;height:55px;object-fit:cover}.select-image span{display:block;padding:6px;color:#48657e;font-size:10px;font-weight:700}.upload-actions{display:flex;gap:7px;align-items:center}.selected-file{font-size:10px;color:#2871af;margin:8px 0;font-weight:700}.upload-message{font-size:11px;color:var(--green);font-weight:700;margin-top:8px;display:none}.uploaded-image{max-height:220px!important;object-fit:contain!important;background:#f0f5f9!important}.photo-upload{margin-top:12px;padding:14px;border:1px dashed #78aee0;border-radius:10px;background:#f7fbff}.photo-upload label{display:block;color:#244f76;font-size:12px;font-weight:800;margin-bottom:8px}.photo-upload input{display:block;width:100%;padding:9px;border:1px solid #cfe0ef;border-radius:8px;background:#fff;font:inherit;font-size:12px}.photo-upload .file-name{margin-top:8px;color:#54718a;font-size:11px}.photo-upload-preview{display:none;width:100%;height:150px;object-fit:contain;margin:10px 0;border:1px solid #dbe8f2;border-radius:9px;background:#fff}.photo-upload .button{width:100%;margin-top:3px}@media(max-width:720px){.upload-fields{grid-template-columns:1fr}.upload-actions{align-items:stretch;flex-direction:column}}
-  .learning-review-actions{display:flex;gap:7px;margin-top:9px}.learning-review-actions .button{padding:8px 10px;font-size:11px}@media(max-width:720px){.learning-review-actions{flex-direction:column}.learning-review-actions .button{width:100%}}
   .timestamp{flex:0 0 218px;min-height:66px;padding:12px 14px;border:1px solid #cfe0ed;border-radius:12px;background:linear-gradient(135deg,#fff,#f5fbff);font-size:11px;color:#6e87a0;text-align:left;line-height:1.3;box-shadow:0 6px 16px rgba(35,93,140,.06)}.timestamp:before{content:"";display:inline-block;width:7px;height:7px;margin:0 6px 1px 0;border-radius:50%;background:#31b98c;box-shadow:0 0 0 4px #31b98c1f}.timestamp b{display:block;overflow:hidden;margin-top:6px;color:#153a60;font-size:13px;line-height:1.25;white-space:nowrap;text-overflow:ellipsis}@media(max-width:720px){.timestamp{flex-basis:auto;width:100%;min-height:0}}
   .job-selector{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:0 0 17px;padding:14px 16px;border:1px solid #cfe1f1;border-radius:14px;background:linear-gradient(135deg,#fff,#f3f9ff);box-shadow:0 8px 18px rgba(26,92,149,.06)}.job-selector-copy small{display:block;color:#6b8198;font-size:11px;margin-bottom:4px}.job-selector-copy b{font-size:15px;color:#153a60}.job-selector-control{display:grid;grid-template-columns:auto 220px;align-items:center;gap:9px}.job-selector-control label{font-size:12px;font-weight:800;color:#385a7a}.job-selector-control select{width:220px;padding:10px 34px 10px 12px;border:1px solid #aacbe5;border-radius:9px;background:#fff;color:#173a5d;font:inherit;font-size:13px;font-weight:800;cursor:pointer}.job-selector-control select:focus{outline:3px solid #b9e2ff;border-color:#277fd0}.info-grid{gap:12px;margin-top:18px}.info{position:relative;min-height:96px;padding:15px 16px 14px;border-color:#d7e5f0;background:linear-gradient(135deg,#fff,#f7fbff);box-shadow:0 5px 13px rgba(37,93,139,.04)}.info:before{content:"";position:absolute;left:16px;top:14px;width:3px;height:12px;border-radius:3px;background:linear-gradient(#46a5e8,#6958dd)}.info small{padding-left:9px;margin-bottom:9px;color:#64809a;font-weight:700;letter-spacing:-.1px}.info b{display:block;font-size:17px;line-height:1.25;color:#143654;letter-spacing:-.4px;word-break:keep-all}.info span{display:block;margin-top:5px;color:#4d7191;font-size:11px;line-height:1.35;font-weight:700}.info:nth-child(2):before{background:linear-gradient(#2cbf9e,#239ee8)}.info:nth-child(3):before{background:linear-gradient(#7d63df,#4595e6)}.info:nth-child(4):before{background:linear-gradient(#ee9a44,#efcc5e)}.job-history-groups{display:grid;gap:9px}.job-history-group{border:1px solid #dce8f2;border-radius:11px;overflow:hidden;background:#fff}.job-history-title{width:100%;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:14px 15px;border:0;background:#fff;text-align:left;color:#183b5b;font:inherit;cursor:pointer}.job-history-title:hover,.job-history-group.open .job-history-title{background:linear-gradient(135deg,#f1f8ff,#f7f5ff)}.job-history-title b{font-size:14px}.job-history-title small{display:block;margin-top:4px;color:#6e879f;font-size:11px}.job-history-title span{color:#1e70b8;font-size:11px;font-weight:800}.job-history-records{display:none;padding:8px 9px 9px;border-top:1px solid #e4edf4;background:#f8fbfe}.job-history-group.open .job-history-records{display:grid;gap:7px}.job-history-record{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:11px;align-items:center;width:100%;padding:11px 12px;border:1px solid transparent;border-radius:9px;background:#fff;color:#183b5b;font:inherit;text-align:left;cursor:pointer}.job-history-record:hover,.job-history-record.selected{border-color:#8ec3ee;background:#eff8ff}.job-history-record>small{display:block;color:#71889e;font-size:11px;font-weight:700;white-space:nowrap}.job-history-record>div b{display:block;color:#173a5d;font-size:13px;line-height:1.2}.job-history-record>div small{display:block;margin-top:4px;color:#6e879f;font-size:10px;line-height:1.2}.job-history-record .pill{font-size:9px;white-space:nowrap}@media(max-width:720px){.job-selector{align-items:stretch;flex-direction:column}.job-selector-control{grid-template-columns:1fr}.job-selector-control select{width:100%}.info{min-height:90px}.job-history-record{grid-template-columns:1fr auto;gap:6px}.job-history-record>small{grid-column:1/-1}.job-history-record .pill{justify-self:end}}
   .job-history-records{padding:0!important;gap:0!important}.job-history-record-head,.job-history-record{display:grid;grid-template-columns:105px 80px minmax(100px,1fr) minmax(110px,1fr) auto;gap:11px;align-items:center}.job-history-record-head{padding:9px 13px;background:#f1f6fa;color:#6c839a;font-size:10px;font-weight:800}.job-history-record{padding:13px!important;border:0!important;border-radius:0!important;border-top:1px solid #e6eef4!important}.job-history-record:hover,.job-history-record.selected{background:#eef8ff!important;box-shadow:inset 3px 0 #2380cd}.job-history-record>small{font-size:11px!important;color:#496d8d!important}.job-history-record>div b{font-size:13px!important}.job-history-record>div small{display:none!important}.job-history-record .history-worker,.job-history-record .history-env{display:block!important;margin:0!important;color:#507390!important;font-size:11px!important;font-weight:700!important}.job-history-record .pill{justify-self:end}#history .grid{display:flex;flex-direction:column;gap:17px}#history .grid>.side{order:1;display:block}#history .grid>.side .panel{width:100%}#history .detail-grid{grid-template-columns:repeat(5,1fr)}@media(max-width:1050px){#history .detail-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:720px){.job-history-record-head{display:none}.job-history-record{grid-template-columns:1fr auto!important;gap:5px!important}.job-history-record>small{grid-column:1/-1}.job-history-record .history-worker{grid-column:1/-1;font-size:10px!important}.job-history-record>div:before{content:"총 투입량";display:block;margin-bottom:3px;color:#7a92a7;font-size:10px}.job-history-record .history-env{grid-column:1/-1;font-size:10px!important}.job-history-record .history-worker:before{content:"작업자 · ";color:#7a92a7}.job-history-record .history-env:before{content:"작업환경 · ";color:#7a92a7}#history .detail-grid{grid-template-columns:1fr 1fr}}
@@ -23,7 +22,21 @@
   .detail-edit-note{min-height:64px;resize:vertical;margin-top:8px}
   .cycle-row .detail-edit-input{font-size:12px;padding:6px}
 </style>
-</head>
+  <style>
+    .learning-review-actions{display:flex;gap:8px;margin-top:10px}
+    .learning-review-actions button{width:auto;padding:8px 12px;font-size:12px}
+  </style>
+  <style>
+    .history-delete{border:0;background:transparent;color:#9aaaba;font:inherit;font-size:11px;cursor:pointer;padding:5px 2px}
+    .history-delete:hover{color:var(--red)}
+    .job-history-record{grid-template-columns:105px 80px minmax(100px,1fr) minmax(110px,1fr) auto auto!important}
+    .learning-delete{margin-top:9px;border:0;border-radius:7px;padding:7px 10px;background:#f3f5f7;color:#687b8e;font:inherit;font-size:11px;cursor:pointer}
+    .learning-delete:hover{background:#fff0f1;color:var(--red)}
+    .learn-title .learning-delete{margin:0 0 0 10px;padding:3px 6px;background:transparent;color:#9aaaba}
+    .learn-title .learning-delete:hover{background:#fff0f1;color:var(--red)}
+    .learn-title>b{display:block!important;flex:1 1 auto;min-width:0;color:var(--ink)!important;visibility:visible!important;opacity:1!important}
+  </style>
+  </head>
 <body>
   <header class="app-header"><div class="brand">AI 스마트 믹싱 <small>REFRACTORY FIELD SYSTEM</small></div><nav><button class="active" data-screen="process">공정 순서</button><button data-screen="dashboard">대시보드</button><button data-screen="worklog">작업일지 및 특이사항</button><button data-screen="history">배합 이력</button><button data-screen="learning">AI 이미지 학습</button></nav><span class="site-status">운영 시스템 확인 중</span></header>
   <main>
@@ -37,9 +50,9 @@
       <div class="summary"><div class="summary-card main"><small>현재 상태</small><b id="dashState">작업자 승인 대기</b></div><div class="summary-card"><small>계획 투입량</small><b>2,500kg</b></div><div class="summary-card"><small>총 믹싱 횟수</small><b>5회</b></div><div class="summary-card"><small>최대 위험도</small><b class="red">13%</b></div><div class="summary-card"><small>추천 신뢰도</small><b class="green">89%</b></div></div>
       <div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 실행 흐름</h2><p>현장 데이터와 AI 추천값을 작업자 승인 후 회차별로 실행합니다.</p></div><span class="badge">XGBoost v2.4</span></div><div class="panel-body"><div class="flow"><div class="flow-step done"><small>01</small><b>환경·원료 수집</b></div><span class="arrow">→</span><div class="flow-step done"><small>02</small><b>AI 조건 계산</b></div><span class="arrow">→</span><div class="flow-step active"><small>03</small><b>작업자 승인</b></div><span class="arrow">→</span><div class="flow-step"><small>04</small><b>1차 믹싱 실행</b></div><span class="arrow">→</span><div class="flow-step"><small>05</small><b>실제값 저장</b></div></div><div class="info-grid"><div class="info"><small>내화물 종류 · 원료 LOT</small><b>저시멘트 캐스터블</b> <span>LC-260805-03</span></div><div class="info"><small>작업환경 자동 감지</small><b>31.0℃ · 78%</b> <span>30초 전 갱신</span></div><div class="info"><small>AI 권장 총 수분량</small><b>130.0L</b> <span>회차별 분할 투입</span></div><div class="info"><small>호퍼 운영 기준</small><b>최대 1,500kg</b> <span>1회 최대 500kg</span></div></div><div class="cycles"><div class="cycle-head"><span>회차</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div><div class="cycle-row current"><b>1차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>12분</span><span><i class="pill use">사용</i> <i class="risk-high">13%</i></span></div><div class="cycle-row"><b>2차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>6분</span><span><i class="pill use">사용</i> <i class="risk-high">11%</i></span></div><div class="cycle-row"><b>3차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>0분</span><span><i class="pill no">미사용</i> <i class="risk-low">8%</i></span></div><div class="cycle-row"><b>4차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>6분</span><span><i class="pill use">사용</i> <i class="risk-high">11%</i></span></div><div class="cycle-row"><b>5차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>0분</span><span><i class="pill no">미사용</i> <i class="risk-low">8%</i></span></div></div><div class="action-bar"><div><b>● 승인 전 확인 필요</b>1·2·4차는 위험도 10% 초과로 지연제 사용 조건이 포함되어 있습니다.</div><button class="button" id="approve">추천 조건 승인 · 작업일지로 전달</button></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>실시간 설비·환경</h2><p>센서 이상 시 작업 실행이 제한됩니다.</p></div></div><div class="panel-body"><div class="sensor-grid"><div class="sensor"><small>작업장 온도 <em>정상</em></small><b>31.0℃</b></div><div class="sensor"><small>상대습도 <em>정상</em></small><b>78%</b></div><div class="sensor"><small>전자저울 <em>연결</em></small><b>0kg</b></div><div class="sensor"><small>수분 유량계 <em>연결</em></small><b>0.0L</b></div><div class="sensor"><small>믹서 PLC <em>대기</em></small><b>READY</b></div><div class="sensor"><small>호퍼 적재량 <em>정상</em></small><b>0kg</b></div></div></div></section><section class="panel"><div class="panel-head"><div><h2>안전 인터록</h2><p>기준을 만족해야 작업을 진행합니다.</p></div><span class="badge">4 / 4 확인</span></div><div class="panel-body"><div class="guard-note">AI 추천은 작업 보조 기준입니다. 수분·시간·지연제 조건 변경 시 변경 사유와 승인자를 기록합니다.</div><div class="check">원료 LOT 및 유효기간 확인</div><div class="check">호퍼 적재량 1,500kg 이하</div><div class="check">1회 믹싱량 500kg 이하</div><div class="check">지연제 사용 조건 확인</div></div></section></aside></div>
     </section>
-    <section class="screen" id="worklog"><div class="hero"><div><div class="eyebrow">WORK LOG</div><h1>작업일지 및 특이사항</h1><p>대시보드에서 승인한 AI 추천값을 기준으로 회차별 실제 작업값과 특이사항을 기록합니다.</p></div><div class="timestamp">작업 상태<b id="logState">추천 조건 전달 대기</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 정보</h2><p>작업 지시와 환경 데이터는 자동 입력됩니다.</p></div><span class="badge">WO-20851</span></div><div class="panel-body"><div class="form-grid"><div class="field"><label>작업명</label><select><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option></select></div><div class="field"><label>내화물 종류</label><input value="저시멘트 캐스터블" readonly></div><div class="field"><label>작업장 온도</label><input value="31.0 ℃" readonly></div><div class="field"><label>상대습도</label><input value="78 %" readonly></div></div><div class="worklog-table"><div class="log-head"><span>회차</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div><div class="log-row"><b>1차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>사용</option><option>미사용</option></select></div><div class="log-row"><b>2차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>사용</option><option>미사용</option></select></div><div class="log-row"><b>3차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>미사용</option><option>사용</option></select></div></div><div class="field" style="margin-top:14px"><label>전체 특이사항</label><textarea placeholder="예: 1차 호퍼 대기시간 12분으로 지연제 사용 후 정상 작업 진행"></textarea></div><div class="save-row"><button class="button secondary">임시 저장</button><button class="button" id="saveLog">작업일지 저장</button></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>AI 추천 기준</h2><p>실제값과 비교해 학습 데이터로 반영됩니다.</p></div></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>권장 총 수분량</small><b>130.0L</b></div><div class="detail"><small>위험도 기준</small><b>5~30%</b></div><div class="detail"><small>지연제 기준</small><b>10% 초과</b></div><div class="detail"><small>적용 모델</small><b>XGBoost</b></div></div></div></section><section class="panel"><div class="panel-head"><div><h2>저장 항목</h2></div></div><div class="panel-body"><div class="check">회차별 실제 배합값</div><div class="check">호퍼 대기시간 및 지연제</div><div class="check">작업 결과 및 특이사항</div><div class="check">작업자·작업 시각·모델 버전</div></div></section></aside></div></section>
+    <section class="screen" id="worklog"><div class="hero"><div><div class="eyebrow">WORK LOG</div><h1>작업일지 및 특이사항</h1><p>대시보드에서 승인한 AI 추천값을 기준으로 회차별 실제 작업값과 특이사항을 기록합니다.</p></div><div class="timestamp">작업 상태b id="logState">추천 조건 전달 대기</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 정보</h2><p>작업 지시와 환경 데이터는 자동 입력됩니다.</p></div><span class="badge">WO-20851</span></div><div class="panel-body"><div class="form-grid"><div class="field"><label>작업명</label><select><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option></select></div><div class="field"><label>내화물 종류</label><input value="저시멘트 캐스터블" readonly></div><div class="field"><label>작업장 온도</label><input value="31.0 ℃" readonly></div><div class="field"><label>상대습도</label><input value="78 %" readonly></div></div><div class="worklog-table"><div class="log-head"><span>회차</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div><div class="log-row"><b>1차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>사용</option><option>미사용</option></select></div><div class="log-row"><b>2차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>사용</option><option>미사용</option></select></div><div class="log-row"><b>3차</b><span>500kg</span><input value="26.0 L"><input value="5 분"><select><option>미사용</option><option>사용</option></select></div></div><div class="field" style="margin-top:14px"><label>전체 특이사항</label><textarea placeholder="예: 1차 호퍼 대기시간 12분으로 지연제 사용 후 정상 작업 진행"></textarea></div><div class="save-row"><button class="button secondary">임시 저장</button><button class="button" id="saveLog">작업일지 저장</button></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>AI 추천 기준</h2><p>실제값과 비교해 학습 데이터로 반영됩니다.</p></div></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>권장 총 수분량</small><b>130.0L</b></div><div class="detail"><small>위험도 기준</small><b>5~30%</b></div><div class="detail"><small>지연제 기준</small><b>10% 초과</b></div><div class="detail"><small>적용 모델</small><b>XGBoost</b></div></div></div></section><section class="panel"><div class="panel-head"><div><h2>저장 항목</h2></div></div><div class="panel-body"><div class="check">회차별 실제 배합값</div><div class="check">호퍼 대기시간 및 지연제</div><div class="check">작업 결과 및 특이사항</div><div class="check">작업자·작업 시각·모델 버전</div></div></section></aside></div></section>
     <section class="screen" id="history"><div class="hero"><div><div class="eyebrow">MIXING HISTORY</div><h1>배합 이력 및 상세 작업 내용</h1><p>작업명별 이력을 선택하면 환경 데이터와 회차별 실제 작업값을 즉시 확인할 수 있습니다.</p></div><div class="timestamp">보관 정책<b>작업 지시번호 기반 추적</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>작업 이력 목록</h2><p>선택한 작업의 상세 내용이 우측에 표시됩니다.</p></div><span class="badge">전체 12건</span></div><div class="panel-body"><div class="history-list" id="historyList"><div class="history-item selected" data-job="래들 벽체" data-material="저시멘트 캐스터블" data-date="2026.08.05" data-amount="2,500kg" data-env="31.0℃ · 78%" data-result="정상 완료" data-note="1·2·4차 지연제 사용 조건으로 진행. 특이사항 없이 완료."><small>2026.08.05</small><div><b>래들 벽체</b><small>저시멘트 캐스터블 · 2,500kg</small></div><span class="pill use">정상 완료</span></div><div class="history-item" data-job="래들 바닥" data-material="고알루미나 캐스터블" data-date="2026.08.02" data-amount="3,500kg" data-env="28.0℃ · 63%" data-result="정상 완료" data-note="1차 대기시간 증가로 지연제 사용. 이후 회차는 기준값으로 진행."><small>2026.08.02</small><div><b>래들 바닥</b><small>고알루미나 캐스터블 · 3,500kg</small></div><span class="pill use">정상 완료</span></div><div class="history-item" data-job="턴디쉬 카바" data-material="저시멘트 캐스터블" data-date="2026.07.30" data-amount="1,250kg" data-env="25.0℃ · 55%" data-result="정상 완료" data-note="대기시간 짧아 지연제 미사용. 권장 수분량과 동일하게 작업."><small>2026.07.30</small><div><b>턴디쉬 카바</b><small>저시멘트 캐스터블 · 1,250kg</small></div><span class="pill no">정상 완료</span></div></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>상세 작업 내용</h2><p id="detailDate">2026.08.05 · 정상 완료</p></div><button class="button secondary">수정</button></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>작업명</small><b id="detailJob">래들 벽체</b></div><div class="detail"><small>내화물 종류</small><b id="detailMaterial">저시멘트 캐스터블</b></div><div class="detail"><small>총 투입량</small><b id="detailAmount">2,500kg</b></div><div class="detail"><small>작업환경</small><b id="detailEnv">31.0℃ · 78%</b></div></div><div class="cycles"><div class="cycle-head"><span>회차</span><span>투입량</span><span>수분</span><span>믹싱</span><span>대기</span><span>지연제 / 위험도</span></div><div class="cycle-row"><b>1차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>12분</span><span><i class="pill use">사용</i> <i class="risk-high">13%</i></span></div><div class="cycle-row"><b>2차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>6분</span><span><i class="pill use">사용</i> <i class="risk-high">11%</i></span></div><div class="cycle-row"><b>3차</b><span>500kg</span><span>26.0L</span><span>5분</span><span>0분</span><span><i class="pill no">미사용</i> <i class="risk-low">8%</i></span></div></div><div class="improve"><b>전체 특이사항</b><br><span id="detailNote">1·2·4차 지연제 사용 조건으로 진행. 특이사항 없이 완료.</span></div></div></section></aside></div></section>
-    <section class="screen" id="learning"><div class="hero"><div><div class="eyebrow">AI IMAGE LEARNING</div><h1>이미지 기반 이상 징후 학습</h1><p>급속 경화 의심 이미지를 작업 조건과 함께 저장하고, 분석 결과와 개선 사안을 AI 재학습 데이터로 적용합니다.</p></div><div class="timestamp">분석 모델<b>PatchCore 이상 탐지</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>적용된 학습 데이터</h2><p>항목을 선택하면 이미지와 작업 조건, 분석 결과를 확인할 수 있습니다.</p></div><span class="badge">학습 이미지 129장</span></div><div class="panel-body"><div class="learn-list"><div class="learn-item"><button class="learn-title"><b>래들 벽체 · 1사이클 1차 · 표면 경화 의심</b><span>2026.08.05 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-ladle-wall.jpg" alt="래들 벽체 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>500kg</b></div><div class="detail"><small>환경</small><b>31℃ · 78%</b></div><div class="detail"><small>호퍼 대기</small><b>12분</b></div><div class="detail"><small>지연제</small><b>사용</b></div></div><p><b>AI 분석 결과</b><br>표면 경화 의심도 18%, 균열 의심도 7%로 정상 범위 내의 건조 흔적이 확인되었습니다.</p><div class="improve"><b>개선 사안</b><br>AI 추천 조건을 준수한 작업이므로 수분량 변경보다 실제 호퍼 대기시간과 지연제 투입 시점을 함께 비교해 다음 추천값을 보정합니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>래들 바닥 · 2사이클 2차 · 균열 패턴 확인</b><span>2026.08.02 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-ladle-bottom.jpg" alt="래들 바닥 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>500kg</b></div><div class="detail"><small>환경</small><b>28℃ · 63%</b></div><div class="detail"><small>호퍼 대기</small><b>8분</b></div><div class="detail"><small>지연제</small><b>사용</b></div></div><p><b>AI 분석 결과</b><br>국부 균열 의심도 14%로 판정되었으며, 급속 경화 패턴과의 유사도는 낮습니다.</p><div class="improve"><b>개선 사안</b><br>실제 수분량과 믹싱시간 편차 여부를 확인하고, 현장 이미지 촬영 거리·조도를 표준화해 학습 품질을 높입니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>턴디쉬 카바 · 1사이클 3차 · 정상 작업 이미지</b><span>2026.07.30 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-tundish-cover.jpg" alt="턴디쉬 카바 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>250kg</b></div><div class="detail"><small>환경</small><b>25℃ · 55%</b></div><div class="detail"><small>호퍼 대기</small><b>0분</b></div><div class="detail"><small>지연제</small><b>미사용</b></div></div><p><b>AI 분석 결과</b><br>표면 상태가 정상 범위이며 기준 이미지로 재학습에 반영됩니다.</p><div class="improve"><b>개선 사안</b><br>정상 이미지도 작업 조건과 함께 누적해 이상 이미지와의 비교 정확도를 높입니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>정상 완료 캐스터블 · 기준 이미지</b><span>인터넷 공개 자료 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="https://www.nakachiku.co.jp/wp/wp-content/uploads/2024/09/fukitsuke_after-scaled.jpg" alt="시공 완료 캐스터블 기준 이미지"><div><div class="detail-grid"><div class="detail"><small>자료 구분</small><b>정상 완료</b></div><div class="detail"><small>이미지 유형</small><b>캐스터블 표면</b></div><div class="detail"><small>학습 용도</small><b>정상 기준</b></div><div class="detail"><small>판정 상태</small><b class="green">기준 등록</b></div></div><p><b>AI 학습 기준 이미지</b><br>시공이 완료된 캐스터블 표면을 정상 상태 기준으로 등록합니다.</p><div class="improve"><b>참고</b><br>공개 자료를 활용한 참고 이미지이며, 실제 현장 사진으로 추가 검증이 필요합니다.<br><a href="https://www.nakachiku.co.jp/castable" target="_blank" rel="noopener">원본 출처 보기</a></div></div></div></div></div></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>이미지 학습 적용 기준</h2><p>분석 결과는 단독 판단이 아닌 현장 데이터와 함께 반영됩니다.</p></div></div><div class="panel-body"><div class="check">작업명·사이클·차수 입력</div><div class="check">환경·대기시간 자동 연동</div><div class="check">분석 결과와 개선 사안 기록</div><div class="check">관리자 검토 후 재학습 적용</div></div></section><section class="panel"><div class="panel-head"><div><h2>모델 상태</h2></div></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>분석 모델</small><b>PatchCore</b></div><div class="detail"><small>학습 이미지</small><b>128장</b></div><div class="detail"><small>최근 학습</small><b>오늘</b></div><div class="detail"><small>검토 상태</small><b class="green">정상</b></div></div></div></section></aside></div></section>
+    <section class="screen" id="learning"><div class="hero"><div><div class="eyebrow">AI IMAGE LEARNING</div><h1>이미지 기반 이상 징후 학습</h1><p>급속 경화 의심 이미지를 작업 조건과 함께 저장하고, 분석 결과와 개선 사안을 AI 재학습 데이터로 적용합니다.</p></div><div class="timestamp">분석 모델<b>PatchCore 이상 탐지</b></div></div><div class="grid"><section class="panel"><div class="panel-head"><div><h2>적용된 학습 데이터</h2><p>항목을 선택하면 이미지와 작업 조건, 분석 결과를 확인할 수 있습니다.</p></div><span class="badge">학습 이미지 128장</span></div><div class="panel-body"><div class="learn-list"><div class="learn-item"><button class="learn-title"><b>래들 벽체 · 1사이클 1차 · 표면 경화 의심</b><span>2026.08.05 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-ladle-wall.jpg" alt="래들 벽체 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>500kg</b></div><div class="detail"><small>환경</small><b>31℃ · 78%</b></div><div class="detail"><small>호퍼 대기</small><b>12분</b></div><div class="detail"><small>지연제</small><b>사용</b></div></div><p><b>AI 분석 결과</b><br>표면 경화 의심도 18%, 균열 의심도 7%로 정상 범위 내의 건조 흔적이 확인되었습니다.</p><div class="improve"><b>개선 사안</b><br>AI 추천 조건을 준수한 작업이므로 수분량 변경보다 실제 호퍼 대기시간과 지연제 투입 시점을 함께 비교해 다음 추천값을 보정합니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>래들 바닥 · 2사이클 2차 · 균열 패턴 확인</b><span>2026.08.02 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-ladle-bottom.jpg" alt="래들 바닥 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>500kg</b></div><div class="detail"><small>환경</small><b>28℃ · 63%</b></div><div class="detail"><small>호퍼 대기</small><b>8분</b></div><div class="detail"><small>지연제</small><b>사용</b></div></div><p><b>AI 분석 결과</b><br>국부 균열 의심도 14%로 판정되었으며, 급속 경화 패턴과의 유사도는 낮습니다.</p><div class="improve"><b>개선 사안</b><br>실제 수분량과 믹싱시간 편차 여부를 확인하고, 현장 이미지 촬영 거리·조도를 표준화해 학습 품질을 높입니다.</div></div></div></div></div><div class="learn-item"><button class="learn-title"><b>턴디쉬 카바 · 1사이클 3차 · 정상 작업 이미지</b><span>2026.07.30 · 펼치기</span></button><div class="learn-detail"><div class="image-layout"><img src="learning-tundish-cover.jpg" alt="턴디쉬 카바 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>투입량</small><b>250kg</b></div><div class="detail"><small>환경</small><b>25℃ · 55%</b></div><div class="detail"><small>호퍼 대기</small><b>0분</b></div><div class="detail"><small>지연제</small><b>미사용</b></div></div><p><b>AI 분석 결과</b><br>표면 상태가 정상 범위이며 기준 이미지로 재학습에 반영됩니다.</p><div class="improve"><b>개선 사안</b><br>정상 이미지도 작업 조건과 함께 누적해 이상 이미지와의 비교 정확도를 높입니다.</div></div></div></div></div></div></div></section><aside class="side"><section class="panel"><div class="panel-head"><div><h2>이미지 학습 적용 기준</h2><p>분석 결과는 단독 판단이 아닌 현장 데이터와 함께 반영됩니다.</p></div></div><div class="panel-body"><div class="check">작업명·사이클·차수 입력</div><div class="check">환경·대기시간 자동 연동</div><div class="check">분석 결과와 개선 사안 기록</div><div class="check">관리자 검토 후 재학습 적용</div></div></section><section class="panel"><div class="panel-head"><div><h2>모델 상태</h2></div></div><div class="panel-body"><div class="detail-grid"><div class="detail"><small>분석 모델</small><b>PatchCore</b></div><div class="detail"><small>학습 이미지</small><b>128장</b></div><div class="detail"><small>최근 학습</small><b>오늘</b></div><div class="detail"><small>검토 상태</small><b class="green">정상</b></div></div></div></section></aside></div></section>
   </main>
   <script>
     const navButtons=[...document.querySelectorAll('nav button')];
@@ -84,8 +97,7 @@
     document.getElementById('saveLog').textContent='저장';
     document.getElementById('saveLog').addEventListener('click',function(){captureSavedWorklog();this.textContent='완료';setTimeout(()=>this.textContent='저장',1000)});
     document.querySelectorAll('.history-item').forEach(item=>item.addEventListener('click',()=>{document.querySelectorAll('.history-item').forEach(x=>x.classList.remove('selected'));item.classList.add('selected');document.getElementById('detailJob').textContent=item.dataset.job;document.getElementById('detailMaterial').textContent=item.dataset.material;document.getElementById('detailAmount').textContent=item.dataset.amount;document.getElementById('detailEnv').textContent=item.dataset.env;document.getElementById('detailDate').textContent=item.dataset.date+' · '+item.dataset.result;document.getElementById('detailNote').textContent=item.dataset.note}));
-    function updateLearningToggle(button,item){const span=button.querySelector('span');if(!span)return;const base=span.dataset.baseLabel??span.textContent.replace(/\s*·\s*(펼치기|접기)$/,'').trim();span.dataset.baseLabel=base;span.textContent=base?(base+' · '+(item.classList.contains('open')?'접기':'펼치기')):(item.classList.contains('open')?'접기':'펼치기')}
-    document.querySelectorAll('.learn-title').forEach(button=>button.addEventListener('click',()=>{const item=button.parentElement;item.classList.toggle('open');updateLearningToggle(button,item)}));
+    document.querySelectorAll('.learn-title').forEach(button=>button.addEventListener('click',()=>{const item=button.parentElement;const status=button.dataset.statusDate||button.querySelector('span').textContent.split('·')[0].trim();button.dataset.statusDate=status;item.classList.toggle('open');button.querySelector('span').textContent=status+' · '+(item.classList.contains('open')?'접기':'펼치기')}));
     (function(){
       const learningSide=document.querySelector('#learning .side');
       const learningList=document.querySelector('#learning .learn-list');
@@ -114,7 +126,7 @@
           detail.querySelector('img').src=selectedImage.src;
           detail.querySelectorAll('.detail b')[0].textContent=job;
           detail.querySelectorAll('.detail b')[1].textContent=cycle+' · '+round;
-          title.addEventListener('click',()=>{item.classList.toggle('open');updateLearningToggle(title,item);});
+          title.addEventListener('click',()=>{item.classList.toggle('open');title.querySelector('span').textContent=item.classList.contains('open')?'접기':'펼치기';});
           learningList.prepend(item);
           document.getElementById('uploadMessage').style.display='block';
       });
@@ -124,7 +136,8 @@
     (function () {
       const learningSide = document.querySelector('#learning .side');
       const learningList = document.querySelector('#learning .learn-list');
-      if (!learningSide || !learningList) return;
+       // 레거시 업로드 패널은 비활성화하고, 아래의 단일 승인 흐름만 사용합니다.
+       if (!learningSide || !learningList || true) return;
 
       const uploadPanel = document.createElement('section');
       uploadPanel.className = 'panel learning-upload-panel';
@@ -151,15 +164,13 @@
       const emptyPreview = document.getElementById('learningPhotoEmpty');
       const fileName = document.getElementById('learningPhotoName');
       const message = document.getElementById('photoUploadMessage');
-      let photoData = ''; let selectedFile = null;
+      let photoData = '';
 
       input.addEventListener('change', function () {
         const file = this.files && this.files[0];
         message.style.display = 'none';
         if (!file) { photoData = ''; preview.style.display = 'none'; emptyPreview.style.display = 'grid'; fileName.textContent = '선택된 파일이 없습니다.'; return; }
         if (!file.type.startsWith('image/')) { this.value = ''; photoData = ''; preview.style.display = 'none'; emptyPreview.style.display = 'grid'; fileName.textContent = '이미지 파일(JPG, PNG, WEBP)만 선택할 수 있습니다.'; return; }
-        selectedFile = file;
-        window.aiSmartMixingDemoFile = null;
         fileName.textContent = '선택된 파일: ' + file.name;
         const reader = new FileReader();
         reader.onload = function (event) { photoData = event.target.result; preview.src = photoData; emptyPreview.style.display = 'none'; preview.style.display = 'block'; };
@@ -179,7 +190,6 @@
           const blob = await response.blob();
           const demoFile = new File([blob], 'refractory-bricks-lining-demo.jpg', { type: blob.type || 'image/jpeg' });
           window.aiSmartMixingDemoFile = demoFile;
-          selectedFile = demoFile;
           photoData = URL.createObjectURL(blob);
           preview.src = photoData;
           emptyPreview.style.display = 'none';
@@ -193,53 +203,20 @@
         }
       });
 
-      document.getElementById('addLearningPhoto').addEventListener('click', async function () {
-        this.dataset.uploadGuardHandled = 'true';
-        if (selectedFile && selectedFile === window.aiSmartMixingDemoFile) {
-          message.style.display = 'block';
-          message.style.color = '#ca4858';
-          message.textContent = '공개 데모 사진은 학습 데이터로 추가하지 않습니다. 실제 내화물 작업면 사진을 선택하세요.';
-          fileName.textContent = '공개 데모 사진은 참고용으로만 사용할 수 있습니다.';
-          return;
-        }
+      document.getElementById('addLearningPhoto').addEventListener('click', function () {
+        // 등록은 아래 Supabase/AI 판정 흐름에서만 수행합니다.
+        // 이 레거시 핸들러가 먼저 목록에 넣으면 판정 전 사진이 학습 데이터로 보입니다.
+        return;
         if (!photoData) { fileName.textContent = '먼저 현장 사진 파일을 선택하세요.'; return; }
-        const file = selectedFile || window.aiSmartMixingDemoFile;
-        if (!file) { fileName.textContent = '선택한 사진을 읽지 못했습니다. 다시 선택하세요.'; return; }
-        const form = new FormData();
-        form.append('file', file, file.name);
-        const check = await fetch('/analyze', { method: 'POST', body: form });
-        const analysis = check.ok ? await check.json() : {};
-        const feature = analysis.feature_summary || {};
-        const documentLike = Number(feature.bright_ratio) >= 0.45 && Number(feature.edge_density) <= 0.14;
-        if (analysis.image_scope !== true || documentLike) {
-          message.style.display = 'block';
-          message.style.color = '#ca4858';
-          message.textContent = '부적합 사진 · 내화물 작업면이 아니어서 학습 반영을 차단했습니다.';
-          fileName.textContent = '분석 대상이 아닌 사진입니다. 작업면 사진을 다시 선택하세요.';
-          return;
-        }
         const job = document.getElementById('photoJob').value;
         const cycle = document.getElementById('photoCycle').value;
         const round = document.getElementById('photoRound').value;
         const item = document.createElement('div');
         item.className = 'learn-item open';
-        item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 현장 업로드 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>작업환경</small><b>자동 연동 예정</b></div><div class="detail"><small>분석 상태</small><b class="green">작업자 등록 완료</b></div></div><p><b>AI 검토 대기</b><br>작업자가 등록한 사진입니다. 아래에서 학습 반영 요청 또는 제외를 선택하세요.</p><div class="improve"><b>작업자 확인</b><br>사진과 작업 조건을 확인한 뒤 학습 반영을 요청할 수 있습니다.<div class="learning-review-actions"><button class="button" type="button" data-learning-action="submit">학습 반영 요청</button><button class="button secondary" type="button" data-learning-action="exclude">제외</button></div></div></div></div></div>`;
-        item.querySelector('.uploaded-image').src = photoData;
+        item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 현장 업로드 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>작업환경</small><b>자동 연동 예정</b></div><div class="detail"><small>분석 상태</small><b class="green">학습 대기</b></div></div><p><b>AI 분석 예정</b><br>등록된 현장 사진을 PatchCore 이상 탐지 모델의 검토·학습 데이터로 추가했습니다.</p><div class="improve"><b>다음 단계</b><br>관리자가 사진 상태와 작업 조건을 검토한 뒤 재학습 데이터에 반영합니다.</div></div></div></div>`;
+        item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
         const title = item.querySelector('.learn-title');
-        title.addEventListener('click', function () { item.classList.toggle('open'); updateLearningToggle(title,item); });
-        item.querySelector('[data-learning-action="submit"]')?.addEventListener('click', function (event) {
-          event.stopPropagation();
-          const state = item.querySelector('.detail-grid .detail:last-child b');
-          if (state) { state.textContent = '학습 반영 요청 완료'; state.className = 'green'; }
-          this.closest('.improve').innerHTML = '<b>학습 반영 요청 완료</b><br>작업자 요청이 저장되었습니다. 관리자 검토 후 모델 학습에 반영됩니다.';
-        });
-        item.querySelector('[data-learning-action="exclude"]')?.addEventListener('click', function (event) {
-          event.stopPropagation();
-          item.remove();
-          message.textContent = '등록 사진을 제외했습니다.';
-          message.style.color = '#54718a';
-          message.style.display = 'block';
-        });
+        title.addEventListener('click', function () { item.classList.toggle('open'); title.querySelector('span').textContent = item.classList.contains('open') ? '접기' : '펼치기'; });
         learningList.prepend(item);
         message.style.display = 'block';
       });
@@ -281,10 +258,11 @@
 
       document.addEventListener('click', async function (event) {
         if (event.target.id !== 'addLearningPhoto') return;
-        if (event.target.dataset.uploadGuardHandled === 'true') return;
-        event.target.dataset.uploadGuardHandled = 'true';
+        // 현재 패널의 단일 분석·저장 흐름이 처리하므로 레거시 중복 핸들러는 실행하지 않는다.
+        return;
         const fileInput = document.getElementById('learningPhotoInput');
-        const file = (fileInput && fileInput.files && fileInput.files[0]) || window.aiSmartMixingDemoFile;
+        const localFile = (fileInput && fileInput.files && fileInput.files[0]) || null;
+        const file = localFile || window.aiSmartMixingDemoFile;
         if (!file) return;
 
         const message = document.getElementById('photoUploadMessage');
@@ -293,6 +271,39 @@
         const job = document.getElementById('photoJob').value;
         const cycle = document.getElementById('photoCycle').value;
         const round = document.getElementById('photoRound').value;
+
+        // 직접 선택한 현장 사진은 판정 API로 보내지 않고 학습 대기 데이터로만 등록합니다.
+        if (localFile) {
+          const item = document.createElement('div');
+          item.className = 'learn-item open';
+          item.dataset.learningData = 'true';
+          item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 대기 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green review-status">AI 추천 · 학습 후보</b></div></div><div class="improve"><b>AI 사전 추천</b><br>사진 형식과 등록 조건을 확인했습니다. 작업자가 승인하면 학습 데이터에 반영됩니다.<div class="learning-review-actions"><button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button></div></div></div></div></div>`;
+          item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
+          item.querySelector('.learn-title').addEventListener('click', () => {
+            item.classList.toggle('open');
+            item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
+          });
+          item.querySelector('[data-learning-approve]').addEventListener('click', (approveEvent) => {
+            approveEvent.stopPropagation();
+            item.querySelector('.review-status').textContent = '학습 반영 완료';
+            item.querySelector('.review-status').className = 'green review-status';
+            item.querySelector('.learning-review-actions').remove();
+            message.textContent = '작업자 승인 완료 · 학습 데이터에 반영되었습니다.';
+          });
+          item.querySelector('[data-learning-reject]').addEventListener('click', (rejectEvent) => {
+            rejectEvent.stopPropagation();
+            item.remove();
+            message.textContent = '학습 데이터에서 제외했습니다.';
+          });
+          document.querySelector('#learning .learn-list')?.prepend(item);
+          message.style.display = 'block';
+          message.style.color = '#108b65';
+          message.textContent = '학습 데이터 등록 완료 · AI 판정은 실행하지 않았습니다.';
+          fileName.textContent = `학습 데이터 등록: ${localFile.name}`;
+          fileInput.value = '';
+          return;
+        }
+
         const temperature = 31;
         const humidity = 78;
         const roundNo = Number(String(round).replace(/[^0-9]/g, '')) || 1;
@@ -301,23 +312,8 @@
         const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
 
         button.disabled = true;
-        button.textContent = '사진 적합성 확인 중...';
+        button.textContent = 'Supabase에 저장 중...';
         try {
-          const precheckBody = new FormData();
-          precheckBody.append('file', file, file.name);
-          const precheckResponse = await fetch('/analyze', { method: 'POST', body: precheckBody });
-          if (!precheckResponse.ok) throw new Error('사진 판정 서버에 연결되지 않았습니다.');
-          const precheck = await precheckResponse.json();
-          const preFeature = precheck.feature_summary || {};
-          const preDocumentLike = Number(preFeature.bright_ratio) >= 0.45 && Number(preFeature.edge_density) <= 0.14;
-          if (precheck.image_scope !== true || preDocumentLike) {
-            message.textContent = '분석 중단 · 내화물 작업면이 아닌 사진은 학습 데이터로 저장하지 않습니다.';
-            message.style.display = 'block';
-            message.style.color = '#ca4858';
-            fileName.textContent = '부적합 사진입니다. 실제 내화물 작업면 사진을 다시 선택하세요.';
-            return;
-          }
-          button.textContent = 'Supabase에 저장 중...';
           const session = await getFieldSession();
           const user = session.user;
           const path = `${user.id}/${Date.now()}-${safeName}`;
@@ -329,7 +325,7 @@
             `${SUPABASE_URL}/storage/v1/object/refractory-images/${path}`,
             { method: 'POST', headers: { ...headers, 'Content-Type': file.type, 'x-upsert': 'false' }, body: file }
           );
-          if (!uploadResponse.ok) throw new Error(await uploadResponse.text());
+          if (!uploadResponse.ok) throw new Error(awat uploadResponse.text());
 
           let analysis = {
             analysis_status: 'AI 분석 대기',
@@ -351,10 +347,14 @@
             if (!analysisResponse.ok) throw new Error(await analysisResponse.text());
             analysis = await analysisResponse.json();
           } catch (analysisError) {
+            analysis = {
+              image_scope: false,
+              analysis_result: 'AI 이미지 판정 서버에 연결되지 않아 등록을 중단했습니다.'
+            };
             console.warn('AI 분석 서버 응답 대기:', analysisError);
           }
 
-          if (analysis.image_scope === false) {
+          if (analysis.image_scope !== true) {
             await fetch(`${SUPABASE_URL}/storage/v1/object/refractory-images/${path}`, {
               method: 'DELETE',
               headers
@@ -391,6 +391,36 @@
             body: JSON.stringify(record)
           });
           if (!insertResponse.ok) throw new Error(await insertResponse.text());
+
+          const learningList = document.querySelector('#learning .learn-list');
+          if (learningList) {
+            const item = document.createElement('div');
+            item.className = 'learn-item open';
+            item.dataset.learningApproved = 'true';
+            item.innerHTML = `
+              <button class="learn-title" type="button"><b></b><span>접기</span></button>
+              <div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div>
+                <div class="detail-grid">
+                  <div class="detail"><small>작업명</small><b></b></div>
+                  <div class="detail"><small>사이클 · 차수</small><b></b></div>
+                  <div class="detail"><small>작업환경</small><b>${temperature}℃ · ${humidity}%</b></div>
+                  <div class="detail"><small>분석 상태</small><b class="green"></b></div>
+                </div>
+                <div class="improve"><b>AI 판정 결과</b><br></div>
+              </div></div></div>`;
+            item.querySelector('.learn-title b').textContent = `${job} · ${cycle} ${round} · 현장 업로드 이미지`;
+            item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
+            item.querySelectorAll('.detail b')[0].textContent = job;
+            item.querySelectorAll('.detail b')[1].textContent = `${cycle} · ${round}`;
+            item.querySelectorAll('.detail b')[3].textContent = analysis.analysis_status || '시범 판정 완료';
+            item.querySelector('.improve').appendChild(document.createTextNode(`경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%\n${analysis.improvement_note || ''}`));
+            const title = item.querySelector('.learn-title');
+            title.addEventListener('click', () => {
+              item.classList.toggle('open');
+              title.querySelector('span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
+            });
+            learningList.prepend(item);
+          }
 
           message.textContent = `Supabase 저장 완료 · ${analysis.analysis_status} · 경화 의심 ${analysis.hardening_score ?? '-'}% / 균열 의심 ${analysis.crack_score ?? '-'}%`;
           message.style.display = 'block';
@@ -663,6 +693,9 @@
         overallNote: item.dataset.overallnote || ''
       }));
       const dateValue = value => String(value || '').replace(/\./g, '-');
+      const historyKey = record => [record.date, record.job, record.worker, record.amount].join('|');
+      const deletedHistory = new Set(JSON.parse(localStorage.getItem('aiSmartMixingDeletedHistory') || '[]'));
+      records.splice(0, records.length, ...records.filter(record => !deletedHistory.has(historyKey(record))));
       records.sort((a, b) => dateValue(b.date).localeCompare(dateValue(a.date)));
       const grouped = records.reduce((groups, record) => {
         (groups[record.job] ||= []).push(record);
@@ -743,7 +776,7 @@
       list.className = 'job-history-groups';
       list.innerHTML = '';
       const detailGrid = document.querySelector('#history .detail-grid');
-      if (detailGrid && !document.getElementById('detailWorker')) {
+      if (detailGrid & !document.getElementById('detailWorker')) {
         const workerDetail = document.createElement('div');
         workerDetail.className = 'detail';
         workerDetail.innerHTML = '<small>작업자</small><b id="detailWorker"></b>';
@@ -766,11 +799,26 @@
         recordBox.className = 'job-history-records';
         recordBox.innerHTML = '<div class="job-history-record-head"><span>작업일</span><span>작업자</span><span>총 투입량</span><span>작업환경</span><span>결과</span></div>';
         jobRecords.forEach((record, recordIndex) => {
-          const row = document.createElement('button');
+          const row = document.createElement('div');
           row.type = 'button';
+          row.tabIndex = 0;
+          row.setAttribute('role', 'button');
           row.className = 'job-history-record' + (index === 0 && recordIndex === 0 ? ' selected' : '');
-          row.innerHTML = '<small>' + record.date + '</small><span class="history-worker">' + record.worker + '</span><div><b>' + record.amount + '</b></div><span class="history-env">' + record.env + '</span><span class="pill ' + (record.result === '정상 완료' ? 'use' : 'no') + '">' + record.result + '</span>';
-          row.addEventListener('click', () => showDetail(record, row));
+          row.innerHTML = '<small>' + record.date + '</small><span class="history-worker">' + record.worker + '</span><div><b>' + record.amount + '</b></div><span class="history-env">' + record.env + '</span><span class="pill ' + (record.result === '정상 완료' ? 'use' : 'no') + '">' + record.result + '</span><button type="button" class="history-delete" title="이력 삭제">삭제</button>';
+          row.addEventListener('click', event => { if (!event.target.closest('.history-delete')) showDetail(record, row); });
+          row.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); showDetail(record, row); } });
+          row.querySelector('.history-delete').addEventListener('click', event => {
+            event.stopPropagation();
+            const currentDeleted = new Set(JSON.parse(localStorage.getItem('aiSmartMixingDeletedHistory') || '[]'));
+            currentDeleted.add(historyKey(record));
+            localStorage.setItem('aiSmartMixingDeletedHistory', JSON.stringify([...currentDeleted]));
+            const saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+            sessionStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(saved.filter(item => historyKey(item) !== historyKey(record))));
+            row.remove();
+            if (!recordBox.querySelector('.job-history-record')) group.remove();
+            const countBadge = document.querySelector('#history .panel-head .badge');
+            if (countBadge) countBadge.textContent = '전체 ' + document.querySelectorAll('#history .job-history-record').length + '건';
+          });
           recordBox.append(row);
         });
         title.addEventListener('click', () => {
@@ -1238,15 +1286,296 @@
       });
     })();
   </script>
-
   <script>
-    // 이전 업로드 흐름에서 남은 잘못된 동적 항목은 새 화면에서 제거합니다.
+    // 업로드 패널은 화면 전환 시에도 항상 준비되도록 보강합니다.
     (() => {
-      document.querySelectorAll('#learning .learn-item').forEach((item) => {
-        const title = item.querySelector('.learn-title b')?.textContent || '';
-        if (title.includes('학습 검토 이미지') || title.includes('현장 업로드 이미지')) item.remove();
+      const install = () => {
+        const learning = document.querySelector('#learning');
+        const hero = learning?.querySelector('.hero');
+        if (!learning || !hero) return;
+        const cleanUnapprovedItems = () => {
+          learning.querySelectorAll('.learn-list .learn-item').forEach((item) => {
+            const text = item.textContent;
+            const legacyUpload = text.includes('현장 업로드 이미지') && item.dataset.learningApproved !== 'true';
+            const legacyApproved = text.includes('학습 반영 완료') && text.includes('AI 사전 추천');
+            if (legacyUpload || legacyApproved) item.remove();
+          });
+        };
+        cleanUnapprovedItems();
+        // 기존 삭제 테스트 항목은 한 번 복구한 뒤, 이후 새 삭제 동작은 그대로 유지한다.
+        if (localStorage.getItem('aiSmartMixingLearningRestoreV1') !== '1') {
+          localStorage.removeItem('aiSmartMixingDeletedLearning');
+          localStorage.setItem('aiSmartMixingLearningRestoreV1', '1');
+        }
+        const deletedLearning = new Set(JSON.parse(localStorage.getItem('aiSmartMixingDeletedLearning') || '[]'));
+        learning.querySelectorAll('.learn-list .learn-item').forEach((item) => {
+          if (item.dataset.learningData === 'true') return;
+          const title = item.querySelector('.learn-title b')?.textContent.trim() || '';
+          if (deletedLearning.has(title)) { item.remove(); return; }
+          const titleBar = item.querySelector('.learn-title');
+          if (!titleBar || titleBar.querySelector('.learning-delete')) return;
+          const deleteButton = document.createElement('span');
+          deleteButton.className = 'learning-delete';
+          deleteButton.setAttribute('role', 'button');
+          deleteButton.setAttribute('tabindex', '0');
+          deleteButton.textContent = '삭제';
+          deleteButton.title = '학습 데이터 삭제';
+          const dateLabel = titleBar.querySelector('span');
+          dateLabel?.insertAdjacentElement('afterend', deleteButton);
+          const deleteItem = (event) => {
+            event.stopPropagation();
+            const nextDeleted = new Set(JSON.parse(localStorage.getItem('aiSmartMixingDeletedLearning') || '[]'));
+            nextDeleted.add(title);
+            localStorage.setItem('aiSmartMixingDeletedLearning', JSON.stringify([...nextDeleted]));
+            item.remove();
+          };
+          deleteButton.addEventListener('click', deleteItem);
+          deleteButton.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') deleteItem(event); });
+        });
+        const learningList = learning.querySelector('.learn-list');
+        if (learningList && learningList.dataset.guardAttached !== 'true') {
+          learningList.dataset.guardAttached = 'true';
+          new MutationObserver(cleanUnapprovedItems).observe(learningList, {childList: true});
+        }
+        if (learning.querySelector('#learningPhotoInput')) return;
+        const panel = document.createElement('section');
+        panel.className = 'panel learning-upload-panel';
+        panel.innerHTML = `
+          <div class="panel-head"><div><h2>현장 사진 업로드</h2><p>급속 경화 의심 사진을 등록해 AI 분석 대상 여부를 먼저 확인합니다.</p></div><span class="badge">JPG · PNG</span></div>
+          <div class="panel-body"><div class="photo-upload">
+            <label for="learningPhotoInput">사진 파일 선택</label>
+            <input id="learningPhotoInput" type="file" accept="image/png,image/jpeg,image/webp">
+            <div id="learningPhotoName" class="file-name">선된 파일이 없습니다.</div>
+            <div class="photo-preview-box"><div id="learningPhotoEmpty" class="photo-preview-empty">사진을 선택하면<br>여기에 미리 보입니다.</div><img id="learningPhotoPreview" class="photo-upload-preview" alt="업로드 사진 미리보기"></div>
+            <div class="upload-fields"><select id="photoJob"><option>래들 벽체</option><option>래들 바닥</option><option>턴디쉬 카바</option><option>승온 버너</option></select><select id="photoCycle"><option>1사이클</option><option>2사이클</option><option>3사이클</option></select><select id="photoRound"><option>1차</option><option>2차</option><option>3차</option></select></div>
+            <button id="loadDemoPhoto" class="button secondary" type="button">공개 데모 사진 불러오기</button>
+          <button id="addLearningPhoto" class="button" type="button">AI 분석 시작</button>
+          <div id="photoUploadMessage" class="upload-message">사진을 분석한 뒤 결과를 확인하고 학습 반영 여부를 선택합니다.</div>
+          </div></div>`;
+        hero.insertAdjacentElement('afterend', panel);
+        const input = panel.querySelector('#learningPhotoInput');
+        const preview = panel.querySelector('#learningPhotoPreview');
+        const empty = panel.querySelector('#learningPhotoEmpty');
+        const name = panel.querySelector('#learningPhotoName');
+        input.addEventListener('change', () => {
+          const file = input.files?.[0];
+          if (!file) return;
+          window.aiSmartMixingSelectedPreview = URL.createObjectURL(file);
+          preview.src = window.aiSmartMixingSelectedPreview;
+          preview.style.display = 'block';
+          empty.style.display = 'none';
+          name.textContent = `선택된 파일: ${file.name}`;
+        });
+        panel.querySelector('#loadDemoPhoto').addEventListener('click', async () => {
+          try {
+            const response = await fetch('/demo-image');
+            if (!response.ok) throw new Error('공개 데모 사진을 불러오지 못했습니다.');
+            const blob = await response.blob();
+            const file = new File([blob], 'refractory-bricks-lining-demo.jpg', {type: blob.type || 'image/jpeg'});
+            window.aiSmartMixingDemoFile = file;
+            window.aiSmartMixingSelectedPreview = URL.createObjectURL(blob);
+            preview.src = window.aiSmartMixingSelectedPreview;
+            preview.style.display = 'block';
+            empty.style.display = 'none';
+            name.textContent = '공개 데모 사진 선택됨';
+          } catch (error) {
+            name.textContent = error.message;
+          }
+        });
+        panel.querySelector('#addLearningPhoto').addEventListener('click', async (event) => {
+          event.stopImmediatePropagation();
+          const localFile = input.files?.[0] || null;
+          const file = localFile || window.aiSmartMixingDemoFile;
+          if (!file) {
+            name.textContent = '먼저 현장 사진 파일을 선택하세요.';
+            return;
+          }
+          const button = event.currentTarget;
+          const message = panel.querySelector('#photoUploadMessage');
+
+          // 직접 선택한 사진은 경화·균열 점수 분석 없이, 내화물 사진 적합성만 먼저 확인합니다.
+          if (localFile) {
+            const job = panel.querySelector('#photoJob').value;
+            const cycle = panel.querySelector('#photoCycle').value;
+            const round = panel.querySelector('#photoRound').value;
+            button.disabled = true;
+            message.style.display = 'block';
+            message.style.color = '#2871af';
+            message.textContent = 'AI 분석 중입니다. 경화·균열 의심도를 계산합니다.';
+            let scopeApproved = false;
+            try {
+              const body = new FormData();
+              body.append('file', localFile, localFile.name);
+              const analysisUrl = window.location.port === '8765' ? 'http://127.0.0.1:8000/analyze' : '/analyze';
+              const response = await fetch(analysisUrl, {method: 'POST', body});
+              const review = response.ok ? await response.json() : {};
+              const feature = review.feature_summary || {};
+              const documentLike = Number(feature.bright_ratio) >= 0.45 && Number(feature.edge_density) <= 0.14;
+              scopeApproved = review.image_scope === true && !documentLike;
+              window.aiSmartMixingLastAnalysis = review;
+            } catch (error) {
+              scopeApproved = false;
+            }
+            const recommendationTitle = scopeApproved ? 'AI 추천 · 학습 후보' : '부적합 · 학습 제외 권고';
+            const recommendationBody = scopeApproved
+              ? '내화물 작업면 사진으로 확인되었습니다. 작업자가 승인하면 학습 데이터에 반영됩니다.'
+              : '내화물 작업면으로 확인되지 않았습니다. 학습 반영을 막고 사진 제외 또는 재업로드를 권고합니다.';
+            const reviewActions = scopeApproved
+              ? '<button type="button" data-learning-approve>학습 반영</button><button type="button" class="button secondary" data-learning-reject>제외</button>'
+              : '<button type="button" class="button secondary" data-learning-reject>사진 제외</button>';
+            const item = document.createElement('div');
+            item.className = 'learn-item open';
+            item.dataset.learningData = 'true';
+            const now = new Date();
+            const learningDate = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
+            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 학습 검토 이미지</b><span>${learningDate} · 접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="등록한 학습 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="${scopeApproved ? 'green' : 'red'} review-status">${recommendationTitle}</b></div></div><div class="improve"><b>AI 사전 적합성 확인</b><br>${recommendationBody}<div class="learning-review-actions">${reviewActions}</div></div></div></div></div>`;
+            const actualHardening = Number(window.aiSmartMixingLastAnalysis?.hardening_score);
+            const actualCrack = Number(window.aiSmartMixingLastAnalysis?.crack_score);
+            if (scopeApproved && Number.isFinite(actualHardening) && Number.isFinite(actualCrack)) {
+              const actualPanel = document.createElement('div');
+              actualPanel.className = 'improve ai-real-analysis';
+              actualPanel.innerHTML = `<b>AI 이미지 분석 결과</b><br>경화 의심도 ${actualHardening}% · 균열 의심도 ${actualCrack}%<br>${window.aiSmartMixingLastAnalysis.improvement_note || ''}`;
+              item.querySelector('.learn-detail > .image-layout > div').append(actualPanel);
+            }
+            item.querySelector('.uploaded-image').src = URL.createObjectURL(localFile);
+            item.querySelector('.learn-title').dataset.statusDate = learningDate;
+            item.querySelector('.learn-title').addEventListener('click', () => {
+              item.classList.toggle('open');
+              item.querySelector('.learn-title span').textContent = `${learningDate} · ${item.classList.contains('open') ? '접기' : '펼치기'}`;
+            });
+            const titleDelete = document.createElement('span');
+            titleDelete.className = 'learning-delete';
+            titleDelete.setAttribute('role', 'button');
+            titleDelete.setAttribute('tabindex', '0');
+            titleDelete.textContent = '삭제';
+            titleDelete.title = '학습 데이터 삭제';
+            item.querySelector('.learn-title').append(titleDelete);
+            titleDelete.addEventListener('click', async (deleteEvent) => {
+              deleteEvent.stopPropagation();
+              if (!item.dataset.learningRecordId) { item.remove(); message.textContent = '학습 데이터에서 제외했습니다.'; return; }
+              titleDelete.textContent = '삭제 중';
+              try {
+                const deleteUrl = window.location.port === '8765' ? `http://127.0.0.1:8000/learning-images/${item.dataset.learningRecordId}` : `/learning-images/${item.dataset.learningRecordId}`;
+                const deleteResponse = await fetch(deleteUrl, {method: 'DELETE'});
+                if (!deleteResponse.ok) throw new Error('저장된 학습 데이터를 삭제하지 못했습니다.');
+                item.remove();
+                message.textContent = '학습 데이터가 삭제되었습니다.';
+              } catch (error) { titleDelete.textContent = '삭제'; message.textContent = `삭제 실패: ${error.message}`; }
+            });
+            item.querySelector('[data-learning-approve]')?.addEventListener('click', async (approveEvent) => {
+              approveEvent.stopPropagation();
+              const approveButton = approveEvent.currentTarget;
+              approveButton.disabled = true;
+              message.textContent = '학습 이미지와 분석 결과를 저장하는 중입니다.';
+              try {
+                const saveBody = new FormData();
+                saveBody.append('file', localFile, localFile.name);
+                saveBody.append('job_name', job);
+                saveBody.append('cycle', cycle);
+                saveBody.append('round_name', round);
+                saveBody.append('analysis', JSON.stringify(window.aiSmartMixingLastAnalysis || {}));
+                const saveUrl = window.location.port === '8765' ? 'http://127.0.0.1:8000/learning-images' : '/learning-images';
+                const saveResponse = await fetch(saveUrl, {method: 'POST', body: saveBody});
+                if (!saveResponse.ok) {
+                  const errorBody = await saveResponse.json().catch(() => ({}));
+                  throw new Error(errorBody.detail || '학습 이미지 저장에 실패했습니다.');
+                }
+                const saved = await saveResponse.json();
+                item.dataset.learningRecordId = saved.record_id;
+              } catch (error) {
+                approveButton.disabled = false;
+                message.textContent = `저장 실패: ${error.message}`;
+                return;
+              }
+              item.querySelector('.review-status').textContent = '학습 반영 완료';
+              item.querySelector('.review-status').className = 'green review-status';
+              item.querySelector('.learning-review-actions').remove();
+              message.textContent = '저장 완료 · 이미지와 분석 결과가 학습 데이터에 반영되었습니다.';
+            });
+            item.querySelector('[data-learning-reject]').addEventListener('click', (rejectEvent) => {
+              rejectEvent.stopPropagation();
+              item.remove();
+              message.textContent = '학습 데이터에서 제외했습니다.';
+            });
+            learning.querySelector('.learn-list').prepend(item);
+            message.style.display = 'block';
+            message.style.color = scopeApproved ? '#108b65' : '#ca4858';
+            message.textContent = scopeApproved ? 'AI 추천 완료 · 작업자 승인 대기 중입니다.' : '부적합 사진 · 학습 반영을 차단했습니다.';
+            name.textContent = `학습 데이터 등록: ${localFile.name}`;
+            button.disabled = false;
+            input.value = '';
+            return;
+          }
+
+          button.disabled = true;
+          message.style.display = 'block';
+          message.style.color = '#2871af';
+          message.textContent = 'AI가 사진의 내화물 범위를 확인하는 중입니다.';
+          try {
+            const body = new FormData();
+            body.append('file', file, file.name);
+            const analysisUrl = window.location.port === '8765' ? 'http://127.0.0.1:8000/analyze' : '/analyze';
+            const response = await fetch(analysisUrl, {method: 'POST', body});
+            if (!response.ok) throw new Error('AI 판정 서버에 연결되지 않았습니다.');
+            const analysis = await response.json();
+            const feature = analysis.feature_summary || {};
+            const documentLike = Number(feature.bright_ratio) >= 0.45 && Number(feature.edge_density) <= 0.14;
+            if (analysis.image_scope !== true || documentLike) {
+              message.style.color = '#ca4858';
+              message.textContent = `분석 중단 · ${analysis.analysis_result || '내화물 현장 사진이 아닙니다.'}`;
+              name.textContent = '분석 대상이 아닌 사진입니다.';
+              return;
+            }
+            const job = panel.querySelector('#photoJob').value;
+            const cycle = panel.querySelector('#photoCycle').value;
+            const round = panel.querySelector('#photoRound').value;
+            const item = document.createElement('div');
+            item.className = 'learn-item open';
+            item.dataset.learningApproved = 'true';
+            item.innerHTML = `<button class="learn-title" type="button"><b>${job} · ${cycle} ${round} · 현장 업로드 이미지</b><span>접기</span></button><div class="learn-detail"><div class="image-layout"><img class="uploaded-image" alt="업로드된 현장 이미지"><div><div class="detail-grid"><div class="detail"><small>작업명</small><b>${job}</b></div><div class="detail"><small>사이클 · 차수</small><b>${cycle} · ${round}</b></div><div class="detail"><small>분석 상태</small><b class="green">${analysis.analysis_status || '시범 판정 완료'}</b></div></div><div class="improve"><b>AI 판정 결과</b><br>경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%<br>${analysis.improvement_note || ''}</div></div></div></div>`;
+            item.querySelector('.uploaded-image').src = window.aiSmartMixingSelectedPreview || URL.createObjectURL(file);
+            item.querySelector('.learn-title').addEventListener('click', () => {
+              item.classList.toggle('open');
+              item.querySelector('.learn-title span').textContent = item.classList.contains('open') ? '접기' : '펼치기';
+            });
+            learning.querySelector('.learn-list').prepend(item);
+            message.style.color = '#108b65';
+            message.textContent = `AI 판정 완료 · 경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%`;
+            name.textContent = `등록 완료: ${file.name}`;
+          } catch (error) {
+            message.style.color = '#ca4858';
+            message.textContent = `등록 중단 · ${error.message}`;
+          } finally {
+            button.disabled = false;
+          }
+        }, true);
+      };
+      install();
+      document.querySelectorAll('nav button[data-screen]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const target = document.getElementById(button.dataset.screen);
+          if (!target) return;
+          document.querySelectorAll('.screen').forEach((screen) => screen.classList.remove('active'));
+          target.classList.add('active');
+          install();
+        });
       });
+      window.addEventListener('hashchange', install);
     })();
   </script>
+<style>
+.steel-sim{background:linear-gradient(135deg,#071d36,#0f3d68);border-radius:18px;padding:24px;color:#eef7ff;box-shadow:0 14px 30px rgba(16,65,105,.18)}
+.steel-sim *{box-sizing:border-box}.steel-sim .ss-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:20px}.steel-sim .ss-kicker{font-size:11px;letter-spacing:1.8px;color:#69dcff;font-weight:800}.steel-sim h1{font-size:32px;margin:8px 0 6px;letter-spacing:-1.5px}.steel-sim .ss-head p{margin:0;color:#b5cde3;font-size:13px;line-height:1.6}.steel-sim .ss-status{padding:9px 12px;border:1px solid #376789;border-radius:20px;color:#62e2aa;white-space:nowrap;font-size:11px}.steel-sim .ss-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px}.steel-sim .ss-step{border:1px solid #315a7a;background:#102c4a;border-radius:11px;padding:14px;cursor:pointer;transition:.2s}.steel-sim .ss-step:hover,.steel-sim .ss-step.active{border-color:#69dcff;background:#174b71;transform:translateY(-2px)}.steel-sim .ss-step small{color:#94b5d0;font-size:10px}.steel-sim .ss-step b{display:block;margin-top:6px;font-size:18px}.steel-sim .ss-step span{display:block;color:#b5cde3;font-size:11px;margin-top:5px}.steel-sim .ss-body{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.steel-sim .ss-panel{border:1px solid #315a7a;border-radius:13px;background:#0e2945;padding:18px}.steel-sim .ss-panel h2{font-size:18px;margin:0 0 6px}.steel-sim .ss-panel p{color:#abc4db;font-size:12px;margin:0;line-height:1.6}.steel-sim .ss-machine{height:225px;margin-top:15px;border:1px solid #315a7a;border-radius:11px;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 55%,rgba(92,222,255,.18),transparent 35%),#081a2c}.steel-sim .ss-machine:before{content:"";position:absolute;left:12%;right:12%;bottom:32px;height:63px;border:3px solid #56d7f5;border-radius:38px 38px 10px 10px;background:linear-gradient(90deg,rgba(37,123,183,.42),rgba(240,142,58,.42));box-shadow:0 0 28px rgba(82,217,255,.16)}.steel-sim .ss-machine:after{content:"";position:absolute;left:25%;right:25%;bottom:67px;height:4px;background:#ffad55;box-shadow:0 24px #59daf8}.steel-sim .ss-pipe{position:absolute;top:28px;bottom:94px;width:3px;background:#416b8b}.steel-sim .ss-pipe.a{left:28%}.steel-sim .ss-pipe.b{left:50%}.steel-sim .ss-pipe.c{left:72%}.steel-sim .ss-machine label{position:absolute;bottom:8px;left:0;right:0;text-align:center;color:#86a9c5;font-size:10px;letter-spacing:1.2px}.steel-sim .ss-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.steel-sim .ss-metric{background:#091b2e;border:1px solid #274966;border-radius:9px;padding:12px}.steel-sim .ss-metric small{display:block;color:#8fabca;font-size:10px;margin-bottom:6px}.steel-sim .ss-metric strong{font-size:19px}.steel-sim .ss-cyan{color:#69dcff}.steel-sim .ss-green{color:#62e2aa}.steel-sim .ss-orange{color:#ffb25f}.steel-sim .ss-timeline{display:grid;gap:12px;margin-top:15px}.steel-sim .ss-event{display:grid;grid-template-columns:42px 1fr;gap:10px}.steel-sim .ss-event>b{color:#69dcff;font-size:11px}.steel-sim .ss-event>div{border-left:2px solid #315a7a;padding:0 0 12px 12px}.steel-sim .ss-event strong{display:block;font-size:13px;margin-bottom:4px}.steel-sim .ss-event span{font-size:11px;color:#abc4db;line-height:1.5}.steel-sim .ss-buttons{display:flex;gap:8px;margin-top:13px}.steel-sim .ss-button{border:0;border-radius:8px;padding:10px 13px;background:#69dcff;color:#08203a;font-weight:800;cursor:pointer}.steel-sim .ss-button.alt{background:#173d5d;color:#eef7ff;border:1px solid #376789}.steel-sim .ss-result{margin-top:12px;padding:11px;border-radius:8px;background:#092035;border:1px solid #274966;color:#b5cde3;font-size:11px;line-height:1.55;min-height:42px}@media(max-width:850px){.steel-sim .ss-head,.steel-sim .ss-body{display:block}.steel-sim .ss-status{display:inline-block;margin-top:14px}.steel-sim .ss-panel{margin-top:12px}}@media(max-width:600px){.steel-sim .ss-steps{grid-template-columns:1fr}.steel-sim h1{font-size:25px}}
+</style>
+<script>
+(function(){
+  const root=document.getElementById('process'); if(!root||true)return; root.dataset.steelSim='1';
+  root.innerHTML='<div class="steel-sim"><div class="ss-head"><div><div class="ss-kicker">SMART STEEL PROCESS / SIMULATION</div><h1>제철 공정을 실시간으로 확인하세요.</h1><p>제선·제강·압연의 공개된 일반 공정 흐름을 기반으로 공정 상태와 센서값을 확인하는 데모입니다.</p></div><div class="ss-status">● 시뮬레이션 연결됨</div></div><div class="ss-steps"><button class="ss-step active" data-n="0"><small>PROCESS 01</small><b>제선</b><span>원료 장입 · 환원 · 쇳물 생산</span></button><button class="ss-step" data-n="1"><small>PROCESS 02</small><b>제강</b><span>정련 · 성분 조정 · 연속 주조</span></button><button class="ss-step" data-n="2"><small>PROCESS 03</small><b>압연</b><span>가열 · 압연 · 품질 확인</span></button></div><div class="ss-body"><div class="ss-panel"><h2 id="ssTitle">제선 공정 모니터</h2><p id="ssDesc">원료를 장입하고 환원 반응을 통해 쇳물을 생산합니다.</p><div class="ss-machine"><i class="ss-pipe a"></i><i class="ss-pipe b"></i><i class="ss-pipe c"></i><label id="ssMachine">BLAST FURNACE / RAW MATERIAL FLOW</label></div><div class="ss-metrics"><div class="ss-metric"><small>공정 온도</small><strong class="ss-orange" id="ssTemp">1,180℃</strong></div><div class="ss-metric"><small>설비 부하</small><strong class="ss-cyan" id="ssLoad">72%</strong></div><div class="ss-metric"><small>진행률</small><strong class="ss-green" id="ssProgress">38%</strong></div><div class="ss-metric"><small>AI 상태</small><strong class="ss-green" id="ssAi">정상</strong></div></div><div class="ss-buttons"><button class="ss-button" id="ssNext">다음 공정 시뮬레이션</button><button class="ss-button alt" id="ssReset">처음부터</button></div><div class="ss-result" id="ssResult">AI 판단: 현재 제선 공정은 정상 범위입니다. 다음 단계 진행을 준비할 수 있습니다.</div></div><div class="ss-panel"><h2>공정 흐름</h2><p>공개된 일반 공정 흐름 기반의 발표용 시뮬레이션</p><div class="ss-timeline"><div class="ss-event"><b>01</b><div><strong>제선</strong><span>원료를 장입하고 환원 반응으로 쇳물을 생산합니다.</span></div></div><div class="ss-event"><b>02</b><div><strong>제강</strong><span>쇳물의 온도와 성분을 조정한 뒤 연속 주조합니다.</span></div></div><div class="ss-event"><b>03</b><div><strong>압연</strong><span>슬래브를 가열·압연하여 제품 규격을 확인합니다.</span></div></div></div><div class="ss-result">실제 PLC를 제어하지 않는 발표용 시뮬레이션입니다.</div></div></div></div>';
+  const data=[['제선 공정 모니터','원료를 장입하고 환원 반응을 통해 쇳물을 생산합니다.','1,180℃','72%','38%','BLAST FURNACE / RAW MATERIAL FLOW','AI 판단: 현재 제선 공정은 정상 범위입니다. 다음 단계 진행을 준비할 수 있습니다.'],['제강 공정 모니터','쇳물의 온도와 성분을 조정하고 연속 주주를 진행합니다.','1,624℃','64%','66%','LADLE / CONTINUOUS CASTING','AI 판단: 성분 조정 단계가 안정적으로 진행 중입니다. 온도 편차를 계속 관찰합니다.'],['압연 공정 모니터','슬래브를 가열하고 압연하여 최종 제품을 생산합니다.','1,080℃','81%','91%','REHEATING FURNACE / ROLLING MILL','AI 판단: 압연 하중이 관리 범위 안에 있습니다. 제품 품질 확인 단계로 이동합니다.']]; let cur=0;
+  function render(n){cur=n;const d=data[n];root.querySelectorAll('.ss-step').forEach((b,i)=>b.classList.toggle('active',i===n));['ssTitle','ssDesc','ssTemp','ssLoad','ssProgress','ssMachine','ssResult'].forEach((id,i)=>root.querySelector('#'+id).textContent=d[i]);root.querySelector('#ssNext').textContent=n===2?'시뮬레이션 완료':'다음 공정 시뮬레이션'}
+  root.querySelectorAll('.ss-step').forEach(b=>b.addEventListener('click',()=>render(Number(b.dataset.n))));root.querySelector('#ssNext').addEventListener('click',()=>render(cur<2?cur+1:0));root.querySelector('#ssReset').addEventListener('click',()=>render(0));
+})();
+</script>
 </body>
 </html>
+
