@@ -1634,8 +1634,10 @@
         });
         if (records.length !== rawRecords.length) localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(records));
         let recordsChanged = false;
+        const seenIds = new Set();
         records.forEach((record, index) => {
-          if (!record.id) { record.id = `legacy-${record.approvedAt || Date.now()}-${index}`; recordsChanged = true; }
+          if (!record.id || seenIds.has(record.id)) { record.id = `local-${record.approvedAt || Date.now()}-${index}`; recordsChanged = true; }
+          seenIds.add(record.id);
         });
         if (recordsChanged) localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(records));
         records.slice().reverse().forEach((record) => {
@@ -1665,6 +1667,7 @@
       }
       updateLearningCount();
       restoreLocalLearning();
+      updateLearningCount();
       document.querySelectorAll('#learning .detail').forEach((el) => {
         const label = el.querySelector('small');
         if (label && label.textContent.includes('학습 이미지')) { label.textContent = '등록 데이터'; const value = el.querySelector('b'); if (value) value.textContent = '3건'; }
