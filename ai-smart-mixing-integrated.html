@@ -1553,6 +1553,8 @@
             const alreadySaved = savedLocalRecords.some((record) => [record.job || '', record.cycle || '', record.round || '', record.fileName || '', String(record.approvedAt || '').slice(0, 10)].join('|') === newRecordKey);
             if (!alreadySaved) savedLocalRecords.unshift(newLocalRecord);
             localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(savedLocalRecords.slice(0, 50)));
+            const visibleLearningTotal = 3 + savedLocalRecords.slice(0, 50).length;
+            document.querySelectorAll('#learning .badge').forEach((badge) => { badge.textContent = `등록 학습 데이터 ${visibleLearningTotal}건`; });
             if (window.aiSmartMixingCountNewLearning) window.aiSmartMixingCountNewLearning();
             message.style.color = '#108b65';
             message.textContent = `AI 판정 완료 · 경화 의심도 ${analysis.hardening_score ?? '-'}% · 균열 의심도 ${analysis.crack_score ?? '-'}%`;
