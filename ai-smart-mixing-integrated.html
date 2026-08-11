@@ -1490,7 +1490,7 @@
                 const approvedAt = new Date().toISOString();
                 const localKey = [job, cycle, round, localFile.name, approvedAt.slice(0, 10)].join('|');
                 const exists = localLearning.some((record) => [record.job || '', record.cycle || '', record.round || '', record.fileName || '', String(record.approvedAt || '').slice(0, 10)].join('|') === localKey);
-                if (!exists) localLearning.unshift({ id: `local-${Date.now()}`, job, cycle, round, fileName: localFile.name, approvedAt });
+                if (!exists) localLearning.unshift({ id: `local-${Date.now()}`, job, cycle, round, fileName: localFile.name, approvedAt, label: 'normal' });
                 localStorage.setItem('aiSmartMixingLocalLearning', JSON.stringify(localLearning.slice(0, 50)));
               }
               item.querySelector('.review-status').textContent = '학습 반영 완료';
@@ -1706,14 +1706,14 @@
         });
         item.querySelector('[data-learning-approve]').addEventListener('click', (event) => {
           event.stopPropagation();
-          item.querySelector('.review-status').textContent = '학습 반영 완료';
+          item.querySelector('.review-status').textContent = '정상 기준 데이터 반영 완료';
           item.querySelector('.learning-review-actions').remove();
           if (!item.dataset.approvedCounted) {
             window.aiSmartMixingCountNewLearning();
             item.dataset.approvedCounted = 'true';
             updateLearningCount();
           }
-          if (message) { message.style.display = 'block'; message.style.color = '#108b65'; message.textContent = '학습 반영 완료'; }
+          if (message) { message.style.display = 'block'; message.style.color = '#108b65'; message.textContent = '정상 기준 데이터로 반영했습니다.'; }
         });
         item.querySelector('[data-learning-reject]').addEventListener('click', (event) => {
           event.stopPropagation();
