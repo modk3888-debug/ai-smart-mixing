@@ -50,36 +50,99 @@ SENSOR_STATE = {
     "humidity": 78.0,
     "source": "demo-sensor",
     "season": "summer",
+    "amount_kg": 500.0,
+    "cycle": 1,
+    "round": 1,
+    "material": "저시멘트 캐스터블",
     "updated_at": datetime.now(timezone.utc).isoformat(),
 }
 
 
+def _material_code(material: str) -> float:
+    """내화물 종류를 모델용 범주값으로 변환한다."""
+    name = str(material or "")
+    if "래들 바닥" in name:
+        return 1.0
+    if "턴디시" in name or "턴디쉬" in name:
+        return 2.0
+    if "버너" in name:
+        return 3.0
+    return 0.0
+
+
 def build_demo_xgboost_model() -> XGBRegressor:
-    """발표용 더미 작업 데이터로 XGBoost 위험도 예측 모델을 준비한다."""
+    """공개 기술자료의 일반 경향을 반영한 발표용 합성 작업 데이터.
+
+    반영 경향:
+    - 물량·수분은 배합 일관성과 작업성에 직접 영향
+    - 온도·습도·호퍼 대기시간이 길수록 작업 가능 시간이 짧아질 수 있음
+    - 믹싱시간은 재료별 최적 범위를 벗어나면 위험이 증가
+    - 내화물 종류, 사이클, 차수에 따라 기준값과 작업 리스크가 달라짐
+    """
     rng = np.random.default_rng(42)
-    rows = 240
+    rows = 480
     temperature = rng.uniform(18, 42, rows)
     humidity = rng.uniform(35, 92, rows)
-    water = rng.uniform(24, 28, rows)
-    mixing = rng.integers(4, 8, rows)
-    hopper_wait = rng.uniform(0, 24, rows)
-    retarder = rng.integers(0, 2, rows)
-    season_code = rng.integers(0, 2, rows)
-    risk = (
-        4.5
-        + np.maximum(temperature - 26, 0) * 0.55
-        + np.maximum(humidity - 58, 0) * 0.11
-        + np.maximum(water - 26.2, 0) * 1.8
-        + np.maximum(hopper_wait - 5, 0) * 0.22
-        + retarder * -2.0
-        + season_code * 0.8
-        + rng.normal(0, 0.8, rows)
+    amount_kg = rng.choice([350, 400, 450, 500], rows)
+    cycle = rng.integers(1, 4, rows)
+    round_no = rng.integers(1, 4, rows)
+    material_code = rng.integers(0, 4, rows).astype(float)
+    season_code = (temperature < 23).astype(float)
+    target_water = (
+        25.5
+        + material_code * 0.18
+        + (temperature < 23) * 0.25
+        - np.maximum(humidity - 70, 0) * 0.025
+        + rng.normal(0, 0.12, rows)
     )
-    features = np.column_stack([temperature, humidity, water, mixing, hopper_wait, retarder, season_code])
+    water = np.clip(target_water + rng.normal(0, 0.35, rows), 24.0, 28.0)
+    mixing = np.clip(
+        4.2
+        + material_code * 0.25
+        + (amount_kg - 350) / 300
+        + rng.normal(0, 0.35, rows),
+        3.5,
+        7.0,
+    )
+    hopper_wait = np.clip(
+        2.0
+        + (round_no - 1) * 1.8
+        + (cycle - 1) * 0.8
+        + rng.normal(0, 2.2, rows),
+        0,
+        24,
+    )
+    retarder = (
+        (
+            (temperature >= 33)
+            | ((humidity >= 78) & (hopper_wait >= 7))
+            | ((round_no >= 3) & (material_code == 1))
+        )
+        & (rng.random(rows) > 0.18)
+    ).astype(float)
+    risk = (
+        3.0
+        + np.maximum(temperature - 27, 0) * 0.48
+        + np.maximum(humidity - 65, 0) * 0.09
+        + np.maximum(water - target_water - 0.35, 0) * 4.2
+        + np.maximum(target_water - water - 0.55, 0) * 2.0
+        + np.maximum(hopper_wait - 5, 0) * 0.42
+        + np.maximum(mixing - 5.5, 0) * 1.2
+        + (amount_kg - 350) * 0.012
+        + (cycle - 1) * 0.7
+        + (round_no - 1) * 0.9
+        + material_code * 0.55
+        - retarder * 2.8
+        + rng.normal(0, 0.55, rows)
+    )
+    features = np.column_stack([
+        temperature, humidity, amount_kg, cycle, round_no, material_code,
+        water, mixing, hopper_wait, retarder, season_code
+    ])
     model = XGBRegressor(
-        n_estimators=80,
-        max_depth=3,
-        learning_rate=0.08,
+        n_estimators=120,
+        max_depth=4,
+        learning_rate=0.06,
         subsample=0.9,
         colsample_bytree=0.9,
         objective="reg:squarederror",
@@ -100,10 +163,14 @@ def _training_features(row: dict) -> list[float]:
     return [
         float(row.get("temperature", 25)),
         float(row.get("humidity", 60)),
-        float(row.get("water", 26)),
-        float(row.get("mixing", 5)),
-        float(row.get("hopper_wait", 0)),
-        float(row.get("retarder", 0)),
+        float(row.get("amount_kg", row.get("amount", 500))),
+        float(row.get("cycle", 1)),
+        float(row.get("round", row.get("round_no", 1))),
+        _material_code(str(row.get("material", ""))),
+        float(row.get("water", row.get("actual_water_l", 26))),
+        float(row.get("mixing", row.get("actual_mixing_min", 5))),
+        float(row.get("hopper_wait", row.get("hopper_wait_min", 0))),
+        float(row.get("retarder", row.get("retarder_used", 0))),
         float(row.get("season_code", 0)),
     ]
 
@@ -146,14 +213,28 @@ def _load_saved_xgboost_model() -> None:
 _load_saved_xgboost_model()
 
 
-def recommendation_for_environment(temperature: float, humidity: float, season: str = "summer") -> dict:
+def recommendation_for_environment(
+    temperature: float,
+    humidity: float,
+    season: str = "summer",
+    amount_kg: float = 500,
+    cycle: int = 1,
+    round_no: int = 1,
+    material: str = "저시멘트 캐스터블",
+    hopper_wait: float = 0,
+    retarder: float = 0,
+) -> dict:
     season_code = 1.0 if season == "winter" else 0.0
-    seasonal_offset = 0.3 if season == "winter" else -0.2
-    water = round(max(24.0, min(28.0, 26.0 + seasonal_offset + max(0.0, temperature - 30.0) * 0.18 - max(0.0, humidity - 70.0) * 0.04)), 1)
+    material_code = _material_code(material)
+    base_water = 25.5 + material_code * 0.18 + (0.25 if season == "winter" else 0.0)
+    water = round(max(24.0, min(28.0, base_water - max(0.0, humidity - 70.0) * 0.025 + max(0.0, temperature - 30.0) * 0.08)), 1)
     mixing_minutes = 5
-    feature_row = np.array([[temperature, humidity, water, mixing_minutes, 0.0, 0.0, season_code]], dtype=float)
+    feature_row = np.array([[
+        temperature, humidity, amount_kg, cycle, round_no, material_code,
+        water, mixing_minutes, hopper_wait, retarder, season_code
+    ]], dtype=float)
     predicted_risk = float(ACTIVE_XGBOOST_MODEL.predict(feature_row)[0])
-    risk = round(max(5.0, min(30.0, predicted_risk)), 1)
+    risk = round(max(3.0, min(30.0, predicted_risk)), 1)
     return {
         "risk": risk,
         "recommended_water_l": water,
@@ -161,9 +242,15 @@ def recommendation_for_environment(temperature: float, humidity: float, season: 
         "retarder": risk > 10,
         "model": "XGBoost v2.4 · field recommendation",
         "season": season,
+        "inputs": {
+            "temperature": temperature,
+            "humidity": humidity,
+            "amount_kg": amount_kg,
+            "cycle": cycle,
+            "round": round_no,
+            "material": material,
+        },
     }
-
-
 
 
 @app.get("/xgboost/status")
@@ -206,6 +293,12 @@ def xgboost_recommend(payload: dict = Body(...)) -> dict:
         float(payload.get("temperature", 25)),
         float(payload.get("humidity", 60)),
         str(payload.get("season", "summer")),
+        float(payload.get("amount_kg", 500)),
+        int(payload.get("cycle", 1)),
+        int(payload.get("round", payload.get("round_no", 1))),
+        str(payload.get("material", "저시멘트 캐스터블")),
+        float(payload.get("hopper_wait", 0)),
+        float(payload.get("retarder", 0)),
     )
     return {**result, "model_version": "XGBoost v2.4", "training_source": TRAINING_SOURCE, "training_rows": TRAINING_ROWS}
 
@@ -223,13 +316,21 @@ def sensor_state() -> dict:
     temperature = float(SENSOR_STATE["temperature"])
     humidity = float(SENSOR_STATE["humidity"])
     season = str(SENSOR_STATE.get("season", "summer"))
+    amount_kg = float(SENSOR_STATE.get("amount_kg", 500))
+    cycle = int(SENSOR_STATE.get("cycle", 1))
+    round_no = int(SENSOR_STATE.get("round", 1))
+    material = str(SENSOR_STATE.get("material", "저시멘트 캐스터블"))
     return {
         "source": SENSOR_STATE["source"],
         "temperature": temperature,
         "humidity": humidity,
         "season": season,
         "updated_at": SENSOR_STATE["updated_at"],
-        "recommendation": recommendation_for_environment(temperature, humidity, season),
+        "amount_kg": amount_kg,
+        "cycle": cycle,
+        "round": round_no,
+        "material": material,
+        "recommendation": recommendation_for_environment(temperature, humidity, season, amount_kg, cycle, round_no, material),
     }
 
 
