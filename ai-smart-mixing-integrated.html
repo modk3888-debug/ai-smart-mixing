@@ -1144,6 +1144,22 @@
               });
               if (!cycleResponse.ok) throw new Error(await cycleResponse.text());
             }
+            const trainingRows = saved.flatMap(item => (item.cycles || []).map(cycle => ({
+              temperature: Number(String(item.env || '').match(/[\\d.]+/)?.[0] || 25),
+              humidity: Number(String(item.env || '').match(/[\\d.]+/g)?.[1] || 60),
+              water: Number(cycle.water || 0),
+              mixing: Number(cycle.mixing || 5),
+              hopper_wait: Number(cycle.wait || 0),
+              retarder: cycle.retarder ? 1 : 0,
+              season_code: /겨울/.test(item.material || '') ? 1 : 0,
+              risk: Number(cycle.risk || 0)
+            })));
+            if (trainingRows.length >= 8) {
+              fetch('/xgboost/train', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rows: trainingRows }) })
+                .then(response => { if (!response.ok) throw new Error('XGBoost 학습 실패'); return response.json(); })
+                .then(result => console.info('XGBoost 모델 재학습 완료:', result.training_rows, '건'))
+                .catch(error => console.warn('XGBoost 재학습 대기:', error));
+            }
             document.getElementById('logState').textContent = '저장 완료 · 서버 DB 동기화';
           } catch (error) {
             document.getElementById('logState').textContent = '저장 완료 · 로컬 기록 (DB 스키마 확인 필요)';
