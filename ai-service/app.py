@@ -1,3 +1,6 @@
+Exit code: 0
+Wall time: 0.2 seconds
+Output:
 """AI 스마트 믹싱용 현장 이미지 분석 API.
 
 현재는 정상 이미지가 충분히 쌓이기 전까지 기준 이미지 기반 시범 판정을 제공합니다.
@@ -9,14 +12,17 @@ from __future__ import annotations
 
 import io
 import json
+import math
+import pickle
 import shutil
+import uuid
 from urllib.request import Request, urlopen
 from datetime import datetime, timezone
 from pathlib import Path
 
 import cv2
 import numpy as np
-from fastapi import Body, FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from PIL import Image
@@ -26,7 +32,10 @@ APP_ROOT = Path(__file__).resolve().parent
 WORKSPACE_ROOT = APP_ROOT.parent
 NORMAL_DIR = APP_ROOT / "data" / "normal"
 MODEL_DIR = APP_ROOT / "models"
-TRAINING_META_PATH = APP_ROOT / "data" / "xgboost_training.json"
+MIXING_MODEL_PATH = MODEL_DIR / "xgboost_mixing.pkl"
+MIXING_TRAINING_PATH = APP_ROOT / "data" / "training" / "mixing_records.json"
+LEARNING_DIR = APP_ROOT / "data" / "learning"
+LEARNING_RECORDS = LEARNING_DIR / "records.json"
 NORMAL_NAMES = (
     "learning-ladle-wall.jpg",
     "learning-ladle-bottom.jpg",
@@ -36,322 +45,99 @@ NORMAL_NAMES = (
 SITE_FILE = "ai-smart-mixing-integrated.html"
 SITE_ASSETS = {SITE_FILE, *NORMAL_NAMES}
 
+MIXING_FEATURES = ("temperature_c", "humidity_pct", "amount_kg", "cycle_no", "round_no", "material_code")
+MIXING_TARGETS = ("water_l", "mixing_min", "hopper_wait_min", "risk_pct")
+MATERIAL_CODES = {"래들 벽체": 1, "래들 바닥": 2, "턴디쉬 카바": 3, "저시멘트 캐스터블": 4}
+
 app = FastAPI(title="AI 스마트 믹싱 이미지 분석 API", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:8990", "http://localhost:8990"],
+    allow_origins=["http://127.0.0.1:8990", "http://localhost:8990", "http://127.0.0.1:8765", "http://localhost:8765"],
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
 
-SENSOR_STATE = {
-    "temperature": 31.0,
-    "humidity": 78.0,
-    "source": "demo-sensor",
-    "season": "summer",
-    "amount_kg": 500.0,
-    "cycle": 1,
-    "round": 1,
-    "material": "저시멘트 캐스터블",
-    "updated_at": datetime.now(timezone.utc).isoformat(),
-}
+def _material_code(value: object) -> int:
+    text = str(value or "")
+    if text in MATERIAL_CODES:
+        return MATERIAL_CODES[text]
+    return 0
 
 
-def _material_code(material: str) -> float:
-    """내화물 종류를 모델용 범주값으로 변환한다."""
-    name = str(material or "")
-    if "래들 바닥" in name:
-        return 1.0
-    if "턴디시" in name or "턴디쉬" in name:
-        return 2.0
-    if "버너" in name:
-        return 3.0
-    return 0.0
-
-
-def build_demo_xgboost_model() -> XGBRegressor:
-    """공개 기술자료의 일반 경향을 반영한 발표용 합성 작업 데이터.
-
-    반영 경향:
-    - 물량·수분은 배합 일관성과 작업성에 직접 영향
-    - 온도·습도·호퍼 대기시간이 길수록 작업 가능 시간이 짧아질 수 있음
-    - 믹싱시간은 재료별 최적 범위를 벗어나면 위험이 증가
-    - 내화물 종류, 사이클, 차수에 따라 기준값과 작업 리스크가 달라짐
-    """
-    rng = np.random.default_rng(42)
-    rows = 480
-    temperature = rng.uniform(18, 42, rows)
-    humidity = rng.uniform(35, 92, rows)
-    amount_kg = rng.choice([350, 400, 450, 500], rows)
-    cycle = rng.integers(1, 4, rows)
-    round_no = rng.integers(1, 4, rows)
-    material_code = rng.integers(0, 4, rows).astype(float)
-    season_code = (temperature < 23).astype(float)
-    target_water = (
-        25.5
-        + material_code * 0.18
-        + (temperature < 23) * 0.25
-        - np.maximum(humidity - 70, 0) * 0.025
-        + rng.normal(0, 0.12, rows)
-    )
-    water = np.clip(target_water + rng.normal(0, 0.35, rows), 24.0, 28.0)
-    mixing = np.clip(
-        4.2
-        + material_code * 0.25
-        + (amount_kg - 350) / 300
-        + rng.normal(0, 0.35, rows),
-        3.5,
-        7.0,
-    )
-    hopper_wait = np.clip(
-        2.0
-        + (round_no - 1) * 1.8
-        + (cycle - 1) * 0.8
-        + rng.normal(0, 2.2, rows),
-        0,
-        24,
-    )
-    retarder = (
-        (
-            (temperature >= 33)
-            | ((humidity >= 78) & (hopper_wait >= 7))
-            | ((round_no >= 3) & (material_code == 1))
-        )
-        & (rng.random(rows) > 0.18)
-    ).astype(float)
-    risk = (
-        3.0
-        + np.maximum(temperature - 27, 0) * 0.48
-        + np.maximum(humidity - 65, 0) * 0.09
-        + np.maximum(water - target_water - 0.35, 0) * 4.2
-        + np.maximum(target_water - water - 0.55, 0) * 2.0
-        + np.maximum(hopper_wait - 5, 0) * 0.42
-        + np.maximum(mixing - 5.5, 0) * 1.2
-        + (amount_kg - 350) * 0.012
-        + (cycle - 1) * 0.7
-        + (round_no - 1) * 0.9
-        + material_code * 0.55
-        - retarder * 2.8
-        + rng.normal(0, 0.55, rows)
-    )
-    features = np.column_stack([
-        temperature, humidity, amount_kg, cycle, round_no, material_code,
-        water, mixing, hopper_wait, retarder, season_code
-    ])
-    model = XGBRegressor(
-        n_estimators=120,
-        max_depth=4,
-        learning_rate=0.06,
-        subsample=0.9,
-        colsample_bytree=0.9,
-        objective="reg:squarederror",
-        random_state=42,
-        n_jobs=1,
-    )
-    model.fit(features, risk)
-    return model
-
-
-DEMO_XGBOOST_MODEL = build_demo_xgboost_model()
-ACTIVE_XGBOOST_MODEL = DEMO_XGBOOST_MODEL
-TRAINING_SOURCE = "demo_seed"
-TRAINING_ROWS = 240
-
-
-def _training_features(row: dict) -> list[float]:
+def _feature_row(row: dict) -> list[float]:
     return [
-        float(row.get("temperature", 25)),
-        float(row.get("humidity", 60)),
-        float(row.get("amount_kg", row.get("amount", 500))),
-        float(row.get("cycle", 1)),
-        float(row.get("round", row.get("round_no", 1))),
-        _material_code(str(row.get("material", ""))),
-        float(row.get("water", row.get("actual_water_l", 26))),
-        float(row.get("mixing", row.get("actual_mixing_min", 5))),
-        float(row.get("hopper_wait", row.get("hopper_wait_min", 0))),
-        float(row.get("retarder", row.get("retarder_used", 0))),
-        float(row.get("season_code", 0)),
+        float(row.get("temperature_c", 25)),
+        float(row.get("humidity_pct", 60)),
+        float(row.get("amount_kg", 500)),
+        float(row.get("cycle_no", 1)),
+        float(row.get("round_no", 1)),
+        float(row.get("material_code", _material_code(row.get("material_type")))),
     ]
 
 
-def _fit_field_xgboost(rows: list[dict]) -> XGBRegressor:
+def _seed_training_rows() -> list[dict]:
+    """발표용 초기 모델을 위한 명시적 기준 데이터. 실제 운영 전 현장 라벨 데이터로 교체한다."""
+    rows = []
+    for i in range(36):
+        temperature = 18 + (i * 7) % 24
+        humidity = 42 + (i * 11) % 45
+        amount = 500
+        cycle = (i % 3) + 1
+        round_no = (i % 5) + 1
+        material_code = (i % 4) + 1
+        risk = max(2, min(28, 3 + (temperature - 20) * 0.28 + (humidity - 55) * 0.12 + (round_no - 1) * 0.7))
+        rows.append({
+            "temperature_c": temperature,
+            "humidity_pct": humidity,
+            "amount_kg": amount,
+            "cycle_no": cycle,
+            "round_no": round_no,
+            "material_code": material_code,
+            "water_l": round(24.5 + material_code * 0.35 + (humidity - 55) * 0.025, 2),
+            "mixing_min": round(4.5 + (material_code % 2) * 0.5, 2),
+            "hopper_wait_min": round(max(0, (risk - 7) * 0.8), 2),
+            "risk_pct": round(risk, 2),
+        })
+    return rows
+
+
+def _fit_mixing_model(rows: list[dict], source: str) -> dict:
     if len(rows) < 8:
-        raise HTTPException(status_code=422, detail="XGBoost 학습에는 최소 8건의 검증된 작업 데이터가 필요합니다.")
-    X = np.asarray([_training_features(row) for row in rows], dtype=np.float32)
-    y = np.asarray([float(row.get("risk", 0)) for row in rows], dtype=np.float32)
-    model = XGBRegressor(
-        n_estimators=120,
-        max_depth=3,
-        learning_rate=0.06,
-        subsample=0.9,
-        colsample_bytree=0.9,
-        objective="reg:squarederror",
-        random_state=42,
-        n_jobs=1,
-    )
-    model.fit(X, y, verbose=False)
-    return model
+        raise HTTPException(status_code=422, detail="XGBoost 학습에는 최소 8건의 라벨 작업 데이터가 필요합니다.")
+    X = np.asarray([_feature_row(row) for row in rows], dtype=np.float32)
+    models = {}
+    for target in MIXING_TARGETS:
+        y = np.asarray([float(row[target]) for row in rows], dtype=np.float32)
+        model = XGBRegressor(
+            n_estimators=120,
+            max_depth=3,
+            learning_rate=0.06,
+            subsample=0.9,
+            colsample_bytree=0.9,
+            objective="reg:squarederror",
+            random_state=42,
+        )
+        model.fit(X, y, verbose=False)
+        models[target] = model
+    artifact = {"models": models, "features": MIXING_FEATURES, "rows": len(rows), "source": source, "trained_at": datetime.now(timezone.utc).isoformat()}
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    with MIXING_MODEL_PATH.open("wb") as handle:
+        pickle.dump(artifact, handle)
+    MIXING_TRAINING_PATH.parent.mkdir(parents=True, exist_ok=True)
+    MIXING_TRAINING_PATH.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
+    return artifact
 
 
-def _load_saved_xgboost_model() -> None:
-    global ACTIVE_XGBOOST_MODEL, TRAINING_SOURCE, TRAINING_ROWS
-    if not TRAINING_META_PATH.exists():
-        return
-    try:
-        payload = json.loads(TRAINING_META_PATH.read_text(encoding="utf-8"))
-        rows = payload.get("rows", [])
-        ACTIVE_XGBOOST_MODEL = _fit_field_xgboost(rows)
-        TRAINING_SOURCE = "field_worklogs"
-        TRAINING_ROWS = len(rows)
-    except Exception:
-        ACTIVE_XGBOOST_MODEL = DEMO_XGBOOST_MODEL
-        TRAINING_SOURCE = "demo_seed"
-        TRAINING_ROWS = 240
-
-
-_load_saved_xgboost_model()
-
-
-def recommendation_for_environment(
-    temperature: float,
-    humidity: float,
-    season: str = "summer",
-    amount_kg: float = 500,
-    cycle: int = 1,
-    round_no: int = 1,
-    material: str = "저시멘트 캐스터블",
-    hopper_wait: float = 0,
-    retarder: float = 0,
-) -> dict:
-    season_code = 1.0 if season == "winter" else 0.0
-    material_code = _material_code(material)
-    base_water = 25.5 + material_code * 0.18 + (0.25 if season == "winter" else 0.0)
-    water = round(max(24.0, min(28.0, base_water - max(0.0, humidity - 70.0) * 0.025 + max(0.0, temperature - 30.0) * 0.08)), 1)
-    mixing_minutes = 5
-    feature_row = np.array([[
-        temperature, humidity, amount_kg, cycle, round_no, material_code,
-        water, mixing_minutes, hopper_wait, retarder, season_code
-    ]], dtype=float)
-    predicted_risk = float(ACTIVE_XGBOOST_MODEL.predict(feature_row)[0])
-    risk = round(max(3.0, min(30.0, predicted_risk)), 1)
-    return {
-        "risk": risk,
-        "recommended_water_l": water,
-        "mixing_minutes": 4 if risk >= 18 else 5,
-        "retarder": risk > 10,
-        "model": "XGBoost v2.4 · field recommendation",
-        "season": season,
-        "inputs": {
-            "temperature": temperature,
-            "humidity": humidity,
-            "amount_kg": amount_kg,
-            "cycle": cycle,
-            "round": round_no,
-            "material": material,
-        },
-    }
-
-
-@app.get("/xgboost/status")
-def xgboost_status() -> dict:
-    return {
-        "status": "ready",
-        "model": "XGBoost",
-        "model_version": "XGBoost v2.4",
-        "training_source": TRAINING_SOURCE,
-        "training_rows": TRAINING_ROWS,
-        "message": "실제 작업일지 데이터가 등록되면 /xgboost/train으로 모델을 다시 학습합니다." if TRAINING_SOURCE == "demo_seed" else "검증된 작업일지 데이터로 학습된 모델입니다.",
-    }
-
-
-@app.post("/xgboost/train")
-def xgboost_train(payload: dict = Body(...)) -> dict:
-    global ACTIVE_XGBOOST_MODEL, TRAINING_SOURCE, TRAINING_ROWS
-    rows = payload.get("rows") if isinstance(payload, dict) else None
-    if not isinstance(rows, list):
-        raise HTTPException(status_code=400, detail="rows 배열이 필요합니다.")
-    model = _fit_field_xgboost(rows)
-    ACTIVE_XGBOOST_MODEL = model
-    TRAINING_SOURCE = "field_worklogs"
-    TRAINING_ROWS = len(rows)
-    TRAINING_META_PATH.parent.mkdir(parents=True, exist_ok=True)
-    TRAINING_META_PATH.write_text(json.dumps({"rows": rows, "trained_at": datetime.now(timezone.utc).isoformat()}, ensure_ascii=False, indent=2), encoding="utf-8")
-    return {
-        "status": "trained",
-        "model": "XGBoost",
-        "model_version": "XGBoost v2.4",
-        "training_source": TRAINING_SOURCE,
-        "training_rows": TRAINING_ROWS,
-        "message": "검증된 작업일지 데이터로 XGBoost 모델을 다시 학습했습니다.",
-    }
-
-
-@app.post("/xgboost/recommend")
-def xgboost_recommend(payload: dict = Body(...)) -> dict:
-    result = recommendation_for_environment(
-        float(payload.get("temperature", 25)),
-        float(payload.get("humidity", 60)),
-        str(payload.get("season", "summer")),
-        float(payload.get("amount_kg", 500)),
-        int(payload.get("cycle", 1)),
-        int(payload.get("round", payload.get("round_no", 1))),
-        str(payload.get("material", "저시멘트 캐스터블")),
-        float(payload.get("hopper_wait", 0)),
-        float(payload.get("retarder", 0)),
-    )
-    return {**result, "model_version": "XGBoost v2.4", "training_source": TRAINING_SOURCE, "training_rows": TRAINING_ROWS}
-
-
-@app.get("/sensor-state")
-def sensor_state() -> dict:
-    """PLC 전환 전 데모 센서 스트림. PLC 게이트웨이는 /sensor-ingest로 값을 보낸다."""
-    if SENSOR_STATE["source"] == "demo-sensor":
-        import math
-        import time
-        now = time.time()
-        SENSOR_STATE["temperature"] = round(30.5 + math.sin(now / 18.0) * 1.8, 1)
-        SENSOR_STATE["humidity"] = round(70.0 + math.sin(now / 25.0 + 0.8) * 8.0, 1)
-        SENSOR_STATE["updated_at"] = datetime.now(timezone.utc).isoformat()
-    temperature = float(SENSOR_STATE["temperature"])
-    humidity = float(SENSOR_STATE["humidity"])
-    season = str(SENSOR_STATE.get("season", "summer"))
-    amount_kg = float(SENSOR_STATE.get("amount_kg", 500))
-    cycle = int(SENSOR_STATE.get("cycle", 1))
-    round_no = int(SENSOR_STATE.get("round", 1))
-    material = str(SENSOR_STATE.get("material", "저시멘트 캐스터블"))
-    return {
-        "source": SENSOR_STATE["source"],
-        "temperature": temperature,
-        "humidity": humidity,
-        "season": season,
-        "updated_at": SENSOR_STATE["updated_at"],
-        "amount_kg": amount_kg,
-        "cycle": cycle,
-        "round": round_no,
-        "material": material,
-        "recommendation": recommendation_for_environment(temperature, humidity, season, amount_kg, cycle, round_no, material),
-    }
-
-
-@app.post("/sensor-ingest")
-def sensor_ingest(payload: dict = Body(...)) -> dict:
-    """PLC/IoT 게이트웨이가 온도·습도를 전달하는 운영용 입력 API."""
-    try:
-        temperature = float(payload["temperature"])
-        humidity = float(payload["humidity"])
-    except (KeyError, TypeError, ValueError) as exc:
-        raise HTTPException(status_code=400, detail="temperature와 humidity가 필요합니다.") from exc
-    if not -20 <= temperature <= 100 or not 0 <= humidity <= 100:
-        raise HTTPException(status_code=400, detail="센서 범위를 확인하세요.")
-    SENSOR_STATE.update({
-        "temperature": round(temperature, 1),
-        "humidity": round(humidity, 1),
-        "season": str(payload.get("season", "summer")) if str(payload.get("season", "summer")) in {"summer", "winter"} else "summer",
-        "source": str(payload.get("source", "plc-gateway")),
-        "updated_at": datetime.now(timezone.utc).isoformat(),
-    })
-    return sensor_state()
+def _ensure_mixing_model() -> dict:
+    if MIXING_MODEL_PATH.exists():
+        try:
+            with MIXING_MODEL_PATH.open("rb") as handle:
+                return pickle.load(handle)
+        except Exception:
+            pass
+    rows = _seed_training_rows()
+    return _fit_mixing_model(rows, "demo_seed")
 
 
 def prepare_normal_images() -> int:
@@ -456,6 +242,62 @@ def health() -> dict:
     }
 
 
+@app.get("/model/status")
+def mixing_model_status() -> dict:
+    artifact = _ensure_mixing_model()
+    return {
+        "status": "ready",
+        "model": "XGBoost",
+        "model_version": "XGBoost v2.4",
+        "trained_at": artifact["trained_at"],
+        "training_rows": artifact["rows"],
+        "training_source": artifact["source"],
+        "targets": list(MIXING_TARGETS),
+    }
+
+
+@app.post("/model/recommend")
+def recommend_mixing(payload: dict) -> dict:
+    """현재 환경·배합 조건을 실제 XGBoost 모델에 넣어 추천값을 반환한다."""
+    artifact = _ensure_mixing_model()
+    features = np.asarray([_feature_row(payload)], dtype=np.float32)
+    predictions = {name: float(model.predict(features)[0]) for name, model in artifact["models"].items()}
+    risk = round(max(0.0, min(30.0, predictions["risk_pct"])), 1)
+    water = round(max(0.0, predictions["water_l"]), 1)
+    mixing = round(max(1.0, predictions["mixing_min"]), 1)
+    hopper_wait = round(max(0.0, predictions["hopper_wait_min"]), 1)
+    return {
+        "model": "XGBoost",
+        "model_version": "XGBoost v2.4",
+        "trained_at": artifact["trained_at"],
+        "training_rows": artifact["rows"],
+        "training_source": artifact["source"],
+        "water_l": water,
+        "mixing_min": mixing,
+        "hopper_wait_min": hopper_wait,
+        "risk_pct": risk,
+        "retarder": risk > 10,
+        "explanation": "학습된 작업 데이터에서 현재 온도·습도·내화물·회차 조건과 가장 유사한 패턴을 기준으로 계산했습니다.",
+    }
+
+
+@app.post("/model/fit")
+def fit_mixing_model(payload: dict) -> dict:
+    """검증된 작업일지 데이터를 받아 XGBoost 모델을 실제로 다시 학습한다."""
+    rows = payload.get("rows") if isinstance(payload, dict) else None
+    if not isinstance(rows, list):
+        raise HTTPException(status_code=400, detail="rows 배열이 필요합니다.")
+    artifact = _fit_mixing_model(rows, "field_worklogs")
+    return {
+        "status": "trained",
+        "model": "XGBoost",
+        "model_version": "XGBoost v2.4",
+        "training_rows": artifact["rows"],
+        "trained_at": artifact["trained_at"],
+        "message": "검증된 작업 데이터로 모델을 다시 학습했습니다.",
+    }
+
+
 @app.get("/system/status")
 def system_status() -> dict:
     """사이트가 운영 모드에서 어떤 기능을 사용할 수 있는지 표시한다."""
@@ -522,6 +364,76 @@ async def analyze(file: UploadFile = File(...)) -> dict:
         "feature_summary": feature,
         "analyzed_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+@app.post("/learning-images")
+async def save_learning_image(
+    file: UploadFile = File(...),
+    job_name: str = Form(""),
+    cycle: str = Form(""),
+    round_name: str = Form(""),
+    analysis: str = Form("{}"),
+) -> dict:
+    """작업자가 승인한 학습 이미지를 파일과 메타데이터로 함께 저장한다.
+
+    운영 환경에서는 이 저장 지점을 Supabase Storage/image_inspections로 교체할 수 있고,
+    로컬 데모에서는 재시작 후에도 확인할 수 있도록 ai-service/data/learning에 저장한다.
+    """
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="이미지 파일만 학습 데이터로 저장할 수 있습니다.")
+    raw = await file.read()
+    if len(raw) == 0 or len(raw) > 15 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="이미지 파일은 1바이트 이상 15MB 이하로 올려주세요.")
+    try:
+        analysis_data = json.loads(analysis or "{}")
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail="분석 결과 형식이 올바르지 않습니다.") from exc
+    if analysis_data.get("image_scope") is not True:
+        raise HTTPException(status_code=409, detail="내화물 작업면으로 확인된 이미지만 학습 반영할 수 있습니다.")
+
+    LEARNING_DIR.mkdir(parents=True, exist_ok=True)
+    record_id = str(uuid.uuid4())
+    suffix = Path(file.filename or "image.jpg").suffix.lower() or ".jpg"
+    image_path = LEARNING_DIR / f"{record_id}{suffix}"
+    image_path.write_bytes(raw)
+    record = {
+        "id": record_id,
+        "image_path": str(image_path.relative_to(APP_ROOT)).replace("\\", "/"),
+        "original_name": file.filename or "uploaded-image",
+        "job_name": job_name,
+        "cycle": cycle,
+        "round": round_name,
+        "analysis": analysis_data,
+        "saved_at": datetime.now(timezone.utc).isoformat(),
+    }
+    records = []
+    if LEARNING_RECORDS.exists():
+        try:
+            records = json.loads(LEARNING_RECORDS.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            records = []
+    records.append(record)
+    LEARNING_RECORDS.write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {"status": "saved", "record_id": record_id, "image_path": record["image_path"], "saved_at": record["saved_at"]}
+
+
+@app.delete("/learning-images/{record_id}")
+def delete_learning_image(record_id: str) -> dict:
+    """승인된 학습 이미지와 메타데이터를 함께 삭제한다."""
+    if not LEARNING_RECORDS.exists():
+        raise HTTPException(status_code=404, detail="삭제할 학습 데이터를 찾지 못했습니다.")
+    try:
+        records = json.loads(LEARNING_RECORDS.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HTTPException(status_code=500, detail="학습 데이터 목록을 읽지 못했습니다.") from exc
+    target = next((record for record in records if record.get("id") == record_id), None)
+    if not target:
+        raise HTTPException(status_code=404, detail="삭제할 학습 데이터를 찾지 못했습니다.")
+    image_path = APP_ROOT / target.get("image_path", "")
+    if image_path.exists():
+        image_path.unlink()
+    LEARNING_RECORDS.write_text(json.dumps([record for record in records if record.get("id") != record_id], ensure_ascii=False, indent=2), encoding="utf-8")
+    return {"status": "deleted", "record_id": record_id}
 
 
 @app.post("/train-patchcore")
