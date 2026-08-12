@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import io
+import json
 import shutil
 from urllib.request import Request, urlopen
 from datetime import datetime, timezone
@@ -25,6 +26,7 @@ APP_ROOT = Path(__file__).resolve().parent
 WORKSPACE_ROOT = APP_ROOT.parent
 NORMAL_DIR = APP_ROOT / "data" / "normal"
 MODEL_DIR = APP_ROOT / "models"
+TRAINING_META_PATH = APP_ROOT / "data" / "xgboost_training.json"
 NORMAL_NAMES = (
     "learning-ladle-wall.jpg",
     "learning-ladle-bottom.jpg",
@@ -89,6 +91,59 @@ def build_demo_xgboost_model() -> XGBRegressor:
 
 
 DEMO_XGBOOST_MODEL = build_demo_xgboost_model()
+ACTIVE_XGBOOST_MODEL = DEMO_XGBOOST_MODEL
+TRAINING_SOURCE = "demo_seed"
+TRAINING_ROWS = 240
+
+
+def _training_features(row: dict) -> list[float]:
+    return [
+        float(row.get("temperature", 25)),
+        float(row.get("humidity", 60)),
+        float(row.get("water", 26)),
+        float(row.get("mixing", 5)),
+        float(row.get("hopper_wait", 0)),
+        float(row.get("retarder", 0)),
+        float(row.get("season_code", 0)),
+    ]
+
+
+def _fit_field_xgboost(rows: list[dict]) -> XGBRegressor:
+    if len(rows) < 8:
+        raise HTTPException(status_code=422, detail="XGBoost 학습에는 최소 8건의 검증된 작업 데이터가 필요합니다.")
+    X = np.asarray([_training_features(row) for row in rows], dtype=np.float32)
+    y = np.asarray([float(row.get("risk", 0)) for row in rows], dtype=np.float32)
+    model = XGBRegressor(
+        n_estimators=120,
+        max_depth=3,
+        learning_rate=0.06,
+        subsample=0.9,
+        colsample_bytree=0.9,
+        objective="reg:squarederror",
+        random_state=42,
+        n_jobs=1,
+    )
+    model.fit(X, y, verbose=False)
+    return model
+
+
+def _load_saved_xgboost_model() -> None:
+    global ACTIVE_XGBOOST_MODEL, TRAINING_SOURCE, TRAINING_ROWS
+    if not TRAINING_META_PATH.exists():
+        return
+    try:
+        payload = json.loads(TRAINING_META_PATH.read_text(encoding="utf-8"))
+        rows = payload.get("rows", [])
+        ACTIVE_XGBOOST_MODEL = _fit_field_xgboost(rows)
+        TRAINING_SOURCE = "field_worklogs"
+        TRAINING_ROWS = len(rows)
+    except Exception:
+        ACTIVE_XGBOOST_MODEL = DEMO_XGBOOST_MODEL
+        TRAINING_SOURCE = "demo_seed"
+        TRAINING_ROWS = 240
+
+
+_load_saved_xgboost_model()
 
 
 def recommendation_for_environment(temperature: float, humidity: float, season: str = "summer") -> dict:
@@ -97,16 +152,62 @@ def recommendation_for_environment(temperature: float, humidity: float, season: 
     water = round(max(24.0, min(28.0, 26.0 + seasonal_offset + max(0.0, temperature - 30.0) * 0.18 - max(0.0, humidity - 70.0) * 0.04)), 1)
     mixing_minutes = 5
     feature_row = np.array([[temperature, humidity, water, mixing_minutes, 0.0, 0.0, season_code]], dtype=float)
-    predicted_risk = float(DEMO_XGBOOST_MODEL.predict(feature_row)[0])
+    predicted_risk = float(ACTIVE_XGBOOST_MODEL.predict(feature_row)[0])
     risk = round(max(5.0, min(30.0, predicted_risk)), 1)
     return {
         "risk": risk,
         "recommended_water_l": water,
         "mixing_minutes": 4 if risk >= 18 else 5,
         "retarder": risk > 10,
-        "model": "XGBoost dummy model v2 · seasonal",
+        "model": "XGBoost v2.4 · field recommendation",
         "season": season,
     }
+
+
+
+
+@app.get("/xgboost/status")
+def xgboost_status() -> dict:
+    return {
+        "status": "ready",
+        "model": "XGBoost",
+        "model_version": "XGBoost v2.4",
+        "training_source": TRAINING_SOURCE,
+        "training_rows": TRAINING_ROWS,
+        "message": "실제 작업일지 데이터가 등록되면 /xgboost/train으로 모델을 다시 학습합니다." if TRAINING_SOURCE == "demo_seed" else "검증된 작업일지 데이터로 학습된 모델입니다.",
+    }
+
+
+@app.post("/xgboost/train")
+def xgboost_train(payload: dict = Body(...)) -> dict:
+    global ACTIVE_XGBOOST_MODEL, TRAINING_SOURCE, TRAINING_ROWS
+    rows = payload.get("rows") if isinstance(payload, dict) else None
+    if not isinstance(rows, list):
+        raise HTTPException(status_code=400, detail="rows 배열이 필요합니다.")
+    model = _fit_field_xgboost(rows)
+    ACTIVE_XGBOOST_MODEL = model
+    TRAINING_SOURCE = "field_worklogs"
+    TRAINING_ROWS = len(rows)
+    TRAINING_META_PATH.parent.mkdir(parents=True, exist_ok=True)
+    TRAINING_META_PATH.write_text(json.dumps({"rows": rows, "trained_at": datetime.now(timezone.utc).isoformat()}, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {
+        "status": "trained",
+        "model": "XGBoost",
+        "model_version": "XGBoost v2.4",
+        "training_source": TRAINING_SOURCE,
+        "training_rows": TRAINING_ROWS,
+        "message": "검증된 작업일지 데이터로 XGBoost 모델을 다시 학습했습니다.",
+    }
+
+
+@app.post("/xgboost/recommend")
+def xgboost_recommend(payload: dict = Body(...)) -> dict:
+    result = recommendation_for_environment(
+        float(payload.get("temperature", 25)),
+        float(payload.get("humidity", 60)),
+        str(payload.get("season", "summer")),
+    )
+    return {**result, "model_version": "XGBoost v2.4", "training_source": TRAINING_SOURCE, "training_rows": TRAINING_ROWS}
 
 
 @app.get("/sensor-state")
