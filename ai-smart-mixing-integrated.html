@@ -529,10 +529,14 @@
       }
       function transferRecommendation(name) {
         const job = jobs[name];
-        const cycles = buildCycles(job);
-        const temperature = dashboard.querySelectorAll('.sensor b')[0].textContent;
-        const humidity = dashboard.querySelectorAll('.sensor b')[1].textContent;
-        const recommendation = { name, material: job.material, amount: job.amount, mixing: job.mixing, temperature, humidity, cycles };
+        const live = window.aiSmartMixingLiveRecommendation;
+        const liveCycles = live && live.name === name && Array.isArray(live.cycles) && live.cycles.length ? live.cycles : null;
+        const cycles = liveCycles || buildCycles(job);
+        const temperature = live?.temperature || dashboard.querySelectorAll('.sensor b')[0].textContent;
+        const humidity = live?.humidity || dashboard.querySelectorAll('.sensor b')[1].textContent;
+        const amount = liveCycles ? liveCycles.reduce((sum, cycle) => sum + Number(cycle.amount || 0), 0) : job.amount;
+        const mixing = liveCycles?.[0]?.mixing || job.mixing;
+        const recommendation = { name, material: job.material, amount, mixing, temperature, humidity, cycles };
         sessionStorage.setItem('aiSmartMixingRecommendation', JSON.stringify(recommendation));
         applyRecommendation(recommendation);
       }
@@ -1759,7 +1763,6 @@
 (function(){
   const dashboard=document.getElementById('dashboard');
   if(!dashboard) return;
-  const rows=[...dashboard.querySelectorAll('.cycle-row')];
   const offsets=[2,1,-2,1,-2];
   const fmt=(n)=>Number(n).toFixed(1);
   function setText(sel,value){const el=dashboard.querySelector(sel);if(el)el.textContent=value;}
@@ -1775,6 +1778,7 @@
       setText('.info:nth-child(3) b',fmt(Number(rec.recommended_water_l||26)*5)+'L');
       setText('.sensor-grid .sensor:nth-child(1) b',fmt(temp)+'℃');
       setText('.sensor-grid .sensor:nth-child(2) b',fmt(humidity)+'%');
+      const rows=[...dashboard.querySelectorAll('.cycle-row')];
       const calculated=rows.map((row,index)=>{
         const risk=Math.max(5,Math.min(30,Math.round(Number(rec.risk||8)+(offsets[index]||0))));
         const use=risk>10;
@@ -1791,6 +1795,30 @@
       setText('.action-bar b','● 센서값 반영 완료');
       const action=dashboard.querySelector('.action-bar div');
       if(action) action.innerHTML='<b>● 센서값 반영 완료</b>'+(maxRisk>10?'위험도 10% 초과 회차는 지연제 사용 조건으로 자동 변경되었습니다.':'현재 환경 기준 위험도 10% 이하입니다. 지연제는 미사용 조건입니다.');
+      const liveCycles=rows.map((row,index)=>{
+        const readNumber=(selector)=>Number.parseFloat((row.querySelector(selector)?.textContent||'').replace(/[^0-9.-]/g,''))||0;
+        const risk=calculated[index]||0;
+        const use=risk>10;
+        const note=row.parentElement?.querySelector('.cycle-note-history span')?.textContent?.trim()||'';
+        return {
+          amount: readNumber('span:nth-child(2)'),
+          water: readNumber('span:nth-child(3)'),
+          mixing: readNumber('span:nth-child(4)'),
+          wait: readNumber('span:nth-child(5)'),
+          risk,
+          retarder: use,
+          cycle: Math.floor(index/3)+1,
+          round: index%3+1,
+          note
+        };
+      });
+      const selectedJob=document.querySelector('#dashboardJob')?.value||'래들 벽체';
+      window.aiSmartMixingLiveRecommendation={
+        name:selectedJob,
+        temperature:fmt(temp)+'℃',
+        humidity:fmt(humidity)+'%',
+        cycles:liveCycles
+      };
       const status=document.querySelector('.site-status');
       if(status) status.textContent=data.source==='demo-sensor'?'센서 데모 연동 · 자동 갱신':'PLC 센서 연동 · 자동 갱신';
     }catch(error){
