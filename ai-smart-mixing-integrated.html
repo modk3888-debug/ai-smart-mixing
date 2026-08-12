@@ -38,7 +38,7 @@
   </style>
   <style id="dashboard-inline-edit-style">.dashboard-cycle-edit{margin-left:auto;border:0;background:#eaf4ff;color:#176fc6;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer}.cycle-detail-block .inline-cycle-input{width:100%;min-width:0;padding:4px 6px;border:1px solid #9fc7e8;border-radius:5px;color:#173654;background:#fff}.cycle-detail-block .inline-cycle-select{width:100%;padding:4px 5px;border:1px solid #9fc7e8;border-radius:5px;color:#173654;background:#fff}.cycle-note-history .inline-note-input{flex:1;min-width:0;padding:5px 7px;border:1px solid #e4bd8f;border-radius:5px;color:#765d45;background:#fff}.cycle-note-history .dashboard-cycle-edit{flex:0 0 auto}</style></head>
 <body>
-  <header class="app-header"><div class="brand">AI 스마트 믹싱 <small>REFRACTORY FIELD SYSTEM</small></div><nav><button class="active" data-screen="process">공정 순서</button><button data-screen="dashboard">대시보드</button><button data-screen="worklog">작업일지 및 특이사항</button><button data-screen="history">배합 이력</button></nav><span class="site-status">운영 시스템 확인 중</span></header>
+  <header class="app-header"><div class="brand">AI 스마트 믹싱 <small>REFRACTORY FIELD SYSTEM</small></div><nav><button class="active" data-screen="process">공정 순서</button><button data-screen="dashboard">대시보드</button><button data-screen="worklog">작업일지 및 특이사항</button><button data-screen="history">배합 이력</button></nav></header>
   <main>
     <section class="screen active" id="process">
       <div class="hero"><div><div class="eyebrow">END-TO-END SYSTEM</div><h1>작업환경부터 AI 학습까지<br>하나의 배합 운영 흐름으로 관리합니다.</h1><p>AI 스마트 믹싱은 환경·원료·배합·작업 결과를 회차 단위로 연결해 급속 경화 위험을 줄이는 현장 운영 시스템입니다.</p></div><div class="timestamp">시스템 상태<b>센서·PLC·데이터 저장 정상</b></div></div>
@@ -1298,8 +1298,7 @@
     // 화면은 학습 데이터가 없어도 운영 시스템의 연결 상태를 먼저 확인합니다.
     // 실제 AI 학습은 별도 모델이 배포된 뒤 이 상태에서 활성화됩니다.
     (() => {
-      const status = document.querySelector('.site-status');
-      if (!status || location.protocol === 'file:') return;
+      if (location.protocol === 'file:') return;
       fetch('/system/status', { headers: { Accept: 'application/json' } })
         .then(response => { if (!response.ok) throw new Error('status'); return response.json(); })
         .then(data => { status.textContent = data.system_status === 'ready' ? '운영 시스템 연결 정상' : '운영 시스템 준비 중'; })
@@ -1875,11 +1874,9 @@
         cycles:liveCycles
       };
       if(window.applyDashboardCycleOverrides) window.applyDashboardCycleOverrides();
-      const status=document.querySelector('.site-status');
-      if(status) status.textContent=data.source==='demo-sensor'?'센서 데모 연동 · 자동 갱신':'PLC 센서 연동 · 자동 갱신';
+
     }catch(error){
-      const status=document.querySelector('.site-status');
-      if(status) status.textContent='센서 연결 대기';
+
     }
   }
   refreshSensor();
