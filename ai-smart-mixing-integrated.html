@@ -530,10 +530,27 @@
       function transferRecommendation(name) {
         const job = jobs[name];
         const live = window.aiSmartMixingLiveRecommendation;
-        const liveCycles = live && live.name === name && Array.isArray(live.cycles) && live.cycles.length ? live.cycles : null;
+        const visibleRows = [...dashboard.querySelectorAll('.cycle-row')];
+        const readNumber = (row, selector) => Number.parseFloat((row.querySelector(selector)?.textContent || '').replace(/[^0-9.-]/g, '')) || 0;
+        const currentCycles = visibleRows.map((row, index) => {
+          const risk = readNumber(row, 'span:nth-child(6)');
+          const pill = row.querySelector('span:nth-child(6) .pill');
+          return {
+            amount: readNumber(row, 'span:nth-child(2)'),
+            water: readNumber(row, 'span:nth-child(3)'),
+            mixing: readNumber(row, 'span:nth-child(4)'),
+            wait: readNumber(row, 'span:nth-child(5)'),
+            risk,
+            retarder: pill?.classList.contains('use') || false,
+            cycle: Math.floor(index / 3) + 1,
+            round: index % 3 + 1,
+            note: row.parentElement?.querySelector('.cycle-note-history span')?.textContent?.trim() || ''
+          };
+        });
+        const liveCycles = live && live.name === name && currentCycles.length ? currentCycles : (live?.cycles || null);
         const cycles = liveCycles || buildCycles(job);
-        const temperature = live?.temperature || dashboard.querySelectorAll('.sensor b')[0].textContent;
-        const humidity = live?.humidity || dashboard.querySelectorAll('.sensor b')[1].textContent;
+        const temperature = dashboard.querySelectorAll('.sensor b')[0].textContent;
+        const humidity = dashboard.querySelectorAll('.sensor b')[1].textContent;
         const amount = liveCycles ? liveCycles.reduce((sum, cycle) => sum + Number(cycle.amount || 0), 0) : job.amount;
         const mixing = liveCycles?.[0]?.mixing || job.mixing;
         const recommendation = { name, material: job.material, amount, mixing, temperature, humidity, cycles };
