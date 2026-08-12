@@ -47,6 +47,7 @@ SENSOR_STATE = {
     "temperature": 31.0,
     "humidity": 78.0,
     "source": "demo-sensor",
+    "season": "summer",
     "updated_at": datetime.now(timezone.utc).isoformat(),
 }
 
@@ -61,6 +62,7 @@ def build_demo_xgboost_model() -> XGBRegressor:
     mixing = rng.integers(4, 8, rows)
     hopper_wait = rng.uniform(0, 24, rows)
     retarder = rng.integers(0, 2, rows)
+    season_code = rng.integers(0, 2, rows)
     risk = (
         4.5
         + np.maximum(temperature - 26, 0) * 0.55
@@ -68,9 +70,10 @@ def build_demo_xgboost_model() -> XGBRegressor:
         + np.maximum(water - 26.2, 0) * 1.8
         + np.maximum(hopper_wait - 5, 0) * 0.22
         + retarder * -2.0
+        + season_code * 0.8
         + rng.normal(0, 0.8, rows)
     )
-    features = np.column_stack([temperature, humidity, water, mixing, hopper_wait, retarder])
+    features = np.column_stack([temperature, humidity, water, mixing, hopper_wait, retarder, season_code])
     model = XGBRegressor(
         n_estimators=80,
         max_depth=3,
@@ -88,10 +91,12 @@ def build_demo_xgboost_model() -> XGBRegressor:
 DEMO_XGBOOST_MODEL = build_demo_xgboost_model()
 
 
-def recommendation_for_environment(temperature: float, humidity: float) -> dict:
-    water = round(max(24.0, min(28.0, 26.0 + max(0.0, temperature - 30.0) * 0.18 - max(0.0, humidity - 70.0) * 0.04)), 1)
+def recommendation_for_environment(temperature: float, humidity: float, season: str = "summer") -> dict:
+    season_code = 1.0 if season == "winter" else 0.0
+    seasonal_offset = 0.3 if season == "winter" else -0.2
+    water = round(max(24.0, min(28.0, 26.0 + seasonal_offset + max(0.0, temperature - 30.0) * 0.18 - max(0.0, humidity - 70.0) * 0.04)), 1)
     mixing_minutes = 5
-    feature_row = np.array([[temperature, humidity, water, mixing_minutes, 0.0, 0.0]], dtype=float)
+    feature_row = np.array([[temperature, humidity, water, mixing_minutes, 0.0, 0.0, season_code]], dtype=float)
     predicted_risk = float(DEMO_XGBOOST_MODEL.predict(feature_row)[0])
     risk = round(max(5.0, min(30.0, predicted_risk)), 1)
     return {
@@ -99,7 +104,8 @@ def recommendation_for_environment(temperature: float, humidity: float) -> dict:
         "recommended_water_l": water,
         "mixing_minutes": 4 if risk >= 18 else 5,
         "retarder": risk > 10,
-        "model": "XGBoost dummy model v1",
+        "model": "XGBoost dummy model v2 · seasonal",
+        "season": season,
     }
 
 
@@ -115,12 +121,14 @@ def sensor_state() -> dict:
         SENSOR_STATE["updated_at"] = datetime.now(timezone.utc).isoformat()
     temperature = float(SENSOR_STATE["temperature"])
     humidity = float(SENSOR_STATE["humidity"])
+    season = str(SENSOR_STATE.get("season", "summer"))
     return {
         "source": SENSOR_STATE["source"],
         "temperature": temperature,
         "humidity": humidity,
+        "season": season,
         "updated_at": SENSOR_STATE["updated_at"],
-        "recommendation": recommendation_for_environment(temperature, humidity),
+        "recommendation": recommendation_for_environment(temperature, humidity, season),
     }
 
 
@@ -137,6 +145,7 @@ def sensor_ingest(payload: dict = Body(...)) -> dict:
     SENSOR_STATE.update({
         "temperature": round(temperature, 1),
         "humidity": round(humidity, 1),
+        "season": str(payload.get("season", "summer")) if str(payload.get("season", "summer")) in {"summer", "winter"} else "summer",
         "source": str(payload.get("source", "plc-gateway")),
         "updated_at": datetime.now(timezone.utc).isoformat(),
     })
