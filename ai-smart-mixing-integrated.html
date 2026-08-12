@@ -36,7 +36,7 @@
     .learn-title .learning-delete:hover{background:#fff0f1;color:var(--red)}
     .learn-title>b{display:block!important;flex:1 1 auto;min-width:0;color:var(--ink)!important;visibility:visible!important;opacity:1!important}
   </style>
-  </head>
+  <style id="dashboard-inline-edit-style">.dashboard-cycle-edit{margin-left:auto;border:0;background:#eaf4ff;color:#176fc6;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer}.cycle-detail-block .inline-cycle-input{width:100%;min-width:0;padding:4px 6px;border:1px solid #9fc7e8;border-radius:5px;color:#173654;background:#fff}.cycle-detail-block .inline-cycle-select{width:100%;padding:4px 5px;border:1px solid #9fc7e8;border-radius:5px;color:#173654;background:#fff}.cycle-note-history .inline-note-input{flex:1;min-width:0;padding:5px 7px;border:1px solid #e4bd8f;border-radius:5px;color:#765d45;background:#fff}.cycle-note-history .dashboard-cycle-edit{flex:0 0 auto}</style></head>
 <body>
   <header class="app-header"><div class="brand">AI 스마트 믹싱 <small>REFRACTORY FIELD SYSTEM</small></div><nav><button class="active" data-screen="process">공정 순서</button><button data-screen="dashboard">대시보드</button><button data-screen="worklog">작업일지 및 특이사항</button><button data-screen="history">배합 이력</button></nav><span class="site-status">운영 시스템 확인 중</span></header>
   <main>
@@ -521,7 +521,7 @@
         cycleBox.innerHTML = '<div class="cycle-head"><span>차수</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + groupedCycles(cycles, ({ cycle, index }) => {
           const useRetarder = Boolean(cycle.retarder);
           const note = cycle.note || (useRetarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
-          return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><span>' + cycle.water.toFixed(1) + 'L</span><span>' + job.mixing + '분</span><span>' + cycle.wait + '분</span><span><i class="pill ' + (useRetarder ? 'use' : 'no') + '">' + (useRetarder ? '사용' : '미사용') + '</i> <i class="' + (useRetarder ? 'risk-high' : 'risk-low') + '">' + cycle.risk + '%</i></span></div><div class="cycle-note-history"><b>' + cycle.round + '차 특이사항</b><span>' + note + '</span></div></div>';
+          return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><span>' + cycle.water.toFixed(1) + 'L</span><span>' + job.mixing + '분</span><span>' + cycle.wait + '분</span><span><i class="pill ' + (useRetarder ? 'use' : 'no') + '">' + (useRetarder ? '사용' : '미사용') + '</i> <i class="' + (useRetarder ? 'risk-high' : 'risk-low') + '">' + cycle.risk + '%</i></span></div><div class="cycle-note-history"><b>' + cycle.round + '차 특이사항</b><span>' + note + '</span><button type="button" class="dashboard-cycle-edit">수정</button></div></div>';
         });
         const notice = dashboard.querySelector('.action-bar div');
         const used = cycles.filter(cycle => cycle.retarder).map(cycle => cycle.cycle + '사이클 ' + cycle.round + '차');
@@ -1884,5 +1884,39 @@
   panel.querySelector('#reset-demo-sensor').addEventListener('click',function(){send('demo-sensor')});
 })();
 </script>
-</body>
+<script id="dashboard-inline-edit">
+(function(){
+  function input(value, cls){var el=document.createElement('input');el.className=cls;el.value=value;return el}
+  document.addEventListener('click',function(event){
+    var button=event.target.closest('.dashboard-cycle-edit');
+    if(!button)return;
+    var block=button.closest('#dashboard .cycle-detail-block');
+    if(!block)return;
+    var row=block.querySelector('.cycle-row'), note=block.querySelector('.cycle-note-history span');
+    if(button.dataset.mode!=='save'){
+      window.aiSmartMixingCycleEditing=true;
+      row.querySelectorAll('span').forEach(function(span,index){
+        if(index<4){var value=span.textContent.trim();span.replaceWith(input(value,'inline-cycle-input'))}
+        else{var select=document.createElement('select');select.className='inline-cycle-select';select.innerHTML='<option>사용</option><option>미사용</option>';select.value=span.querySelector('.pill.use')?'사용':'미사용';span.replaceWith(select)}
+      });
+      if(note){var noteInput=input(note.textContent.trim(),'inline-note-input');note.replaceWith(noteInput)}
+      button.dataset.mode='save';button.textContent='저장';return;
+    }
+    var fields=row.querySelectorAll('.inline-cycle-input,.inline-cycle-select');
+    var vals=[...fields].map(function(field){return field.value});
+    var retarder=vals[4], risk=Number(String(row.querySelector('.risk-high,.risk-low')?.textContent||'0').replace(/[^0-9.]/g,''))||0;
+    row.querySelectorAll('.inline-cycle-input,.inline-cycle-select').forEach(function(field,index){
+      var span=document.createElement('span');
+      if(index===4)span.innerHTML='<i class="pill '+(retarder==='사용'?'use':'no')+'">'+retarder+'</i> <i class="'+(risk>10?'risk-high':'risk-low')+'">'+risk+'%</i>';
+      else span.textContent=vals[index];
+      field.replaceWith(span);
+    });
+    var noteInput=block.querySelector('.inline-note-input');
+    if(noteInput){var text=document.createElement('span');text.textContent=noteInput.value;noteInput.replaceWith(text)}
+    button.dataset.mode='edit';button.textContent='수정';window.aiSmartMixingCycleEditing=false;
+    var action=document.querySelector('#dashboard .action-bar div');
+    if(action)action.innerHTML='<b>● 작업자 변경 기록</b>'+row.querySelector('b')?.textContent+' 값이 수정되었습니다. 저장 전 승인 내용을 확인하세요.';
+  });
+})();
+</script></body>
 </html>
