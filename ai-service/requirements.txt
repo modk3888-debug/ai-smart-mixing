@@ -5,3 +5,4 @@ pillow
 numpy
 opencv-python-headless
 xgboost>=3.0.0
+scikit-learn>=1.5.0
