@@ -1783,6 +1783,7 @@
   if(!dashboard) return;
   const offsets=[2,1,-2,1,-2];
   const fmt=(n)=>Number(n).toFixed(1);
+  let lastEnvironmentKey='';
   function setText(sel,value){const el=dashboard.querySelector(sel);if(el)el.textContent=value;}
   async function refreshSensor(){
     if(window.aiSmartMixingSensorPaused) return;
@@ -1792,6 +1793,13 @@
       const data=await response.json();
       const rec=data.recommendation||{};
       const temp=Number(data.temperature), humidity=Number(data.humidity);
+      const environmentKey=fmt(temp)+'|'+fmt(humidity)+'|'+(rec.season||'');
+      if(lastEnvironmentKey && environmentKey!==lastEnvironmentKey){
+        window.aiSmartMixingCycleOverrides={};
+        const changedAction=dashboard.querySelector('.action-bar div');
+        if(changedAction) changedAction.innerHTML='<b>● 환경값 변경 반영 완료</b>새 온도·습도 기준으로 회차별 AI 추천값을 다시 계산했습니다.';
+      }
+      lastEnvironmentKey=environmentKey;
       setText('.info:nth-child(2) b',fmt(temp)+'℃ · '+fmt(humidity)+'%');
       setText('.info:nth-child(2) span',(data.source==='demo-sensor'?'데모 센서 스트림':'PLC 센서')+' · 방금 갱신');
       setText('.info:nth-child(3) b',fmt(Number(rec.recommended_water_l||26)*5)+'L');
