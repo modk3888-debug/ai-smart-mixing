@@ -19,6 +19,7 @@ from fastapi import Body, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from PIL import Image
+from xgboost import XGBRegressor
 
 APP_ROOT = Path(__file__).resolve().parent
 WORKSPACE_ROOT = APP_ROOT.parent
@@ -50,15 +51,55 @@ SENSOR_STATE = {
 }
 
 
+def build_demo_xgboost_model() -> XGBRegressor:
+    """발표용 더미 작업 데이터로 XGBoost 위험도 예측 모델을 준비한다."""
+    rng = np.random.default_rng(42)
+    rows = 240
+    temperature = rng.uniform(18, 42, rows)
+    humidity = rng.uniform(35, 92, rows)
+    water = rng.uniform(24, 28, rows)
+    mixing = rng.integers(4, 8, rows)
+    hopper_wait = rng.uniform(0, 24, rows)
+    retarder = rng.integers(0, 2, rows)
+    risk = (
+        4.5
+        + np.maximum(temperature - 26, 0) * 0.55
+        + np.maximum(humidity - 58, 0) * 0.11
+        + np.maximum(water - 26.2, 0) * 1.8
+        + np.maximum(hopper_wait - 5, 0) * 0.22
+        + retarder * -2.0
+        + rng.normal(0, 0.8, rows)
+    )
+    features = np.column_stack([temperature, humidity, water, mixing, hopper_wait, retarder])
+    model = XGBRegressor(
+        n_estimators=80,
+        max_depth=3,
+        learning_rate=0.08,
+        subsample=0.9,
+        colsample_bytree=0.9,
+        objective="reg:squarederror",
+        random_state=42,
+        n_jobs=1,
+    )
+    model.fit(features, risk)
+    return model
+
+
+DEMO_XGBOOST_MODEL = build_demo_xgboost_model()
+
+
 def recommendation_for_environment(temperature: float, humidity: float) -> dict:
-    risk = round(max(5.0, min(30.0, 6.0 + max(0.0, temperature - 25.0) * 0.65 + max(0.0, humidity - 55.0) * 0.12)), 1)
     water = round(max(24.0, min(28.0, 26.0 + max(0.0, temperature - 30.0) * 0.18 - max(0.0, humidity - 70.0) * 0.04)), 1)
-    mixing_minutes = 4 if risk >= 18 else 5
+    mixing_minutes = 5
+    feature_row = np.array([[temperature, humidity, water, mixing_minutes, 0.0, 0.0]], dtype=float)
+    predicted_risk = float(DEMO_XGBOOST_MODEL.predict(feature_row)[0])
+    risk = round(max(5.0, min(30.0, predicted_risk)), 1)
     return {
         "risk": risk,
         "recommended_water_l": water,
-        "mixing_minutes": mixing_minutes,
+        "mixing_minutes": 4 if risk >= 18 else 5,
         "retarder": risk > 10,
+        "model": "XGBoost dummy model v1",
     }
 
 
