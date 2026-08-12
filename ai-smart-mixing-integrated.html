@@ -1838,6 +1838,7 @@
         humidity:fmt(humidity)+'%',
         cycles:liveCycles
       };
+      if(window.applyDashboardCycleOverrides) window.applyDashboardCycleOverrides();
       const status=document.querySelector('.site-status');
       if(status) status.textContent=data.source==='demo-sensor'?'센서 데모 연동 · 자동 갱신':'PLC 센서 연동 · 자동 갱신';
     }catch(error){
@@ -1886,36 +1887,39 @@
 </script>
 <script id="dashboard-inline-edit">
 (function(){
+  window.aiSmartMixingCycleOverrides=window.aiSmartMixingCycleOverrides||{};
   function input(value, cls){var el=document.createElement('input');el.className=cls;el.value=value;return el}
+  function rowSpans(row){return [...row.children].filter(function(el){return el.tagName==='SPAN'})}
+  window.applyDashboardCycleOverrides=function(){
+    document.querySelectorAll('#dashboard .cycle-detail-block').forEach(function(block,index){
+      var ov=window.aiSmartMixingCycleOverrides[index]; if(!ov)return;
+      var row=block.querySelector('.cycle-row'), spans=rowSpans(row); if(spans.length<5)return;
+      spans[0].textContent=ov.amount; spans[1].textContent=ov.water; spans[2].textContent=ov.mixing; spans[3].textContent=ov.wait;
+      spans[4].innerHTML='<i class="pill '+(ov.retarder==='사용'?'use':'no')+'">'+ov.retarder+'</i> <i class="'+(Number(ov.risk)>10?'risk-high':'risk-low')+'">'+ov.risk+'%</i>';
+      var note=block.querySelector('.cycle-note-history span'); if(note&&ov.note!==undefined)note.textContent=ov.note;
+    });
+  };
   document.addEventListener('click',function(event){
-    var button=event.target.closest('.dashboard-cycle-edit');
-    if(!button)return;
-    var block=button.closest('#dashboard .cycle-detail-block');
-    if(!block)return;
-    var row=block.querySelector('.cycle-row'), note=block.querySelector('.cycle-note-history span');
+    var button=event.target.closest('.dashboard-cycle-edit'); if(!button)return;
+    var block=button.closest('#dashboard .cycle-detail-block'); if(!block)return;
+    var allBlocks=[...document.querySelectorAll('#dashboard .cycle-detail-block')], blockIndex=allBlocks.indexOf(block);
+    var row=block.querySelector('.cycle-row'), spans=rowSpans(row), note=block.querySelector('.cycle-note-history span');
     if(button.dataset.mode!=='save'){
       window.aiSmartMixingCycleEditing=true;
-      row.querySelectorAll('span').forEach(function(span,index){
-        if(index<4){var value=span.textContent.trim();span.replaceWith(input(value,'inline-cycle-input'))}
-        else{var select=document.createElement('select');select.className='inline-cycle-select';select.innerHTML='<option>사용</option><option>미사용</option>';select.value=span.querySelector('.pill.use')?'사용':'미사용';span.replaceWith(select)}
-      });
+      row.dataset.riskValue=(spans[4]?.querySelector('.risk-high,.risk-low')?.textContent||'0').replace(/[^0-9.]/g,'');
+      spans.slice(0,4).forEach(function(span){span.replaceWith(input(span.textContent.trim(),'inline-cycle-input'))});
+      var select=document.createElement('select'); select.className='inline-cycle-select'; select.innerHTML='<option>사용</option><option>미사용</option>'; select.value=spans[4].querySelector('.pill.use')?'사용':'미사용'; spans[4].replaceWith(select);
       if(note){var noteInput=input(note.textContent.trim(),'inline-note-input');note.replaceWith(noteInput)}
       button.dataset.mode='save';button.textContent='저장';return;
     }
-    var fields=row.querySelectorAll('.inline-cycle-input,.inline-cycle-select');
-    var vals=[...fields].map(function(field){return field.value});
-    var retarder=vals[4], risk=Number(String(row.querySelector('.risk-high,.risk-low')?.textContent||'0').replace(/[^0-9.]/g,''))||0;
-    row.querySelectorAll('.inline-cycle-input,.inline-cycle-select').forEach(function(field,index){
-      var span=document.createElement('span');
-      if(index===4)span.innerHTML='<i class="pill '+(retarder==='사용'?'use':'no')+'">'+retarder+'</i> <i class="'+(risk>10?'risk-high':'risk-low')+'">'+risk+'%</i>';
-      else span.textContent=vals[index];
-      field.replaceWith(span);
-    });
-    var noteInput=block.querySelector('.inline-note-input');
-    if(noteInput){var text=document.createElement('span');text.textContent=noteInput.value;noteInput.replaceWith(text)}
+    var fields=row.querySelectorAll('.inline-cycle-input,.inline-cycle-select'), vals=[...fields].map(function(field){return field.value});
+    var risk=Number(row.dataset.riskValue||0), retarder=vals[4]||'미사용', noteInput=block.querySelector('.inline-note-input'), noteValue=noteInput?noteInput.value:'';
+    window.aiSmartMixingCycleOverrides[blockIndex]={amount:vals[0],water:vals[1],mixing:vals[2],wait:vals[3],retarder,risk,note:noteValue};
+    var currentSpans=rowSpans(row);
+    fields.forEach(function(field,index){var span=document.createElement('span');if(index===4)span.innerHTML='<i class="pill '+(retarder==='사용'?'use':'no')+'">'+retarder+'</i> <i class="'+(risk>10?'risk-high':'risk-low')+'">'+risk+'%</i>';else span.textContent=vals[index];field.replaceWith(span)});
+    if(noteInput){var text=document.createElement('span');text.textContent=noteValue;noteInput.replaceWith(text)}
     button.dataset.mode='edit';button.textContent='수정';window.aiSmartMixingCycleEditing=false;
-    var action=document.querySelector('#dashboard .action-bar div');
-    if(action)action.innerHTML='<b>● 작업자 변경 기록</b>'+row.querySelector('b')?.textContent+' 값이 수정되었습니다. 저장 전 승인 내용을 확인하세요.';
+    var action=document.querySelector('#dashboard .action-bar div'); if(action)action.innerHTML='<b>● 작업자 변경 기록</b>'+row.querySelector('b')?.textContent+' 값이 수정되었습니다. 다른 회차 값은 유지됩니다.';
   });
 })();
 </script></body>
