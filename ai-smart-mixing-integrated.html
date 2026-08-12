@@ -1151,6 +1151,10 @@
               mixing: Number(cycle.mixing || 5),
               hopper_wait: Number(cycle.wait || 0),
               retarder: cycle.retarder ? 1 : 0,
+              amount_kg: Number(cycle.amount || 500),
+              cycle: Number(cycle.cycle || 1),
+              round: Number(cycle.round || cycle.index || 1),
+              material: item.material || item.name || '저시멘트 캐스터블',
               season_code: /겨울/.test(item.material || '') ? 1 : 0,
               risk: Number(cycle.risk || 0)
             })));
@@ -1807,8 +1811,17 @@
       const response=await fetch('/sensor-state',{cache:'no-store'});
       if(!response.ok) throw new Error('sensor unavailable');
       const data=await response.json();
-      const rec=data.recommendation||{};
       const temp=Number(data.temperature), humidity=Number(data.humidity);
+      const rows=[...dashboard.querySelectorAll('.cycle-row')];
+      const selectedJob=document.querySelector('#dashboardJob')?.value||'저시멘트 캐스터블';
+      const recommendations=await Promise.all(rows.map((row,index)=>{
+        const readNumber=(selector)=>Number.parseFloat((row.querySelector(selector)?.textContent||'').replace(/[^0-9.-]/g,''))||0;
+        return fetch('/xgboost/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          temperature:temp, humidity:humidity, amount_kg:readNumber('span:nth-child(2)')||500,
+          cycle:Math.floor(index/3)+1, round:index%3+1, material:selectedJob
+        })}).then(r=>r.ok?r.json():data.recommendation).catch(()=>data.recommendation);
+      }));
+      const rec=recommendations[0]||data.recommendation||{};
       const environmentKey=fmt(temp)+'|'+fmt(humidity)+'|'+(rec.season||'');
       if(lastEnvironmentKey && environmentKey!==lastEnvironmentKey){
         window.aiSmartMixingCycleOverrides={};
@@ -1821,16 +1834,16 @@
       setText('.info:nth-child(3) b',fmt(Number(rec.recommended_water_l||26)*5)+'L');
       setText('.sensor-grid .sensor:nth-child(1) b',fmt(temp)+'℃');
       setText('.sensor-grid .sensor:nth-child(2) b',fmt(humidity)+'%');
-      const rows=[...dashboard.querySelectorAll('.cycle-row')];
       const calculated=rows.map((row,index)=>{
-        const risk=Math.max(5,Math.min(30,Math.round(Number(rec.risk||8)+(offsets[index]||0))));
+        const rowRec=recommendations[index]||rec;
+        const risk=Math.max(3,Math.min(30,Math.round(Number(rowRec.risk||8))));
         const use=risk>10;
         const result=row.querySelector('span:nth-child(6)');
         if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
         const mix=row.querySelector('span:nth-child(4)');
-        if(mix) mix.textContent=(rec.mixing_minutes||5)+'분';
+        if(mix) mix.textContent=(rowRec.mixing_minutes||5)+'분';
         const water=row.querySelector('span:nth-child(3)');
-        if(water) water.textContent=fmt(rec.recommended_water_l||26)+'L';
+        if(water) water.textContent=fmt(rowRec.recommended_water_l||26)+'L';
         return risk;
       });
       const maxRisk=Math.max(...calculated);
@@ -1855,7 +1868,6 @@
           note
         };
       });
-      const selectedJob=document.querySelector('#dashboardJob')?.value||'래들 벽체';
       window.aiSmartMixingLiveRecommendation={
         name:selectedJob,
         temperature:fmt(temp)+'℃',
