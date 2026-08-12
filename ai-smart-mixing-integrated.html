@@ -528,6 +528,7 @@
         notice.innerHTML = used.length ? '<b>● 승인 전 확인 필요</b>' + used.join(' · ') + '에 위험도 10% 초과로 지연제 사용 조건이 포함되어 있습니다.' : '<b>● 정상 조건</b>모든 사이클·차수가 위험도 10% 이하로 지연제 사용 없이 작업할 수 있습니다.';
       }
       function transferRecommendation(name) {
+        window.aiSmartMixingSensorPaused = true;
         const job = jobs[name];
         const live = window.aiSmartMixingLiveRecommendation;
         const visibleRows = [...dashboard.querySelectorAll('.cycle-row')];
@@ -1784,6 +1785,7 @@
   const fmt=(n)=>Number(n).toFixed(1);
   function setText(sel,value){const el=dashboard.querySelector(sel);if(el)el.textContent=value;}
   async function refreshSensor(){
+    if(window.aiSmartMixingSensorPaused) return;
     try{
       const response=await fetch('/sensor-state',{cache:'no-store'});
       if(!response.ok) throw new Error('sensor unavailable');
