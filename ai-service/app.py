@@ -164,7 +164,7 @@ def _ensure_mixing_model() -> dict:
         except Exception:
             pass
     rows = _seed_training_rows()
-    return _fit_mixing_model(rows, "demo_seed")
+    return _fit_mixing_model(rows, "literature_informed_synthetic")
 
 
 def prepare_normal_images() -> int:
