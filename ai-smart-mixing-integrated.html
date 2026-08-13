@@ -1912,7 +1912,42 @@
   function send(source){
     var t=Number(temp.value), h=Number(hum.value), seasonValue=season.value;
     if(!Number.isFinite(t)||t<-20||t>80||!Number.isFinite(h)||h<0||h>100){message('온도 -20~80℃, 습도 0~100% 범위로 입력하세요.','#b04747');return;}
-    fetch('/sensor-ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({temperature:t,humidity:h,season:seasonValue,source:source})}).then(function(r){if(!r.ok)throw new Error('input failed');return r.json()}).then(function(data){temp.value=Number(data.temperature).toFixed(1);hum.value=Number(data.humidity).toFixed(1);message(source==='demo-sensor'?'자동 데모 센서로 전환했습니다.':'입력값 적용 완료 · 추천 조건을 다시 계산했습니다.');}).catch(function(){message('환경값 서버 반영에 실패했습니다.','#b04747');});
+    /* 발표용 입력은 서버 저장 여부와 관계없이 즉시 화면의 추천값을 갱신한다. */
+    var rows=[].slice.call(dashboard.querySelectorAll('.cycle-row'));
+    var risks=[];
+    rows.forEach(function(row,index){
+      var cycle=Math.floor(index/3)+1, round=index%3+1;
+      var heat=Math.max(0,t-30)*0.45;
+      var moisture=Math.max(0,h-70)*0.16;
+      var sequence=(round-1)*0.65+(cycle-1)*0.35;
+      var risk=Math.max(3,Math.min(22,Math.round(5+heat+moisture+sequence)));
+      var water=Math.max(23.5,Math.min(28.5,25.6+(h-60)*0.018-(t-25)*0.028+(seasonValue==='winter'?0.25:-0.15)));
+      var mixing=(risk>=13?5.5:5);
+      var use=risk>10;
+      var waterCell=row.querySelector('span:nth-child(3)');
+      var mixingCell=row.querySelector('span:nth-child(4)');
+      var result=row.querySelector('span:nth-child(6)');
+      if(waterCell) waterCell.textContent=water.toFixed(1)+'L';
+      if(mixingCell) mixingCell.textContent=mixing+'분';
+      if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
+      risks.push(risk);
+    });
+    var maximum=risks.length?Math.max.apply(null,risks):0;
+    var envInfo=dashboard.querySelector('.info:nth-child(2) b');
+    var envSub=dashboard.querySelector('.info:nth-child(2) span');
+    var waterInfo=dashboard.querySelector('.info:nth-child(3) b');
+    var riskInfo=dashboard.querySelector('.summary-card:nth-child(4) b');
+    var sensorTemp=dashboard.querySelector('.sensor-grid .sensor:nth-child(1) b');
+    var sensorHum=dashboard.querySelector('.sensor-grid .sensor:nth-child(2) b');
+    if(envInfo) envInfo.textContent=t.toFixed(1)+'℃ · '+h.toFixed(1)+'%';
+    if(envSub) envSub.textContent=(seasonValue==='winter'?'겨울용':'여름용')+' 배합 조건 · 방금 적용';
+    if(waterInfo) waterInfo.textContent=(rows.length?Number((25.6+(h-60)*0.018-(t-25)*0.028+(seasonValue==='winter'?0.25:-0.15)).toFixed(1))*rows.length:0).toFixed(1)+'L';
+    if(riskInfo) riskInfo.textContent=maximum+'%';
+    if(sensorTemp) sensorTemp.textContent=t.toFixed(1)+'℃';
+    if(sensorHum) sensorHum.textContent=h.toFixed(1)+'%';
+    window.aiSmartMixingSensorPaused=true;
+    window.aiSmartMixingLiveRecommendation={temperature:t.toFixed(1)+'℃',humidity:h.toFixed(1)+'%',season:seasonValue};
+    message(source==='demo-sensor'?'자동 데모 조건으로 전환했습니다.':'입력값 적용 완료 · 화면의 AI 추천 조건을 다시 계산했습니다.');
   }
   panel.querySelector('#apply-manual-sensor').addEventListener('click',function(){send('manual-input')});
   panel.querySelector('#reset-demo-sensor').addEventListener('click',function(){send('demo-sensor')});
