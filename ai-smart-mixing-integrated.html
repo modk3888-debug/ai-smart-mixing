@@ -548,7 +548,10 @@
             note: row.parentElement?.querySelector('.cycle-note-history span')?.textContent?.trim() || ''
           };
         });
-        const liveCycles = live && live.name === name && currentCycles.length ? currentCycles : (live?.cycles || null);
+        // 작업일지에는 화면에 현재 표시된 추천값(환경값 적용·작업자 수정 포함)을 우선 전달합니다.
+        // 환경값 적용 직후 live 객체에는 회차 정보가 없을 수 있으므로, 이를 기준으로 다시 기본값을 만들면
+        // 대시보드의 지연제 사용 여부와 작업일지가 달라질 수 있습니다.
+        const liveCycles = currentCycles.length ? currentCycles : (live?.cycles || null);
         const cycles = liveCycles || buildCycles(job);
         const temperature = dashboard.querySelectorAll('.sensor b')[0].textContent;
         const humidity = dashboard.querySelectorAll('.sensor b')[1].textContent;
