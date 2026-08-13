@@ -1990,7 +1990,7 @@
     document.querySelectorAll('#dashboard .cycle-detail-block').forEach(function(block,index){
       var ov=window.aiSmartMixingCycleOverrides[index]; if(!ov)return;
       var row=block.querySelector('.cycle-row'), spans=rowSpans(row); if(spans.length<5)return;
-      spans[0].textContent=ov.amount; spans[1].textContent=ov.water; spans[2].textContent=ov.mixing; spans[3].textContent=ov.wait;
+      spans[0].textContent=String(ov.amount).replace(/(kg|L|분)\s*$/,''); spans[1].textContent=String(ov.water).replace(/(kg|L|분)\s*$/,''); spans[2].textContent=String(ov.mixing).replace(/(kg|L|분)\s*$/,''); spans[3].textContent=String(ov.wait).replace(/(kg|L|분)\s*$/,'');
       spans[4].innerHTML='<i class="pill '+(ov.retarder==='사용'?'use':'no')+'">'+ov.retarder+'</i> <i class="'+(Number(ov.risk)>10?'risk-high':'risk-low')+'">'+ov.risk+'%</i>';
       var note=block.querySelector('.cycle-note-history span'); if(note&&ov.note!==undefined)note.textContent=ov.note;
     });
@@ -2019,14 +2019,14 @@
       button.dataset.mode='save';button.textContent='저장';return;
     }
     var fields=row.querySelectorAll('.inline-cycle-input,.inline-cycle-select'), vals=[...fields].map(function(field,index){
-      var value=field.value.trim();
+      var value=field.value.trim().replace(/(kg|L|분)\s*$/,'');
       if(value) return value;
       return index===0?row.dataset.editamount:index===1?row.dataset.editwater:index===2?row.dataset.editmixing:index===3?row.dataset.editwait:'미사용';
     });
     var risk=Number(row.dataset.riskValue||0), retarder=vals[4]||'미사용', noteInput=block.querySelector('.inline-note-input'), noteValue=noteInput?noteInput.value:'';
     window.aiSmartMixingCycleOverrides[blockIndex]={amount:vals[0],water:vals[1],mixing:vals[2],wait:vals[3],retarder,risk,note:noteValue};
     var currentSpans=rowSpans(row);
-    fields.forEach(function(field,index){var span=document.createElement('span');if(index===4){span.innerHTML='<i class="pill '+(retarder==='사용'?'use':'no')+'">'+retarder+'</i> <i class="'+(risk>10?'risk-high':'risk-low')+'">'+risk+'%</i>';field.replaceWith(span)}else {span.textContent=vals[index]+(index===0?'kg':index===1?'L':'분');if(field.dataset.original!==undefined&&vals[index]!==field.dataset.original)span.className='changed-value';(field.closest('.inline-unit-field')||field).replaceWith(span)} });
+    fields.forEach(function(field,index){var span=document.createElement('span');if(index===4){span.innerHTML='<i class="pill '+(retarder==='사용'?'use':'no')+'">'+retarder+'</i> <i class="'+(risk>10?'risk-high':'risk-low')+'">'+risk+'%</i>';field.replaceWith(span)}else {var clean=String(vals[index]).replace(/(kg|L|분)\s*$/,'');span.textContent=clean+(index===0?'kg':index===1?'L':'분');if(field.dataset.original!==undefined&&clean!==String(field.dataset.original).replace(/(kg|L|분)\s*$/,''))span.className='changed-value';(field.closest('.inline-unit-field')||field).replaceWith(span)} });
     if(noteInput){var text=document.createElement('span');text.textContent=noteValue||'기준 시간 내 이송, 특이사항 없음.';noteInput.replaceWith(text)}
     button.dataset.mode='edit';button.textContent='수정';window.aiSmartMixingCycleEditing=false;
     var action=document.querySelector('#dashboard .action-bar div'); if(action)action.innerHTML='<b>● 작업자 변경 기록</b>'+row.querySelector('b')?.textContent+' 값이 수정되었습니다. 다른 회차 값은 유지됩니다.';
