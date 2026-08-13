@@ -2135,5 +2135,57 @@
     resultCard.querySelector('.demo-toast').textContent='작업 결과가 기록되었습니다 · '+result+' · 확인자 '+person;
   });
 })();
+</script>
+<style id="dashboard-recommendation-status-style">
+  #dashboard .ai-recommendation-status{display:inline-flex;align-items:center;margin-left:8px;margin-right:0;padding:3px 7px;border-radius:999px;background:#eef7ff;color:#176fc6;font-size:10px;font-weight:800;white-space:nowrap}
+  #dashboard .ai-recommendation-status.worker{background:#e8f2ff;color:#176fc6}
+  #dashboard .ai-recommendation-status.ai{background:#eef8f4;color:#178263}
+</style>
+<script id="dashboard-recommendation-status">
+(function(){
+  var dashboard=document.getElementById('dashboard');
+  if(!dashboard) return;
+  var units=['kg','L','분','분'];
+  function clean(value){return String(value==null?'':value).replace(/(kg|L|분)\s*$/,'').trim();}
+  function current(block){
+    var row=block.querySelector('.cycle-row');
+    if(!row) return null;
+    var spans=[...row.children].filter(function(el){return el.tagName==='SPAN'});
+    var pill=row.querySelector('.pill');
+    return {values:spans.slice(0,4).map(function(el){return clean(el.textContent)}),retarder:pill&&pill.textContent.trim()||''};
+  }
+  function badge(block,kind){
+    var note=block.querySelector('.cycle-note-history');
+    if(!note) return;
+    var button=note.querySelector('.dashboard-cycle-edit');
+    var el=note.querySelector('.ai-recommendation-status');
+    if(!el){el=document.createElement('span');el.className='ai-recommendation-status';if(button)note.insertBefore(el,button);else note.appendChild(el)}
+    el.className='ai-recommendation-status '+(kind==='worker'?'worker':'ai');
+    el.textContent=kind==='worker'?'작업자 수정':'AI 추천 적용';
+  }
+  function decorate(){dashboard.querySelectorAll('.cycle-detail-block').forEach(function(block){if(!block.querySelector('.ai-recommendation-status'))badge(block,'ai')})}
+  decorate();
+  document.addEventListener('click',function(event){
+    var button=event.target.closest('#dashboard .dashboard-cycle-edit');
+    if(!button) return;
+    var block=button.closest('.cycle-detail-block');
+    if(!block) return;
+    if(button.dataset.mode!=='save'){
+      button.__aiBefore=current(block);
+      return;
+    }
+    var before=button.__aiBefore;
+    setTimeout(function(){
+      var after=current(block);
+      if(!before||!after) return;
+      var changed=before.retarder!==after.retarder||before.values.some(function(value,index){return value!==after.values[index]});
+      badge(block,changed?'worker':'ai');
+      var blocks=[...dashboard.querySelectorAll('.cycle-detail-block')], index=blocks.indexOf(block);
+      window.aiSmartMixingCycleOverrides=window.aiSmartMixingCycleOverrides||{};
+      window.aiSmartMixingCycleOverrides[index]=Object.assign({},window.aiSmartMixingCycleOverrides[index]||{}, {editStatus:changed?'worker':'ai'});
+    },0);
+  },true);
+  window.addEventListener('aiSmartMixingRecommendationUpdated',function(){setTimeout(decorate,0)});
+})();
 </script></body>
 </html>
