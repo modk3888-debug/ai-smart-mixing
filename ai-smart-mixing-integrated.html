@@ -1970,8 +1970,10 @@
       var modelMax=Math.max.apply(null,modelRows.map(function(rec){return Math.round(Number(rec.risk_pct)||0)}));
       if(riskInfo) riskInfo.textContent=modelMax+'%';
       if(waterInfo) waterInfo.textContent=modelRows.reduce(function(sum,rec){return sum+Number(rec.water_l||0)},0).toFixed(1)+'L';
+      window.dispatchEvent(new Event('aiSmartMixingRecommendationUpdated'));
       message('입력값 적용 완료 · 공개 기술자료 관계로 생성한 XGBoost 시연 모델 결과입니다.');
     }catch(error){
+      window.dispatchEvent(new Event('aiSmartMixingRecommendationUpdated'));
       message('모델 서버 연결 전이라 화면 내 문헌 기반 시연값을 표시합니다.','#a36b22');
     }
   }
@@ -1997,23 +1999,138 @@
     var button=event.target.closest('.dashboard-cycle-edit'); if(!button)return;
     var block=button.closest('#dashboard .cycle-detail-block'); if(!block)return;
     var allBlocks=[...document.querySelectorAll('#dashboard .cycle-detail-block')], blockIndex=allBlocks.indexOf(block);
-    var row=block.querySelector('.cycle-row'), spans=rowSpans(row), note=block.querySelector('.cycle-note-history span');
+    var row=block.querySelector('.cycle-row'), cells=[...row.children].slice(1), note=block.querySelector('.cycle-note-history span, .cycle-note-history .inline-note-input');
     if(button.dataset.mode!=='save'){
       window.aiSmartMixingCycleEditing=true;
-      row.dataset.riskValue=(spans[4]?.querySelector('.risk-high,.risk-low')?.textContent||'0').replace(/[^0-9.]/g,'');
-      spans.slice(0,4).forEach(function(span){span.replaceWith(input(span.textContent.trim(),'inline-cycle-input'))});
-      var select=document.createElement('select'); select.className='inline-cycle-select'; select.innerHTML='<option>사용</option><option>미사용</option>'; select.value=spans[4].querySelector('.pill.use')?'사용':'미사용'; spans[4].replaceWith(select);
-      if(note){var noteInput=input(note.textContent.trim(),'inline-note-input');note.replaceWith(noteInput)}
+      var statusCell=cells[4], existingSelect=row.querySelector('.inline-cycle-select');
+      row.dataset.riskValue=(statusCell?.querySelector('.risk-high,.risk-low')?.textContent||'0').replace(/[^0-9.]/g,'');
+      [['kg','amount'],['L','water'],['분','mixing'],['분','wait']].forEach(function(spec,index){
+        var wrap=document.createElement('span'); wrap.className='inline-unit-field';
+        var source=cells[index], existingField=source?.querySelector('input');
+        var raw=(existingField?existingField.value:source?.textContent||'').trim().replace(/(kg|L|분)\s*$/,'').trim();
+        row.dataset['edit'+spec[1]]=raw;
+        var field=input(raw,'inline-cycle-input'); field.dataset.original=raw; wrap.appendChild(field);
+        var unit=document.createElement('i'); unit.className='inline-unit-suffix'; unit.textContent=spec[0];
+        wrap.appendChild(unit); source.replaceWith(wrap);
+      });
+      if(!existingSelect && statusCell){var select=document.createElement('select'); select.className='inline-cycle-select'; select.innerHTML='<option>사용</option><option>미사용</option>'; select.value=statusCell.querySelector('.pill.use')?'사용':'미사용'; statusCell.replaceWith(select)}
+      if(note && !note.classList.contains('inline-note-input')){var noteInput=input(note.textContent.trim(),'inline-note-input');noteInput.placeholder='변경 사유 입력';note.replaceWith(noteInput)}
       button.dataset.mode='save';button.textContent='저장';return;
     }
-    var fields=row.querySelectorAll('.inline-cycle-input,.inline-cycle-select'), vals=[...fields].map(function(field){return field.value});
+    var fields=row.querySelectorAll('.inline-cycle-input,.inline-cycle-select'), vals=[...fields].map(function(field,index){
+      var value=field.value.trim();
+      if(value) return value;
+      return index===0?row.dataset.editamount:index===1?row.dataset.editwater:index===2?row.dataset.editmixing:index===3?row.dataset.editwait:'미사용';
+    });
     var risk=Number(row.dataset.riskValue||0), retarder=vals[4]||'미사용', noteInput=block.querySelector('.inline-note-input'), noteValue=noteInput?noteInput.value:'';
     window.aiSmartMixingCycleOverrides[blockIndex]={amount:vals[0],water:vals[1],mixing:vals[2],wait:vals[3],retarder,risk,note:noteValue};
     var currentSpans=rowSpans(row);
-    fields.forEach(function(field,index){var span=document.createElement('span');if(index===4)span.innerHTML='<i class="pill '+(retarder==='사용'?'use':'no')+'">'+retarder+'</i> <i class="'+(risk>10?'risk-high':'risk-low')+'">'+risk+'%</i>';else span.textContent=vals[index];field.replaceWith(span)});
-    if(noteInput){var text=document.createElement('span');text.textContent=noteValue;noteInput.replaceWith(text)}
+    fields.forEach(function(field,index){var span=document.createElement('span');if(index===4){span.innerHTML='<i class="pill '+(retarder==='사용'?'use':'no')+'">'+retarder+'</i> <i class="'+(risk>10?'risk-high':'risk-low')+'">'+risk+'%</i>';field.replaceWith(span)}else {span.textContent=vals[index]+(index===0?'kg':index===1?'L':'분');if(field.dataset.original!==undefined&&vals[index]!==field.dataset.original)span.className='changed-value';(field.closest('.inline-unit-field')||field).replaceWith(span)} });
+    if(noteInput){var text=document.createElement('span');text.textContent=noteValue||'기준 시간 내 이송, 특이사항 없음.';noteInput.replaceWith(text)}
     button.dataset.mode='edit';button.textContent='수정';window.aiSmartMixingCycleEditing=false;
     var action=document.querySelector('#dashboard .action-bar div'); if(action)action.innerHTML='<b>● 작업자 변경 기록</b>'+row.querySelector('b')?.textContent+' 값이 수정되었습니다. 다른 회차 값은 유지됩니다.';
+  });
+})();
+</script>
+<script id="operations-demo-addon">
+/* 별도 운영 흐름 데모 전용: ?demo=operations 에서만 표시됩니다. */
+(function () {
+  if (new URLSearchParams(location.search).get('demo') !== 'operations') return;
+
+  const css = document.createElement('style');
+  css.textContent = `
+    .demo-card{margin-top:16px;padding:16px 18px;border:1px solid #cfe1f1;border-radius:13px;background:linear-gradient(135deg,#f8fcff,#fff);box-shadow:0 7px 17px rgba(25,88,139,.05)}
+    .cycle-detail-block .inline-unit-field{display:inline-flex;align-items:center;gap:3px;width:100%;min-width:0}.cycle-detail-block .inline-unit-field .inline-cycle-input{flex:1;min-width:0}.cycle-detail-block .inline-unit-suffix{color:#58728a;font-size:11px;font-weight:800}.cycle-detail-block .changed-value{color:#176fc6!important;font-weight:800}
+    .demo-card h3{margin:0 0 5px;color:#163a5d;font-size:16px}.demo-card p{margin:0;color:#668099;font-size:12px;line-height:1.55}.demo-reason{display:grid;gap:8px;margin-top:13px}.demo-reason div{padding:10px 12px;border-radius:9px;background:#edf7ff;color:#365d7c;font-size:12px;line-height:1.45}.demo-reason b{color:#1871ba}.demo-change-item{padding:10px 0;border-top:1px solid #e5eef5;color:#49687f;font-size:12px;line-height:1.5}.demo-change-item b{color:#174d78}.demo-result-grid{display:grid;grid-template-columns:1.2fr 1fr auto;gap:9px;align-items:end;margin-top:13px}.demo-result-grid label{display:grid;gap:6px;color:#648099;font-size:11px;font-weight:800}.demo-result-grid select,.demo-result-grid input{height:37px;padding:0 10px;border:1px solid #cfe0ed;border-radius:8px;background:#fff;color:#163a5d;font:inherit}.demo-result-grid button{height:37px;padding:0 14px;border:0;border-radius:8px;background:#1976c9;color:#fff;font-weight:800;cursor:pointer}.demo-toast{margin-top:10px;color:#128261;font-size:12px;font-weight:800}@media(max-width:700px){.demo-result-grid{grid-template-columns:1fr}.demo-result-grid button{width:100%}}
+  `;
+  document.head.appendChild(css);
+
+  const dashboard = document.getElementById('dashboard');
+  const worklog = document.getElementById('worklog');
+  const baseline = [];
+  const changes = [];
+  const cycleRows = () => [...dashboard.querySelectorAll('.cycle-row')];
+  const readCycle = row => {
+    const spans = [...row.children].filter(node => node.tagName === 'SPAN');
+    return {
+      label: row.querySelector('b')?.textContent.trim() || '',
+      water: spans[1]?.textContent.trim() || '',
+      mixing: spans[2]?.textContent.trim() || '',
+      wait: spans[3]?.textContent.trim() || '',
+      retarder: spans[4]?.querySelector('.pill')?.textContent.trim() || '미사용',
+      risk: spans[4]?.querySelector('.risk-high,.risk-low')?.textContent.trim() || '0%'
+    };
+  };
+  cycleRows().forEach(row => baseline.push(readCycle(row)));
+
+  const evidence = document.createElement('section');
+  evidence.className = 'demo-card';
+  evidence.innerHTML = '<h3>AI 추천 근거</h3><p>추천값이 나온 이유를 작업자가 바로 확인합니다.</p><div class="demo-reason"></div>';
+  dashboard.querySelector('.action-bar')?.after(evidence);
+  function renderEvidence(){
+    const temp = dashboard.querySelector('.sensor-grid .sensor:nth-child(1) b')?.textContent || '현재';
+    const hum = dashboard.querySelector('.sensor-grid .sensor:nth-child(2) b')?.textContent || '현재';
+    const reasons = cycleRows().map((row,index) => {
+      const item=readCycle(row); const cycle=Math.floor(index/3)+1;
+      const retarder=item.retarder==='사용' ? '위험도 기준을 넘어 지연제 사용을 권장했습니다.' : '위험도 기준 이하로 지연제 미사용을 권장했습니다.';
+      return '<div><b>'+cycle+'사이클 '+item.label+'</b> · 온도 '+temp+', 습도 '+hum+', 호퍼 대기 '+item.wait+' · '+retarder+'</div>';
+    });
+    evidence.querySelector('.demo-reason').innerHTML=reasons.join('');
+  }
+  renderEvidence();
+  // 환경값 적용은 비동기 추천 결과로 표를 갱신합니다. 표가 바뀔 때마다 근거도 같은 값을 다시 읽습니다.
+  let evidenceTimer;
+  new MutationObserver(() => {
+    clearTimeout(evidenceTimer);
+    evidenceTimer=setTimeout(renderEvidence, 80);
+  }).observe(dashboard.querySelector('.cycles'), {childList:true,subtree:true,characterData:true});
+  // 수동 환경값 적용은 기존 표의 텍스트만 교체합니다. 완료 뒤 다시 읽어 근거를 동기화합니다.
+  document.getElementById('apply-manual-sensor')?.addEventListener('click', () => {
+    setTimeout(renderEvidence, 300);
+    setTimeout(renderEvidence, 1000);
+  });
+  document.getElementById('reset-demo-sensor')?.addEventListener('click', () => {
+    setTimeout(renderEvidence, 300);
+    setTimeout(renderEvidence, 1000);
+  });
+  window.addEventListener('aiSmartMixingRecommendationUpdated', renderEvidence);
+
+  const changeCard = document.createElement('section');
+  changeCard.className = 'demo-card';
+  changeCard.innerHTML = '<h3>AI 추천 변경 이력</h3><p>AI 추천값을 그대로 적용한 경우에는 자동 적용만 남기고, 작업자가 수정한 경우에만 변경 전·후 값과 사유를 기록합니다.</p><div class="demo-change-list"><div class="demo-change-item">아직 작업자 변경 없음 · AI 추천값 그대로 전달</div></div>';
+  // 변경 사유는 기존 차수별 특이사항에 기록하므로 별도 변경 이력 카드는 표시하지 않습니다.
+  changeCard.remove();
+  function renderChanges(){
+    const target=changeCard.querySelector('.demo-change-list');
+    if(!changes.length){ target.innerHTML='<div class="demo-change-item">아직 작업자 변경 없음 · AI 추천값 그대로 전달</div>'; return; }
+    target.innerHTML=changes.map(item=>'<div class="demo-change-item"><b>'+item.title+'</b><br>'+item.before+' → '+item.after+'<br>변경 사유: '+item.reason+' · 작업자: 현장 작업자 · 시간: '+item.time+'</div>').join('');
+  }
+  function detectDashboardChange(button){
+    const block=button.closest('.cycle-detail-block');
+    const index=[...dashboard.querySelectorAll('.cycle-detail-block')].indexOf(block);
+    const after=readCycle(block.querySelector('.cycle-row')); const before=baseline[index];
+    const fields=[];
+    ['water','mixing','wait','retarder'].forEach(key=>{if(before[key]!==after[key])fields.push(key==='retarder'?'지연제 '+before[key]+' → '+after[key]:key==='water'?'수분 '+before[key]+' → '+after[key]:key==='mixing'?'믹싱시간 '+before[key]+' → '+after[key]:'호퍼 대기 '+before[key]+' → '+after[key]);});
+    if(!fields.length) return;
+    changes.push({title:(Math.floor(index/3)+1)+'사이클 '+after.label+' 추천값 변경',before:'AI 추천: '+fields.map(text=>text.split(' → ')[0]).join(', '),after:'적용값: '+fields.map(text=>text.split(' → ')[1]||text).join(', '),reason:'현장 확인 후 작업 조건 조정',time:new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})});
+    renderChanges(); renderEvidence();
+  }
+  document.addEventListener('click', event=>{
+    const button=event.target.closest('.dashboard-cycle-edit');
+    if(!button || button.dataset.mode!=='save') return;
+    setTimeout(()=>detectDashboardChange(button),0);
+  });
+
+  const resultCard=document.createElement('section');
+  resultCard.className='demo-card';
+  resultCard.innerHTML='<h3>작업 결과 입력</h3><p>작업 종료 후 전체 결과를 확정합니다. 이 결과는 향후 현장 데이터 기반 모델 학습의 정답값으로 사용할 수 있습니다.</p><div class="demo-result-grid"><label>최종 작업 결과<select><option>정상 완료</option><option>경화 의심</option><option>재작업</option><option>폐기</option></select></label><label>결과 확인자<input value="현장 작업자"></label><button type="button">결과 확정</button></div><div class="demo-toast" aria-live="polite"></div>';
+  // 기존 저장 버튼 바로 위에 최종 결과를 두어, 기록 흐름의 마지막 단계가 되도록 합니다.
+  const saveArea=worklog.querySelector('.save-row');
+  saveArea?.before(resultCard);
+  resultCard.querySelector('button').addEventListener('click',()=>{
+    const result=resultCard.querySelector('select').value;
+    const person=resultCard.querySelector('input').value.trim()||'미입력';
+    resultCard.querySelector('.demo-toast').textContent='작업 결과가 기록되었습니다 · '+result+' · 확인자 '+person;
   });
 })();
 </script></body>
