@@ -2012,7 +2012,7 @@
         var field=input(raw,'inline-cycle-input'); field.dataset.original=raw; field.style.cssText='display:block!important;flex:1 1 auto!important;width:1%!important;min-width:0!important;height:31px!important;padding:4px 6px!important;';
         var unit=document.createElement('i'); unit.className='inline-unit-suffix'; unit.textContent=spec[0]; unit.style.cssText='display:inline-block!important;flex:0 0 auto!important;visibility:visible!important;white-space:nowrap!important;margin:0!important;';
         wrap.append(field,unit); source.replaceWith(wrap);
-        field.addEventListener('input',function(){var changed=field.value.trim().replace(/(kg|L|분)\s*$/,'')!==String(field.dataset.original).replace(/(kg|L|분)\s*$/,'');field.classList.toggle('changed-value',changed);field.style.setProperty('color',changed?'#176fc6':'#173654','important');field.style.fontWeight=changed?'800':'400'});
+        field.addEventListener('input',function(){field.dataset.edited='true'});
         field.style.setProperty('color','#173654','important');
       });
       if(!existingSelect && statusCell){var select=document.createElement('select'); select.className='inline-cycle-select'; select.innerHTML='<option>사용</option><option>미사용</option>'; select.value=statusCell.querySelector('.pill.use')?'사용':'미사용'; statusCell.replaceWith(select)}
