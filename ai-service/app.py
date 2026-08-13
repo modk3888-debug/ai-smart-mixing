@@ -47,6 +47,14 @@ MIXING_TARGETS = ("water_l", "mixing_min", "hopper_wait_min", "risk_pct")
 MATERIAL_CODES = {"래들 벽체": 1, "래들 바닥": 2, "턴디쉬 카바": 3, "저시멘트 캐스터블": 4}
 
 app = FastAPI(title="AI 스마트 믹싱 이미지 분석 API", version="0.1.0")
+MODEL_SCHEMA_VERSION = "literature_informed_synthetic_v1"
+MATERIAL_PROFILES = {
+    1: {"name": "ladle_wall", "water_pct": 5.2, "mixing_min": 5.0},
+    2: {"name": "ladle_bottom", "water_pct": 5.0, "mixing_min": 5.0},
+    3: {"name": "tundish_cover", "water_pct": 4.8, "mixing_min": 4.0},
+    4: {"name": "low_cement", "water_pct": 5.5, "mixing_min": 5.0},
+}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:8990", "http://localhost:8990", "http://127.0.0.1:8765", "http://localhost:8765"],
@@ -73,29 +81,49 @@ def _feature_row(row: dict) -> list[float]:
     ]
 
 
+def _literature_rule(temperature: float, humidity: float, amount: float, cycle: int, round_no: int, material_code: int) -> dict:
+    """Published castable installation guidance translated into demo rules.
+
+    16-29C is the preferred installation range. High temperature accelerates hydration
+    and shortens working time. Product water remains within its own specified range.
+    Humidity and queue sequence are intentionally small operational assumptions until
+    field measurements replace this literature-informed synthetic dataset.
+    """
+    profile = MATERIAL_PROFILES.get(material_code, MATERIAL_PROFILES[4])
+    hot_penalty = max(0.0, temperature - 29.0) * 1.35
+    cold_penalty = max(0.0, 16.0 - temperature) * 0.55
+    humidity_penalty = max(0.0, humidity - 75.0) * 0.12
+    queue_penalty = max(0, round_no - 1) * 1.1 + max(0, cycle - 1) * 0.45
+    risk = max(2.0, min(30.0, 4.0 + hot_penalty + cold_penalty + humidity_penalty + queue_penalty))
+    water_pct = profile["water_pct"] + (0.08 if temperature > 29 else 0.0) - (0.05 if humidity > 80 else 0.0)
+    return {
+        "water_l": round(amount * water_pct / 100.0, 2),
+        "mixing_min": profile["mixing_min"],
+        "hopper_wait_min": round(max(0.0, min(20.0, 20.0 - risk * 0.72)), 2),
+        "risk_pct": round(risk, 2),
+    }
+
+
 def _seed_training_rows() -> list[dict]:
     """발표용 초기 모델을 위한 명시적 기준 데이터. 실제 운영 전 현장 라벨 데이터로 교체한다."""
     rows = []
-    for i in range(36):
-        temperature = 18 + (i * 7) % 24
-        humidity = 42 + (i * 11) % 45
-        amount = 500
-        cycle = (i % 3) + 1
-        round_no = (i % 5) + 1
-        material_code = (i % 4) + 1
-        risk = max(2, min(28, 3 + (temperature - 20) * 0.28 + (humidity - 55) * 0.12 + (round_no - 1) * 0.7))
-        rows.append({
-            "temperature_c": temperature,
-            "humidity_pct": humidity,
-            "amount_kg": amount,
-            "cycle_no": cycle,
-            "round_no": round_no,
-            "material_code": material_code,
-            "water_l": round(24.5 + material_code * 0.35 + (humidity - 55) * 0.025, 2),
-            "mixing_min": round(4.5 + (material_code % 2) * 0.5, 2),
-            "hopper_wait_min": round(max(0, (risk - 7) * 0.8), 2),
-            "risk_pct": round(risk, 2),
-        })
+    temperatures = (10, 16, 20, 25, 29, 32, 36, 40)
+    humidities = (40, 55, 65, 75, 85)
+    for material_code in MATERIAL_PROFILES:
+        for cycle in range(1, 4):
+            for round_no in range(1, 4):
+                for index, temperature in enumerate(temperatures):
+                    humidity = humidities[(index + cycle + round_no + material_code) % len(humidities)]
+                    amount = 500 if round_no < 3 else 250
+                    rows.append({
+                        "temperature_c": temperature,
+                        "humidity_pct": humidity,
+                        "amount_kg": amount,
+                        "cycle_no": cycle,
+                        "round_no": round_no,
+                        "material_code": material_code,
+                        **_literature_rule(temperature, humidity, amount, cycle, round_no, material_code),
+                    })
     return rows
 
 
@@ -117,7 +145,7 @@ def _fit_mixing_model(rows: list[dict], source: str) -> dict:
         )
         model.fit(X, y, verbose=False)
         models[target] = model
-    artifact = {"models": models, "features": MIXING_FEATURES, "rows": len(rows), "source": source, "trained_at": datetime.now(timezone.utc).isoformat()}
+    artifact = {"models": models, "features": MIXING_FEATURES, "rows": len(rows), "source": source, "schema_version": MODEL_SCHEMA_VERSION, "trained_at": datetime.now(timezone.utc).isoformat()}
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
     with MIXING_MODEL_PATH.open("wb") as handle:
         pickle.dump(artifact, handle)
@@ -130,7 +158,9 @@ def _ensure_mixing_model() -> dict:
     if MIXING_MODEL_PATH.exists():
         try:
             with MIXING_MODEL_PATH.open("rb") as handle:
-                return pickle.load(handle)
+                artifact = pickle.load(handle)
+                if artifact.get("source") == "field_worklogs" or artifact.get("schema_version") == MODEL_SCHEMA_VERSION:
+                    return artifact
         except Exception:
             pass
     rows = _seed_training_rows()
@@ -249,6 +279,7 @@ def mixing_model_status() -> dict:
         "trained_at": artifact["trained_at"],
         "training_rows": artifact["rows"],
         "training_source": artifact["source"],
+        "dataset_basis": "literature_informed_synthetic" if artifact["source"] != "field_worklogs" else "field_worklogs",
         "targets": list(MIXING_TARGETS),
     }
 
@@ -269,6 +300,7 @@ def recommend_mixing(payload: dict) -> dict:
         "trained_at": artifact["trained_at"],
         "training_rows": artifact["rows"],
         "training_source": artifact["source"],
+        "dataset_basis": "literature_informed_synthetic" if artifact["source"] != "field_worklogs" else "field_worklogs",
         "water_l": water,
         "mixing_min": mixing,
         "hopper_wait_min": hopper_wait,

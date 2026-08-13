@@ -1909,7 +1909,7 @@
   anchor.parentNode.insertBefore(panel,anchor);
   var temp=panel.querySelector('#manual-temperature'), hum=panel.querySelector('#manual-humidity'), season=panel.querySelector('#manual-season'), msg=panel.querySelector('#manual-sensor-message');
   function message(text,color){msg.textContent=text;msg.style.color=color||'#108b65';}
-  function send(source){
+  async function send(source){
     var t=Number(temp.value), h=Number(hum.value), seasonValue=season.value;
     if(!Number.isFinite(t)||t<-20||t>80||!Number.isFinite(h)||h<0||h>100){message('온도 -20~80℃, 습도 0~100% 범위로 입력하세요.','#b04747');return;}
     /* 발표용 입력은 서버 저장 여부와 관계없이 즉시 화면의 추천값을 갱신한다. */
@@ -1947,7 +1947,30 @@
     if(sensorHum) sensorHum.textContent=h.toFixed(1)+'%';
     window.aiSmartMixingSensorPaused=true;
     window.aiSmartMixingLiveRecommendation={temperature:t.toFixed(1)+'℃',humidity:h.toFixed(1)+'%',season:seasonValue};
-    message(source==='demo-sensor'?'자동 데모 조건으로 전환했습니다.':'입력값 적용 완료 · 화면의 AI 추천 조건을 다시 계산했습니다.');
+    message(source==='demo-sensor'?'자동 데모 조건으로 전환했습니다.':'입력값 적용 완료 · 문헌 기반 XGBoost 추천값을 불러오는 중입니다.');
+    try{
+      var selectedJob=document.querySelector('#dashboardJob')?.value||'';
+      var materialCode=selectedJob.indexOf('바닥')>=0?2:selectedJob.indexOf('턴디쉬')>=0?3:selectedJob.indexOf('벽체')>=0?1:4;
+      var modelRows=await Promise.all(rows.map(async function(row,index){
+        var amountText=(row.querySelector('span:nth-child(2)')?.textContent||'500').replace(/[^0-9.]/g,'');
+        var response=await fetch('/model/recommend',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({temperature_c:t,humidity_pct:h,amount_kg:Number(amountText)||500,cycle_no:Math.floor(index/3)+1,round_no:index%3+1,material_code:materialCode})});
+        if(!response.ok) throw new Error('model unavailable');
+        return response.json();
+      }));
+      modelRows.forEach(function(rec,index){
+        var row=rows[index], risk=Math.round(Number(rec.risk_pct)||0), use=Boolean(rec.retarder);
+        var waterCell=row.querySelector('span:nth-child(3)'), mixingCell=row.querySelector('span:nth-child(4)'), result=row.querySelector('span:nth-child(6)');
+        if(waterCell) waterCell.textContent=Number(rec.water_l).toFixed(1)+'L';
+        if(mixingCell) mixingCell.textContent=Number(rec.mixing_min).toFixed(1).replace('.0','')+'분';
+        if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
+      });
+      var modelMax=Math.max.apply(null,modelRows.map(function(rec){return Math.round(Number(rec.risk_pct)||0)}));
+      if(riskInfo) riskInfo.textContent=modelMax+'%';
+      if(waterInfo) waterInfo.textContent=modelRows.reduce(function(sum,rec){return sum+Number(rec.water_l||0)},0).toFixed(1)+'L';
+      message('입력값 적용 완료 · 공개 기술자료 관계로 생성한 XGBoost 시연 모델 결과입니다.');
+    }catch(error){
+      message('모델 서버 연결 전이라 화면 내 문헌 기반 시연값을 표시합니다.','#a36b22');
+    }
   }
   panel.querySelector('#apply-manual-sensor').addEventListener('click',function(){send('manual-input')});
   panel.querySelector('#reset-demo-sensor').addEventListener('click',function(){send('demo-sensor')});
