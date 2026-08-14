@@ -1958,6 +1958,16 @@
     if(envSub) envSub.textContent=(seasonValue==='winter'?'겨울용':'여름용')+' 배합 조건 · 방금 적용';
     if(waterInfo) waterInfo.textContent=(rows.length?Number((25.6+(h-60)*0.018-(t-25)*0.028+(seasonValue==='winter'?0.25:-0.15)).toFixed(1))*rows.length:0).toFixed(1)+'L';
     if(riskInfo) riskInfo.textContent=maximum+'%';
+    // 공개 시연 환경에서는 API가 없어도 더미 학습 범위 기반 신뢰도를 계산해 표시한다.
+    var confidenceCard=dashboard.querySelector('.summary-card:nth-child(5) b');
+    if(confidenceCard){
+      var tempCoverage=Math.max(0,1-Math.abs(t-28)/15);
+      var humidityCoverage=Math.max(0,1-Math.abs(h-65)/35);
+      var conditionCoverage=(tempCoverage+humidityCoverage)/2;
+      var demoConfidence=Math.round((0.89*0.7+conditionCoverage*0.3)*100);
+      confidenceCard.textContent=Math.max(55,Math.min(94,demoConfidence))+'%';
+      confidenceCard.title='더미 학습 데이터의 검증 성능과 현재 환경조건의 유사도를 반영한 시연용 신뢰도';
+    }
     if(sensorTemp) sensorTemp.textContent=t.toFixed(1)+'℃';
     if(sensorHum) sensorHum.textContent=h.toFixed(1)+'%';
     window.aiSmartMixingSensorPaused=true;
