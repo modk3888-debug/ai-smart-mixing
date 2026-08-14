@@ -2309,4 +2309,41 @@
   new MutationObserver(function(){sync()}).observe(dashboard,{subtree:true,childList:true,characterData:true});
 })();
 </script></body>
+<script id="dashboard-final-live-sync">
+(function(){
+  function start(){
+    var dashboard=document.getElementById('dashboard');
+    if(!dashboard){setTimeout(start,100);return;}
+    function sync(){
+      var worker=false;
+      dashboard.querySelectorAll('.cycle-detail-block').forEach(function(block,index){
+        var row=block.querySelector('.cycle-row');
+        if(!row)return;
+        var spans=[...row.children].filter(function(el){return el.tagName==='SPAN'});
+        if(spans[1]){
+          var water=String(spans[1].textContent||'').replace(/[^0-9.]/g,'');
+          if(water&&!isNaN(Number(water))){var display=Number(water).toFixed(1)+'L';if(spans[1].textContent!==display)spans[1].textContent=display;}
+        }
+        var override=window.aiSmartMixingCycleOverrides&&window.aiSmartMixingCycleOverrides[index];
+        var edited=!!block.querySelector('.changed-value')||(override&&override.editStatus==='worker');
+        worker=worker||edited;
+        var note=block.querySelector('.cycle-note-history');
+        if(note){
+          var mark=note.querySelector('.ai-recommendation-status');
+          if(!mark){mark=document.createElement('span');mark.className='ai-recommendation-status';note.insertBefore(mark,note.querySelector('.dashboard-cycle-edit')||null);}
+          var cls='ai-recommendation-status '+(edited?'worker':'ai'), text=edited?'\uC791\uC5C5\uC790 \uC218\uC815':'AI \uCD94\uCC9C \uC801\uC6A9';
+          if(mark.className!==cls)mark.className=cls;
+          if(mark.textContent!==text)mark.textContent=text;
+        }
+      });
+      var approve=document.getElementById('approve');
+      if(approve&&!approve.dataset.approved){var text=worker?'\uC791\uC5C5\uC790 \uC870\uAC74 \uC2B9\uC778':'\uCD94\uCC9C \uC870\uAC74 \uC2B9\uC778';if(approve.textContent!==text)approve.textContent=text;}
+    }
+    sync();
+    setInterval(sync,300);
+    window.addEventListener('hashchange',function(){setTimeout(sync,50)});
+  }
+  start();
+})();
+</script></body>
 </html>
