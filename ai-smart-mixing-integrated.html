@@ -2212,7 +2212,11 @@
     setTimeout(function(){
       var after=current(block);
       if(!before||!after) return;
-      var changed=before.retarder!==after.retarder||before.values.some(function(value,index){return value!==after.values[index]});
+      var changed=before.retarder!==after.retarder||before.values.some(function(value,index){
+        // 26.0L와 26L처럼 표시 형식만 다른 숫자는 같은 추천값으로 봅니다.
+        if(index<4) return Number(value)!==Number(after.values[index]);
+        return value!==after.values[index];
+      });
       badge(block,changed?'worker':'ai');
       syncApprovalButton();
       var blocks=[...dashboard.querySelectorAll('.cycle-detail-block')], index=blocks.indexOf(block);
