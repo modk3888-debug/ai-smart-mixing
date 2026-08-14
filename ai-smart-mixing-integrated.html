@@ -1932,17 +1932,22 @@
     var risks=[];
     rows.forEach(function(row,index){
       var cycle=Math.floor(index/3)+1, round=index%3+1;
-      var heat=Math.max(0,t-30)*0.45;
-      var moisture=Math.max(0,h-70)*0.16;
+      var heat=Math.max(0,t-29)*1.35;
+      var cold=Math.max(0,16-t)*0.55;
+      var moisture=Math.max(0,h-75)*0.12;
       var sequence=(round-1)*0.65+(cycle-1)*0.35;
-      var risk=Math.max(3,Math.min(22,Math.round(5+heat+moisture+sequence)));
-      var water=Math.max(23.5,Math.min(28.5,25.6+(h-60)*0.018-(t-25)*0.028+(seasonValue==='winter'?0.25:-0.15)));
+      var risk=Math.max(2,Math.min(30,Math.round(4+heat+cold+moisture+sequence)));
+      // 물량은 온도만으로 증감시키지 않고 제품 권장 범위 안에서 계절·습도만 보정한다.
+      var water=Math.max(23.5,Math.min(28.5,25.6+(h>80?0.05:0)+(seasonValue==='winter'?0.2:-0.1)));
       var mixing=(risk>=13?5.5:5);
+      var hopperWait=Math.max(0,Math.min(20,20-risk*0.72));
       var use=risk>10;
       var waterCell=row.querySelector('span:nth-child(3)');
       var mixingCell=row.querySelector('span:nth-child(4)');
+      var waitCell=row.querySelector('span:nth-child(5)');
       var result=row.querySelector('span:nth-child(6)');
       if(waterCell) waterCell.textContent=water.toFixed(1)+'L';
+      if(waitCell) waitCell.textContent=Math.round(hopperWait)+'분';
       if(mixingCell) mixingCell.textContent=mixing+'분';
       if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
       risks.push(risk);
