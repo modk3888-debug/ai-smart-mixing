@@ -2034,6 +2034,35 @@
   });
 })();
 </script>
+<script id="dashboard-approval-label">
+(function(){
+  var dashboard=document.getElementById('dashboard'), approve=document.getElementById('approve');
+  if(!dashboard||!approve) return;
+  function hasWorkerChange(){
+    var overrides=window.aiSmartMixingCycleOverrides||{};
+    return Object.keys(overrides).some(function(key){return overrides[key]&&overrides[key].editStatus==='worker';});
+  }
+  function syncApprovalLabel(){
+    var worker=hasWorkerChange();
+    approve.dataset.approvalMode=worker?'worker':'ai';
+    if(!approve.dataset.approved) approve.textContent=worker?'작업자 조건 승인':'추천 조건 승인';
+  }
+  function refreshAfterExistingHandler(){
+    setTimeout(syncApprovalLabel,20);
+    setTimeout(syncApprovalLabel,520);
+  }
+  syncApprovalLabel();
+  document.addEventListener('click',function(event){
+    if(event.target.closest('#dashboard .dashboard-cycle-edit')) refreshAfterExistingHandler();
+    if(event.target.closest('#dashboard #approve')){
+      var worker=hasWorkerChange();
+      setTimeout(function(){approve.dataset.approved='true';approve.textContent=worker?'작업자 조건 승인 완료':'추천 조건 승인 완료';},30);
+      setTimeout(function(){delete approve.dataset.approved;approve.textContent=worker?'작업자 조건 승인':'추천 조건 승인';},700);
+    }
+  },true);
+  window.addEventListener('aiSmartMixingRecommendationUpdated',function(){setTimeout(syncApprovalLabel,30);});
+})();
+</script>
 <script id="operations-demo-addon">
 /* 별도 운영 흐름 데모 전용: ?demo=operations 에서만 표시됩니다. */
 (function () {
