@@ -58,6 +58,8 @@
     const removedLearningScreen=document.getElementById('learning');
     if(removedLearningScreen) removedLearningScreen.remove();
     document.querySelector('#process .timestamp')?.remove();
+    const xgboostCard=document.querySelector('#process .lower .mini');
+    if(xgboostCard){xgboostCard.querySelector('h3').textContent='XGBoost 역할';xgboostCard.querySelector('p').textContent='과거 작업 데이터를 학습해 현재 조건에 맞는 배합 조건과 위험도를 예측합니다.';}
     if(location.hash==='#learning') history.replaceState(null,'','#process');
     document.querySelectorAll('.panel p').forEach((p)=>{if(p.textContent.includes('학습 데이터로 반영됩니다.')) p.textContent='실제값과 비교해 추천 기준을 보정합니다.';});
     const cleanDemoText=()=>document.querySelectorAll('body *').forEach((el)=>{if(el.children.length===0&&el.textContent.includes('데모')) el.textContent=el.textContent.replaceAll('현재 데모 사이트','현재 시스템').replaceAll('현재 데모 상태','공정 상태').replaceAll('자동 데모로 전환','자동값으로 전환').replaceAll('자동 데모 조건','자동 환경값').replaceAll('데모 센서 스트림','자동 환경값');});
