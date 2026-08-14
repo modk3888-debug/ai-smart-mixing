@@ -2026,7 +2026,7 @@
         var source=cells[index], existingField=source?.querySelector('input');
         var raw=(existingField?existingField.value:source?.textContent||'').trim().replace(/(kg|L|분)\s*$/,'').trim();
         row.dataset['edit'+spec[1]]=raw;
-        var wrap=document.createElement('span'); wrap.className='inline-unit-field'; wrap.style.cssText='display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:3px!important;width:100%!important;min-width:0!important;white-space:nowrap!important;';
+        var wrap=document.createElement('span'); wrap.className='inline-unit-field'; wrap.style.cssText='display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:3px!important;width:100%!important;min-width:0!important;white-space:nowrap!important;overflow:hidden!important;';
         var field=input(raw,'inline-cycle-input'); field.dataset.original=raw; field.style.cssText='display:block!important;flex:1 1 auto!important;width:1%!important;min-width:0!important;height:31px!important;padding:4px 6px!important;';
         var unit=document.createElement('i'); unit.className='inline-unit-suffix'; unit.textContent=spec[0]; unit.style.cssText='display:inline-block!important;flex:0 0 auto!important;visibility:visible!important;white-space:nowrap!important;margin:0!important;';
         wrap.append(field,unit); source.replaceWith(wrap);
@@ -2062,7 +2062,7 @@
   function syncApprovalLabel(){
     var worker=hasWorkerChange();
     approve.dataset.approvalMode=worker?'worker':'ai';
-    if(!approve.dataset.approved) approve.textContent=worker?'작업자 조건 승인':'추천 조건 승인';
+    if(!approve.dataset.approved){var next=worker?'작업자 조건 승인':'추천 조건 승인';if(approve.textContent!==next) approve.textContent=next;}
   }
   function refreshAfterExistingHandler(){
     setTimeout(syncApprovalLabel,20);
@@ -2078,6 +2078,7 @@
     }
   },true);
   window.addEventListener('aiSmartMixingRecommendationUpdated',function(){setTimeout(syncApprovalLabel,30);});
+  new MutationObserver(function(){syncApprovalLabel();}).observe(dashboard,{subtree:true,childList:true,characterData:true});
 })();
 </script>
 <script id="operations-demo-addon">
@@ -2267,5 +2268,5 @@
   },true);
   window.addEventListener('aiSmartMixingRecommendationUpdated',function(){setTimeout(resetRecommendationBaselines,80)});
 })();
-</script></body>
+<style id="stable-inline-edit-layout">#dashboard .cycle-detail-block .inline-unit-field{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:3px!important;width:100%!important;min-width:0!important;overflow:hidden!important;white-space:nowrap!important}#dashboard .cycle-detail-block .inline-unit-field .inline-cycle-input{width:100%!important;min-width:0!important;box-sizing:border-box!important}#dashboard .cycle-detail-block .inline-unit-suffix{display:block!important;white-space:nowrap!important;line-height:1!important}</style></script></body>
 </html>
