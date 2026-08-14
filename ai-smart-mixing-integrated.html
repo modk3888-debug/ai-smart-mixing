@@ -1940,14 +1940,11 @@
       // 물량은 온도만으로 증감시키지 않고 제품 권장 범위 안에서 계절·습도만 보정한다.
       var water=Math.max(23.5,Math.min(28.5,25.6+(h>80?0.05:0)+(seasonValue==='winter'?0.2:-0.1)));
       var mixing=(risk>=13?5.5:5);
-      var hopperWait=Math.max(0,Math.min(20,20-risk*0.72));
       var use=risk>10;
       var waterCell=row.querySelector('span:nth-child(3)');
       var mixingCell=row.querySelector('span:nth-child(4)');
-      var waitCell=row.querySelector('span:nth-child(5)');
       var result=row.querySelector('span:nth-child(6)');
       if(waterCell) waterCell.textContent=water.toFixed(1)+'L';
-      if(waitCell) waitCell.textContent=Math.round(hopperWait)+'분';
       if(mixingCell) mixingCell.textContent=mixing+'분';
       if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
       risks.push(risk);
