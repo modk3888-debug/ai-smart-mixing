@@ -1944,7 +1944,7 @@
       var waterMin=waterBase-0.3, waterMax=waterBase+0.3;
       var hotWaterAdjustment=Math.min(waterMax-waterBase,Math.max(0,t-27)*0.02);
       var water=Math.min(waterMax,Math.max(waterMin,waterBase+hotWaterAdjustment+(seasonValue==='winter'?0.1:0)));
-      var mixing=(risk>=13?5.5:5);
+      var mixing=selectedJob.indexOf('턴디쉬')>=0?4:5;
       var use=risk>10;
       var waterCell=row.querySelector('span:nth-child(3)');
       var mixingCell=row.querySelector('span:nth-child(4)');
