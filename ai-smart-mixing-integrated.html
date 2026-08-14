@@ -1979,6 +1979,12 @@
         if(mixingCell) mixingCell.textContent=Number(rec.mixing_min).toFixed(1).replace('.0','')+'분';
         if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
       });
+      var confidenceValues=modelRows.map(function(rec){return Number(rec.confidence_pct)}).filter(function(value){return Number.isFinite(value)});
+      if(confidenceValues.length){
+        var confidence=Math.round(confidenceValues.reduce(function(sum,value){return sum+value},0)/confidenceValues.length);
+        var confidenceCard=dashboard.querySelector('.summary-card:nth-child(5) b');
+        if(confidenceCard){confidenceCard.textContent=confidence+'%';confidenceCard.title='검증 성능과 현재 조건의 학습 범위 적합도를 반영한 값';}
+      }
       var modelMax=Math.max.apply(null,modelRows.map(function(rec){return Math.round(Number(rec.risk_pct)||0)}));
       if(riskInfo) riskInfo.textContent=modelMax+'%';
       if(waterInfo) waterInfo.textContent=modelRows.reduce(function(sum,rec){return sum+Number(rec.water_l||0)},0).toFixed(1)+'L';

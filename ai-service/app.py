@@ -24,6 +24,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from PIL import Image
 from xgboost import XGBRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
 
 APP_ROOT = Path(__file__).resolve().parent
 WORKSPACE_ROOT = APP_ROOT.parent
@@ -47,7 +49,7 @@ MIXING_TARGETS = ("water_l", "mixing_min", "hopper_wait_min", "risk_pct")
 MATERIAL_CODES = {"래들 벽체": 1, "래들 바닥": 2, "턴디쉬 카바": 3, "저시멘트 캐스터블": 4}
 
 app = FastAPI(title="AI 스마트 믹싱 이미지 분석 API", version="0.1.0")
-MODEL_SCHEMA_VERSION = "literature_informed_synthetic_v1"
+MODEL_SCHEMA_VERSION = "literature_informed_synthetic_v2"
 MATERIAL_PROFILES = {
     1: {"name": "ladle_wall", "water_pct": 5.2, "mixing_min": 5.0},
     2: {"name": "ladle_bottom", "water_pct": 5.0, "mixing_min": 5.0},
@@ -132,6 +134,8 @@ def _fit_mixing_model(rows: list[dict], source: str) -> dict:
         raise HTTPException(status_code=422, detail="XGBoost 학습에는 최소 8건의 라벨 작업 데이터가 필요합니다.")
     X = np.asarray([_feature_row(row) for row in rows], dtype=np.float32)
     models = {}
+    validation = {}
+    train_idx, test_idx = train_test_split(np.arange(len(rows)), test_size=0.2, random_state=42)
     for target in MIXING_TARGETS:
         y = np.asarray([float(row[target]) for row in rows], dtype=np.float32)
         model = XGBRegressor(
@@ -145,7 +149,19 @@ def _fit_mixing_model(rows: list[dict], source: str) -> dict:
         )
         model.fit(X, y, verbose=False)
         models[target] = model
-    artifact = {"models": models, "features": MIXING_FEATURES, "rows": len(rows), "source": source, "schema_version": MODEL_SCHEMA_VERSION, "trained_at": datetime.now(timezone.utc).isoformat()}
+        holdout_model = XGBRegressor(
+            n_estimators=120, max_depth=3, learning_rate=0.06, subsample=0.9,
+            colsample_bytree=0.9, objective="reg:squarederror", random_state=42,
+        )
+        holdout_model.fit(X[train_idx], y[train_idx], verbose=False)
+        predicted = holdout_model.predict(X[test_idx])
+        scale = max(float(np.ptp(y)), 1.0)
+        mae = float(mean_absolute_error(y[test_idx], predicted))
+        validation[target] = {"mae": round(mae, 3), "score": round(max(0.0, min(1.0, 1.0 - mae / scale)), 3)}
+    validation_score = float(np.mean([item["score"] for item in validation.values()]))
+    feature_min = X.min(axis=0).tolist()
+    feature_max = X.max(axis=0).tolist()
+    artifact = {"models": models, "features": MIXING_FEATURES, "rows": len(rows), "source": source, "schema_version": MODEL_SCHEMA_VERSION, "trained_at": datetime.now(timezone.utc).isoformat(), "validation": validation, "validation_score": round(validation_score, 3), "feature_min": feature_min, "feature_max": feature_max}
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
     with MIXING_MODEL_PATH.open("wb") as handle:
         pickle.dump(artifact, handle)
@@ -159,12 +175,28 @@ def _ensure_mixing_model() -> dict:
         try:
             with MIXING_MODEL_PATH.open("rb") as handle:
                 artifact = pickle.load(handle)
-                if artifact.get("source") == "field_worklogs" or artifact.get("schema_version") == MODEL_SCHEMA_VERSION:
+                if "validation" in artifact and "feature_min" in artifact and "feature_max" in artifact and (artifact.get("source") == "field_worklogs" or artifact.get("schema_version") == MODEL_SCHEMA_VERSION):
                     return artifact
         except Exception:
             pass
     rows = _seed_training_rows()
     return _fit_mixing_model(rows, "literature_informed_synthetic")
+
+
+def _recommendation_confidence(artifact: dict, features: np.ndarray) -> dict:
+    """검증 성능과 현재 입력값이 학습 범위 안에 있는지를 합쳐 계산한다."""
+    validation_score = float(artifact.get("validation_score", 0.0))
+    mins = np.asarray(artifact.get("feature_min", []), dtype=np.float32)
+    maxs = np.asarray(artifact.get("feature_max", []), dtype=np.float32)
+    if mins.size != features.shape[1] or maxs.size != features.shape[1]:
+        coverage = 0.5
+    else:
+        span = np.maximum(maxs - mins, 1.0)
+        below = np.maximum(mins - features[0], 0.0) / span
+        above = np.maximum(features[0] - maxs, 0.0) / span
+        coverage = float(max(0.0, min(1.0, 1.0 - np.mean(below + above))))
+    confidence = round((validation_score * 0.7 + coverage * 0.3) * 100, 1)
+    return {"confidence_pct": confidence, "validation_score": round(validation_score * 100, 1), "condition_coverage_pct": round(coverage * 100, 1)}
 
 
 def prepare_normal_images() -> int:
@@ -280,6 +312,8 @@ def mixing_model_status() -> dict:
         "training_rows": artifact["rows"],
         "training_source": artifact["source"],
         "dataset_basis": "literature_informed_synthetic" if artifact["source"] != "field_worklogs" else "field_worklogs",
+        "validation_score_pct": round(float(artifact.get("validation_score", 0.0)) * 100, 1),
+        "validation": artifact.get("validation", {}),
         "targets": list(MIXING_TARGETS),
     }
 
@@ -294,6 +328,7 @@ def recommend_mixing(payload: dict) -> dict:
     water = round(max(0.0, predictions["water_l"]), 1)
     mixing = round(max(1.0, predictions["mixing_min"]), 1)
     hopper_wait = round(max(0.0, predictions["hopper_wait_min"]), 1)
+    confidence = _recommendation_confidence(artifact, features)
     return {
         "model": "XGBoost",
         "model_version": "XGBoost v2.4",
@@ -301,6 +336,7 @@ def recommend_mixing(payload: dict) -> dict:
         "training_rows": artifact["rows"],
         "training_source": artifact["source"],
         "dataset_basis": "literature_informed_synthetic" if artifact["source"] != "field_worklogs" else "field_worklogs",
+        **confidence,
         "water_l": water,
         "mixing_min": mixing,
         "hopper_wait_min": hopper_wait,
@@ -323,6 +359,8 @@ def fit_mixing_model(payload: dict) -> dict:
         "model_version": "XGBoost v2.4",
         "training_rows": artifact["rows"],
         "trained_at": artifact["trained_at"],
+        "validation_score_pct": round(float(artifact.get("validation_score", 0.0)) * 100, 1),
+        "validation": artifact.get("validation", {}),
         "message": "검증된 작업 데이터로 모델을 다시 학습했습니다.",
     }
 
