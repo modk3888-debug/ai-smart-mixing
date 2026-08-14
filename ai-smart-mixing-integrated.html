@@ -2200,10 +2200,12 @@
     var block=button.closest('.cycle-detail-block');
     if(!block) return;
     if(button.dataset.mode!=='save'){
-      button.__aiBefore=current(block);
+      // 첫 수정 시작 시점의 AI 추천값을 기준값으로 고정합니다.
+      // 작업자가 다시 이 기준값으로 되돌리면 AI 추천 적용으로 복귀합니다.
+      if(!button.__aiBaseline) button.__aiBaseline=current(block);
       return;
     }
-    var before=button.__aiBefore;
+      var before=button.__aiBaseline;
     setTimeout(function(){
       var after=current(block);
       if(!before||!after) return;
