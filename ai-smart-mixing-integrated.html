@@ -1943,8 +1943,10 @@
       var use=risk>10;
       var waterCell=row.querySelector('span:nth-child(3)');
       var mixingCell=row.querySelector('span:nth-child(4)');
+      var waitCell=row.querySelector('span:nth-child(5)');
       var result=row.querySelector('span:nth-child(6)');
       if(waterCell) waterCell.textContent=water.toFixed(1)+'L';
+      if(waitCell) waitCell.textContent=mixing+'분';
       if(mixingCell) mixingCell.textContent=mixing+'분';
       if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
       risks.push(risk);
@@ -1986,8 +1988,9 @@
       }));
       modelRows.forEach(function(rec,index){
         var row=rows[index], risk=Math.round(Number(rec.risk_pct)||0), use=Boolean(rec.retarder);
-        var waterCell=row.querySelector('span:nth-child(3)'), mixingCell=row.querySelector('span:nth-child(4)'), result=row.querySelector('span:nth-child(6)');
+        var waterCell=row.querySelector('span:nth-child(3)'), mixingCell=row.querySelector('span:nth-child(4)'), waitCell=row.querySelector('span:nth-child(5)'), result=row.querySelector('span:nth-child(6)');
         if(waterCell) waterCell.textContent=Number(rec.water_l).toFixed(1)+'L';
+        if(waitCell) waitCell.textContent=Number(rec.mixing_min).toFixed(1).replace('.0','')+'분';
         if(mixingCell) mixingCell.textContent=Number(rec.mixing_min).toFixed(1).replace('.0','')+'분';
         if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
       });

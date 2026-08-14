@@ -101,7 +101,7 @@ def _literature_rule(temperature: float, humidity: float, amount: float, cycle: 
     return {
         "water_l": round(amount * water_pct / 100.0, 2),
         "mixing_min": profile["mixing_min"],
-        "hopper_wait_min": round(max(0.0, min(20.0, 20.0 - risk * 0.72)), 2),
+        "hopper_wait_min": profile["mixing_min"],
         "risk_pct": round(risk, 2),
     }
 
@@ -327,7 +327,7 @@ def recommend_mixing(payload: dict) -> dict:
     risk = round(max(0.0, min(30.0, predictions["risk_pct"])), 1)
     water = round(max(0.0, predictions["water_l"]), 1)
     mixing = round(max(1.0, predictions["mixing_min"]), 1)
-    hopper_wait = round(max(0.0, predictions["hopper_wait_min"]), 1)
+    hopper_wait = mixing
     confidence = _recommendation_confidence(artifact, features)
     return {
         "model": "XGBoost",
