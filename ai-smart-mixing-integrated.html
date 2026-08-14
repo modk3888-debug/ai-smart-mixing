@@ -2268,5 +2268,45 @@
   },true);
   window.addEventListener('aiSmartMixingRecommendationUpdated',function(){setTimeout(resetRecommendationBaselines,80)});
 })();
-<style id="stable-inline-edit-layout">#dashboard .cycle-detail-block .inline-unit-field{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:3px!important;width:100%!important;min-width:0!important;overflow:hidden!important;white-space:nowrap!important}#dashboard .cycle-detail-block .inline-unit-field .inline-cycle-input{width:100%!important;min-width:0!important;box-sizing:border-box!important}#dashboard .cycle-detail-block .inline-unit-suffix{display:block!important;white-space:nowrap!important;line-height:1!important}</style></script></body>
+<style id="stable-inline-edit-layout">#dashboard .cycle-detail-block .inline-unit-field{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:3px!important;width:100%!important;min-width:0!important;overflow:hidden!important;white-space:nowrap!important}#dashboard .cycle-detail-block .inline-unit-field .inline-cycle-input{width:100%!important;min-width:0!important;box-sizing:border-box!important}#dashboard .cycle-detail-block .inline-unit-suffix{display:block!important;white-space:nowrap!important;line-height:1!important}</style>
+<script id="final-dashboard-state-fix">
+(function(){
+  var dashboard=document.getElementById('dashboard');
+  if(!dashboard) return;
+  var AI='\uCD94\uCC9C \uC870\uAC74 \uC2B9\uC778', WORKER='\uC791\uC5C5\uC790 \uC870\uAC74 \uC2B9\uC778';
+  function blocks(){return [...dashboard.querySelectorAll('.cycle-detail-block')]}
+  function waterDecimal(block){
+    var row=block.querySelector('.cycle-row');
+    if(!row) return;
+    var spans=[...row.children].filter(function(el){return el.tagName==='SPAN'});
+    if(!spans[1]) return;
+    var value=String(spans[1].textContent||'').replace(/[^0-9.]/g,'');
+    if(value!==''&&!isNaN(Number(value))) spans[1].textContent=Number(value).toFixed(1)+'L';
+  }
+  function status(block){
+    var note=block.querySelector('.cycle-note-history');
+    if(!note) return false;
+    var edited=!!block.querySelector('.changed-value');
+    var mark=note.querySelector('.ai-recommendation-status');
+    if(!mark){mark=document.createElement('span');note.insertBefore(mark,note.querySelector('.dashboard-cycle-edit')||null)}
+    var nextClass='ai-recommendation-status '+(edited?'worker':'ai');
+    var nextText=edited?'\uC791\uC5C5\uC790 \uC218\uC815':'AI \uCD94\uCC9C \uC801\uC6A9';
+    if(mark.className!==nextClass) mark.className=nextClass;
+    if(mark.textContent!==nextText) mark.textContent=nextText;
+    return edited;
+  }
+  function sync(){
+    var worker=false;
+    blocks().forEach(function(block){waterDecimal(block);if(status(block))worker=true});
+    var approve=document.getElementById('approve');
+    if(approve&&!approve.dataset.approved) approve.textContent=worker?WORKER:AI;
+  }
+  sync();
+  document.addEventListener('click',function(event){
+    var button=event.target.closest('#dashboard .dashboard-cycle-edit');
+    if(button&&button.dataset.mode==='save') setTimeout(sync,80);
+  },true);
+  new MutationObserver(function(){sync()}).observe(dashboard,{subtree:true,childList:true,characterData:true});
+})();
+</script></body>
 </html>
