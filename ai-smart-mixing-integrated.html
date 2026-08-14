@@ -2189,6 +2189,7 @@
     spans.slice(0,4).forEach(function(span,index){
       var same=Number(before.values[index])===Number(after.values[index]);
       var value=same?before.values[index]:after.values[index];
+      if(index===1&&Number.isFinite(Number(value))) value=Number(value).toFixed(1);
       // AI 원본값으로 되돌리면 원래 표시 형식(예: 26.0L)과 기본색을 복원합니다.
       span.textContent=String(value)+suffix[index];
       span.classList.toggle('changed-value',!same);
