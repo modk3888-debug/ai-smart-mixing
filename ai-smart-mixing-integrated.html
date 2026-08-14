@@ -2039,8 +2039,7 @@
   var dashboard=document.getElementById('dashboard'), approve=document.getElementById('approve');
   if(!dashboard||!approve) return;
   function hasWorkerChange(){
-    var overrides=window.aiSmartMixingCycleOverrides||{};
-    return Object.keys(overrides).some(function(key){return overrides[key]&&overrides[key].editStatus==='worker';});
+    return !!dashboard.querySelector('.ai-recommendation-status.worker');
   }
   function syncApprovalLabel(){
     var worker=hasWorkerChange();
@@ -2192,7 +2191,11 @@
     el.className='ai-recommendation-status '+(kind==='worker'?'worker':'ai');
     el.textContent=kind==='worker'?'작업자 수정':'AI 추천 적용';
   }
-  function decorate(){dashboard.querySelectorAll('.cycle-detail-block').forEach(function(block){if(!block.querySelector('.ai-recommendation-status'))badge(block,'ai')})}
+  function syncApprovalButton(){
+    var approve=document.getElementById('approve');
+    if(approve&&!approve.dataset.approved) approve.textContent=dashboard.querySelector('.ai-recommendation-status.worker')?'작업자 조건 승인':'추천 조건 승인';
+  }
+  function decorate(){dashboard.querySelectorAll('.cycle-detail-block').forEach(function(block){if(!block.querySelector('.ai-recommendation-status'))badge(block,'ai')});syncApprovalButton()}
   decorate();
   document.addEventListener('click',function(event){
     var button=event.target.closest('#dashboard .dashboard-cycle-edit');
@@ -2211,6 +2214,7 @@
       if(!before||!after) return;
       var changed=before.retarder!==after.retarder||before.values.some(function(value,index){return value!==after.values[index]});
       badge(block,changed?'worker':'ai');
+      syncApprovalButton();
       var blocks=[...dashboard.querySelectorAll('.cycle-detail-block')], index=blocks.indexOf(block);
       window.aiSmartMixingCycleOverrides=window.aiSmartMixingCycleOverrides||{};
       window.aiSmartMixingCycleOverrides[index]=Object.assign({},window.aiSmartMixingCycleOverrides[index]||{}, {editStatus:changed?'worker':'ai'});
