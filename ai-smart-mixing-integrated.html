@@ -2182,6 +2182,18 @@
     var pill=row.querySelector('.pill');
     return {values:spans.slice(0,4).map(function(el){return clean(el.textContent)}),retarder:pill&&pill.textContent.trim()||''};
   }
+  function restoreDisplay(block,before,after){
+    var row=block.querySelector('.cycle-row');
+    var spans=[...row.children].filter(function(el){return el.tagName==='SPAN'});
+    var suffix=['kg','L','분','분'];
+    spans.slice(0,4).forEach(function(span,index){
+      var same=Number(before.values[index])===Number(after.values[index]);
+      var value=same?before.values[index]:after.values[index];
+      // AI 원본값으로 되돌리면 원래 표시 형식(예: 26.0L)과 기본색을 복원합니다.
+      span.textContent=String(value)+suffix[index];
+      span.classList.toggle('changed-value',!same);
+    });
+  }
   function badge(block,kind){
     var note=block.querySelector('.cycle-note-history');
     if(!note) return;
@@ -2218,6 +2230,7 @@
         return value!==after.values[index];
       });
       badge(block,changed?'worker':'ai');
+      restoreDisplay(block,before,after);
       syncApprovalButton();
       var blocks=[...dashboard.querySelectorAll('.cycle-detail-block')], index=blocks.indexOf(block);
       window.aiSmartMixingCycleOverrides=window.aiSmartMixingCycleOverrides||{};
