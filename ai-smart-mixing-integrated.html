@@ -59,6 +59,8 @@
     if(removedLearningScreen) removedLearningScreen.remove();
     document.querySelector('#process .timestamp')?.remove();
     const processLower=document.querySelector('#process .lower');
+    const processAiCard=document.querySelector('#process .process-card:nth-child(2)');
+    if(processAiCard){processAiCard.querySelector('b').textContent='환경조건 기반 배합 조건 판단';processAiCard.querySelector('p').textContent='AI가 온도·습도와 작업 조건을 분석해 수분량·호퍼 운영·위험도·지연제 사용 여부를 판단하고, 제품별 기준 믹싱시간을 적용합니다.';}
     const aiRoleCard=processLower?.querySelector('.mini');
     if(aiRoleCard){aiRoleCard.querySelector('h3').textContent='AI 추천의 역할';aiRoleCard.querySelector('p').textContent='입력된 온도·습도와 작업 조건을 바탕으로 회차별 권장값을 제시합니다. 최종 조건은 작업자가 확인합니다.';}
     if(processLower&&!processLower.querySelector('.xgboost-mini')){const xgboostCard=document.createElement('div');xgboostCard.className='mini xgboost-mini';xgboostCard.innerHTML='<h3>XGBoost 역할</h3><p>과거 작업 데이터를 학습해 현재 조건에 맞는 배합 조건과 위험도를 예측합니다.</p>';processLower.insertBefore(xgboostCard,processLower.children[1]||null);}
