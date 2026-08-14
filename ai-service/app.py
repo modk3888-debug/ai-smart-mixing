@@ -49,12 +49,12 @@ MIXING_TARGETS = ("water_l", "mixing_min", "hopper_wait_min", "risk_pct")
 MATERIAL_CODES = {"래들 벽체": 1, "래들 바닥": 2, "턴디쉬 카바": 3, "저시멘트 캐스터블": 4}
 
 app = FastAPI(title="AI 스마트 믹싱 이미지 분석 API", version="0.1.0")
-MODEL_SCHEMA_VERSION = "literature_informed_synthetic_v2"
+MODEL_SCHEMA_VERSION = "literature_informed_synthetic_v3"
 MATERIAL_PROFILES = {
-    1: {"name": "ladle_wall", "water_pct": 5.2, "mixing_min": 5.0},
-    2: {"name": "ladle_bottom", "water_pct": 5.0, "mixing_min": 5.0},
-    3: {"name": "tundish_cover", "water_pct": 4.8, "mixing_min": 4.0},
-    4: {"name": "low_cement", "water_pct": 5.5, "mixing_min": 5.0},
+    1: {"name": "ladle_wall", "water_pct": 5.2, "water_min_pct": 5.0, "water_max_pct": 5.4, "mixing_min": 5.0},
+    2: {"name": "ladle_bottom", "water_pct": 5.0, "water_min_pct": 4.8, "water_max_pct": 5.2, "mixing_min": 5.0},
+    3: {"name": "tundish_cover", "water_pct": 4.8, "water_min_pct": 4.6, "water_max_pct": 5.0, "mixing_min": 4.0},
+    4: {"name": "low_cement", "water_pct": 5.5, "water_min_pct": 5.2, "water_max_pct": 5.8, "mixing_min": 5.0},
 }
 
 app.add_middleware(
@@ -97,9 +97,18 @@ def _literature_rule(temperature: float, humidity: float, amount: float, cycle: 
     humidity_penalty = max(0.0, humidity - 75.0) * 0.12
     queue_penalty = max(0, round_no - 1) * 1.1 + max(0, cycle - 1) * 0.45
     risk = max(2.0, min(30.0, 4.0 + hot_penalty + cold_penalty + humidity_penalty + queue_penalty))
-    water_pct = profile["water_pct"] + (0.08 if temperature > 29 else 0.0) - (0.05 if humidity > 80 else 0.0)
+    # 고온으로 작업성이 떨어질 때만 제품별 허용 범위 안에서 수분을 소폭 보정한다.
+    # 상한을 넘겨 물을 추가하지 않으며, 상한에 도달하면 지연제/이송 조건 검토 대상으로 남긴다.
+    hot_workability = min(profile["water_max_pct"] - profile["water_pct"], max(0.0, temperature - 27.0) * 0.02)
+    water_pct = min(profile["water_max_pct"], max(profile["water_min_pct"], profile["water_pct"] + hot_workability))
+    if humidity >= 85.0:
+        water_pct = min(water_pct, profile["water_pct"] + 0.05)
+    water_cap_reached = water_pct >= profile["water_max_pct"] - 1e-9
     return {
         "water_l": round(amount * water_pct / 100.0, 2),
+        "water_pct": round(water_pct, 3),
+        "water_cap_reached": water_cap_reached,
+        "retarder_recommended": bool(water_cap_reached and risk >= 10.0),
         "mixing_min": profile["mixing_min"],
         "hopper_wait_min": profile["mixing_min"],
         "risk_pct": round(risk, 2),
