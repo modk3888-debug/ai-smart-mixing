@@ -810,8 +810,10 @@
         document.getElementById('detailNote').textContent = record.overallNote || (record.cycleNotes?.length ? '차수별 특이사항은 위 회차별 항목에서 확인할 수 있습니다.' : record.note);
         renderBatchBreakdown(record);
         renderCycleDetails(record);
-        document.querySelector('#history .grid > .side').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelector('#history .grid > .side').scrollIntoView({ behavior: 'auto', block: 'start' });
       }
+      // 작업일지에서 새로 저장한 건도 같은 상세 배합 이력 렌더링을 사용합니다.
+      window.aiSmartMixingShowHistoryDetail = showDetail;
       list.className = 'job-history-groups';
       list.innerHTML = '';
       const detailGrid = document.querySelector('#history .detail-grid');
@@ -2280,17 +2282,21 @@
         row.tabIndex = 0;
         row.setAttribute('role', 'button');
         row.innerHTML = '<small>' + record.date + '</small><span class="history-worker">' + (record.worker || '현장 작업자') + '</span><div><b>' + record.amount + '</b></div><span class="history-env">' + record.env + '</span><span class="pill use">' + record.result + '</span>';
-        row.addEventListener('click', () => updateDetail(record));
+        row.addEventListener('click', () => {
+          if (typeof window.aiSmartMixingShowHistoryDetail === 'function') window.aiSmartMixingShowHistoryDetail(record, row);
+          else updateDetail(record);
+        });
         group.querySelector('.job-history-title').addEventListener('click', () => group.classList.toggle('open'));
         group.querySelector('.job-history-records').append(row);
         list.prepend(group);
         const badge = document.querySelector('#history .panel-head .badge');
         if (badge) badge.textContent = '전체 ' + list.querySelectorAll('.job-history-record').length + '건';
-        updateDetail(record);
+        if (typeof window.aiSmartMixingShowHistoryDetail === 'function') window.aiSmartMixingShowHistoryDetail(record, row);
+        else updateDetail(record);
       };
       window.addEventListener('aiSmartMixingWorklogSaved', event => {
-        addHistoryRow(event.detail);
         openHistory();
+        addHistoryRow(event.detail);
       });
     })();
   </script>
