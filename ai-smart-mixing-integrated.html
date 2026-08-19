@@ -534,7 +534,7 @@
         const cycleBox = dashboard.querySelector('.cycles');
         cycleBox.innerHTML = '<div class="cycle-head"><span>차수</span><span>투입량</span><span>권장 수분</span><span>믹싱시간</span><span>호퍼 대기</span><span>지연제 / 위험도</span></div>' + groupedCycles(cycles, ({ cycle, index }) => {
           const useRetarder = Boolean(cycle.retarder);
-          const note = cycle.note || (useRetarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
+          const note = cycle.note || '작업자 입력 없음.';
           return '<div class="cycle-detail-block"><div class="cycle-row' + (index === 0 ? ' current' : '') + '"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><span>' + cycle.water.toFixed(1) + 'L</span><span>' + job.mixing + '분</span><span>' + cycle.wait + '분</span><span><i class="pill ' + (useRetarder ? 'use' : 'no') + '">' + (useRetarder ? '사용' : '미사용') + '</i> <i class="' + (useRetarder ? 'risk-high' : 'risk-low') + '">' + cycle.risk + '%</i></span></div><div class="cycle-note-history"><b>' + cycle.round + '차 특이사항</b><span>' + note + '</span><button type="button" class="dashboard-cycle-edit">수정</button></div></div>';
         });
         const notice = dashboard.querySelector('.action-bar div');
@@ -591,7 +591,7 @@
         const worklogTable = worklog.querySelector('.worklog-table');
         worklogTable.innerHTML = '<div class="log-head"><span>차수</span><span>투입량</span><span>실제 수분량</span><span>실제 믹싱시간</span><span>지연제 사용</span></div>' + groupedCycles(recommendation.cycles, ({ cycle }) => {
           const retarder = Boolean(cycle.retarder);
-          const note = cycle.note || (retarder ? '호퍼 대기 ' + cycle.wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
+          const note = cycle.note || '';
           return '<div class="log-cycle" data-cycle="' + cycle.cycle + '" data-round="' + cycle.round + '" data-wait="' + cycle.wait + '" data-risk="' + cycle.risk + '" data-retarder="' + retarder + '"><div class="log-row"><b>' + cycle.round + '차</b><span>' + formatKg(cycle.amount) + '</span><input value="' + cycle.water.toFixed(1) + ' L"><input value="' + recommendation.mixing + ' 분"><select><option' + (retarder ? ' selected' : '') + '>사용</option><option' + (!retarder ? ' selected' : '') + '>미사용</option></select></div><div class="cycle-note"><label>' + cycle.round + '차 특이사항</label><input value="' + note + '"></div></div>';
         });
         worklog.querySelector('.panel-head .badge').textContent = 'AI 추천 · ' + formatKg(recommendation.amount);
@@ -770,7 +770,7 @@
           const risk = Number(cycle.risk)||Math.min(30, Math.round(5 + wait * .35));
           const retarder = Boolean(cycle.retarder);
           const note = record.cycleNotes?.[index] || '';
-          const displayNote = note || (retarder ? '호퍼 대기 ' + wait + '분으로 지연제 사용.' : '기준 시간 내 이송, 특이사항 없음.');
+          const displayNote = note || '작업자 입력 없음.';
           const noteHtml = '<div class="cycle-note-history"><b>' + (cycle.round || (index % 3 + 1)) + '차 특이사항</b><span>' + displayNote + '</span></div>';
           return '<div class="cycle-detail-block"><div class="cycle-row' + ((cycle.round || (index % 3 + 1)) === 1 ? ' current' : '') + '"><b>' + (cycle.round || (index % 3 + 1)) + '차</b><span>' + Number(cycle.amount).toLocaleString('ko-KR') + 'kg</span><span>' + Number(cycle.water).toFixed(1) + 'L</span><span>' + (Number(cycle.mixing)||mixingTime) + '분</span><span>' + wait + '분</span><span><i class="pill ' + (retarder ? 'use' : 'no') + '">' + (retarder ? '사용' : '미사용') + '</i> <i class="' + (retarder ? 'risk-high' : 'risk-low') + '">' + risk + '%</i></span></div>' + noteHtml + '</div>';
         }).join('') + '</section>').join('');
@@ -1212,21 +1212,9 @@
           const select = row?.querySelector('select');
           if (select) select.value = useRetarder ? '사용' : '미사용';
           if (useRetarder) usedRounds.push((cycle.dataset.cycle || Math.floor(index / 3) + 1) + '사이클 ' + (cycle.dataset.round || (index % 3 + 1)) + '차');
-          const note = cycle.querySelector('.cycle-note input');
-          if (note && !note.value) {
-            note.value = useRetarder
-              ? '호퍼 대기 ' + wait + '분으로 지연제 사용. 믹싱 후 즉시 이송하고 유량계 상태를 확인함.'
-              : wait > 0
-                ? '호퍼 대기 ' + wait + '분, 지연제 미사용. 기준 시간 내 이송 완료.'
-                : '대기 없이 이송 완료. 수분량과 믹싱 상태 정상.';
-          }
+          // 특이사항은 AI가 생성하지 않고 작업자가 직접 입력합니다.
         });
-        const overall = worklog.querySelector('textarea');
-        if (overall && !overall.value) {
-          overall.value = usedRounds.length
-            ? usedRounds.join(' · ') + '에 지연제를 사용했습니다.'
-            : '전체 사이클·차수에서 지연제를 사용하지 않았습니다.';
-        }
+        // 작업 결과와 특이사항은 작업자가 확인 후 직접 작성합니다.
       }
 
       approve.addEventListener('click', () => {
@@ -1282,33 +1270,6 @@
         if (cycle) cycle.dataset.wait = String(Number(input.value.replace(/[^\d.]/g, '')) || 0);
       });
       document.getElementById('approve')?.addEventListener('click', () => setTimeout(syncWorklogWaitColumn, 650));
-    })();
-  </script>
-  <script>
-    (() => {
-      // 실제 작업 중 발생한 예시 상황: 래들 바닥 1사이클 2차에서 호퍼 배출 게이트 점검으로 이송이 지연된 경우
-      function applyFieldScenario() {
-        const job = document.querySelector('#worklog .form-grid select')?.value;
-        if (job !== '래들 바닥') return;
-        const target = document.querySelector('#worklog .log-cycle[data-cycle="1"][data-round="2"]');
-        if (!target) return;
-        target.dataset.wait = '9';
-        target.dataset.risk = '12';
-        target.dataset.retarder = 'true';
-        const select = target.querySelector('select');
-        if (select) select.value = '사용';
-        const note = target.querySelector('.cycle-note input');
-        if (note && (!note.value || note.value.includes('기준 시간 내'))) {
-          note.value = '호퍼 배출 게이트 점검으로 이송이 4분 지연됨. 호퍼 대기 9분 후 지연제 사용.';
-        }
-        const overall = document.querySelector('#worklog textarea');
-        if (overall && (!overall.value || overall.value.includes('전체 사이클'))) {
-          overall.value = '1사이클 2차에서 호퍼 배출 게이트 점검으로 이송이 지연되어 지연제를 사용했습니다.';
-        }
-      }
-      document.getElementById('approve')?.addEventListener('click', () => setTimeout(applyFieldScenario, 700));
-      document.getElementById('dashboardJob')?.addEventListener('change', () => setTimeout(applyFieldScenario, 120));
-      window.addEventListener('hashchange', () => setTimeout(applyFieldScenario, 120));
     })();
   </script>
   <script>
@@ -2069,7 +2030,7 @@
     window.aiSmartMixingCycleOverrides[blockIndex]={amount:vals[0],water:vals[1],mixing:vals[2],wait:vals[3],retarder,risk,note:noteValue};
     var currentSpans=rowSpans(row);
     fields.forEach(function(field,index){var span=document.createElement('span');if(index===4){span.innerHTML='<i class="pill '+(retarder==='사용'?'use':'no')+'">'+retarder+'</i> <i class="'+(risk>10?'risk-high':'risk-low')+'">'+risk+'%</i>';field.replaceWith(span)}else {var clean=String(vals[index]).replace(/(kg|L|분)\s*$/,'');span.textContent=clean+(index===0?'kg':index===1?'L':'분');if(field.dataset.original!==undefined&&clean!==String(field.dataset.original).replace(/(kg|L|분)\s*$/,''))span.className='changed-value';(field.closest('.inline-unit-field')||field).replaceWith(span)} });
-    if(noteInput){var text=document.createElement('span');text.textContent=noteValue||'기준 시간 내 이송, 특이사항 없음.';noteInput.replaceWith(text)}
+    if(noteInput){var text=document.createElement('span');text.textContent=noteValue||'작업자 입력 없음.';noteInput.replaceWith(text)}
     button.dataset.mode='edit';button.textContent='수정';window.aiSmartMixingCycleEditing=false;
     var action=document.querySelector('#dashboard .action-bar div'); if(action)action.innerHTML='<b>● 작업자 변경 기록</b>'+row.querySelector('b')?.textContent+' 값이 수정되었습니다. 다른 회차 값은 유지됩니다.';
   });
@@ -2291,6 +2252,7 @@
   },true);
   window.addEventListener('aiSmartMixingRecommendationUpdated',function(){setTimeout(resetRecommendationBaselines,80)});
 })();
+</script>
 <style id="stable-inline-edit-layout">#dashboard .cycle-detail-block .inline-unit-field{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:3px!important;width:100%!important;min-width:0!important;overflow:hidden!important;white-space:nowrap!important}#dashboard .cycle-detail-block .inline-unit-field .inline-cycle-input{width:100%!important;min-width:0!important;box-sizing:border-box!important}#dashboard .cycle-detail-block .inline-unit-suffix{display:block!important;white-space:nowrap!important;line-height:1!important}</style>
 <script id="final-dashboard-state-fix">
 (function(){
@@ -2331,7 +2293,7 @@
   },true);
   new MutationObserver(function(){sync()}).observe(dashboard,{subtree:true,childList:true,characterData:true});
 })();
-</script></body>
+</script>
 <script id="dashboard-final-live-sync">
 (function(){
   function start(){
