@@ -2281,10 +2281,22 @@
         row.dataset.recordKey = key;
         row.tabIndex = 0;
         row.setAttribute('role', 'button');
-        row.innerHTML = '<small>' + record.date + '</small><span class="history-worker">' + (record.worker || '현장 작업자') + '</span><div><b>' + record.amount + '</b></div><span class="history-env">' + record.env + '</span><span class="pill use">' + record.result + '</span>';
-        row.addEventListener('click', () => {
+        row.innerHTML = '<small>' + record.date + '</small><span class="history-worker">' + (record.worker || '현장 작업자') + '</span><div><b>' + record.amount + '</b></div><span class="history-env">' + record.env + '</span><span class="pill use">' + record.result + '</span><button type="button" class="history-delete" title="이력 삭제">삭제</button>';
+        row.addEventListener('click', event => {
+          if (event.target.closest('.history-delete')) return;
           if (typeof window.aiSmartMixingShowHistoryDetail === 'function') window.aiSmartMixingShowHistoryDetail(record, row);
           else updateDetail(record);
+        });
+        row.querySelector('.history-delete').addEventListener('click', event => {
+          event.stopPropagation();
+          const deleted = new Set(JSON.parse(localStorage.getItem('aiSmartMixingDeletedHistory') || '[]'));
+          deleted.add(key);
+          localStorage.setItem('aiSmartMixingDeletedHistory', JSON.stringify([...deleted]));
+          const saved = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]');
+          sessionStorage.setItem('aiSmartMixingSavedHistory', JSON.stringify(saved.filter(item => [item.date, item.job, item.worker, item.amount].join('|') !== key)));
+          group.remove();
+          const badge = document.querySelector('#history .panel-head .badge');
+          if (badge) badge.textContent = '전체 ' + list.querySelectorAll('.job-history-record').length + '건';
         });
         group.querySelector('.job-history-title').addEventListener('click', () => group.classList.toggle('open'));
         group.querySelector('.job-history-records').append(row);
