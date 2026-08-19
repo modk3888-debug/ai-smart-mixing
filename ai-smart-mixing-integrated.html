@@ -1290,9 +1290,9 @@
       if (!saveButton) return;
       saveButton.addEventListener('click', () => {
         setTimeout(() => {
-          location.hash = 'history';
-          location.reload();
-        }, 120);
+          const record = JSON.parse(sessionStorage.getItem('aiSmartMixingSavedHistory') || '[]')[0];
+          window.dispatchEvent(new CustomEvent('aiSmartMixingWorklogSaved', { detail: record }));
+        }, 0);
       });
     })();
   </script>
@@ -2245,5 +2245,54 @@
 })();
 </script>
 <style id="stable-inline-edit-layout">#dashboard .cycle-detail-block .inline-unit-field{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;gap:3px!important;width:100%!important;min-width:0!important;overflow:hidden!important;white-space:nowrap!important}#dashboard .cycle-detail-block .inline-unit-field .inline-cycle-input{width:100%!important;min-width:0!important;box-sizing:border-box!important}#dashboard .cycle-detail-block .inline-unit-suffix{display:block!important;white-space:nowrap!important;line-height:1!important}</style>
+  <script id="history-fast-transition">
+    (() => {
+      const openHistory = () => {
+        document.querySelectorAll('.screen').forEach(screen => screen.classList.toggle('active', screen.id === 'history'));
+        document.querySelectorAll('nav button').forEach(button => button.classList.toggle('active', button.dataset.screen === 'history'));
+        history.replaceState(null, '', '#history');
+      };
+      const updateDetail = record => {
+        if (!record) return;
+        document.querySelectorAll('.job-history-record').forEach(row => row.classList.remove('selected'));
+        const setDetail = (id, value) => { const target = document.getElementById(id); if (target) target.textContent = value; };
+        setDetail('detailJob', record.job || '-');
+        setDetail('detailMaterial', record.material || '-');
+        setDetail('detailAmount', record.amount || '-');
+        setDetail('detailEnv', record.env || '-');
+        const worker = document.getElementById('detailWorker');
+        if (worker) worker.textContent = record.worker || '현장 작업자';
+        setDetail('detailDate', (record.date || '-') + ' · ' + (record.result || '저장 완료'));
+        setDetail('detailNote', record.overallNote || (record.cycleNotes || []).filter(Boolean).join(' / ') || '작업자 입력 없음.');
+      };
+      const addHistoryRow = record => {
+        const list = document.getElementById('historyList');
+        if (!list || !record) return;
+        const key = [record.date, record.job, record.worker, record.amount].join('|');
+        const alreadyAdded = [...list.querySelectorAll('.job-history-record')].some(row => row.dataset.recordKey === key);
+        if (alreadyAdded) { updateDetail(record); return; }
+        const group = document.createElement('section');
+        group.className = 'job-history-group open';
+        group.innerHTML = '<button type="button" class="job-history-title"><div><b>' + record.job + '</b><small>' + record.material + ' · 작업 이력 1건</small></div><span>접기 ▲</span></button><div class="job-history-records"><div class="job-history-record-head"><span>작업일</span><span>작업자</span><span>총 투입량</span><span>작업환경</span><span>결과</span></div></div>';
+        const row = document.createElement('div');
+        row.className = 'job-history-record selected';
+        row.dataset.recordKey = key;
+        row.tabIndex = 0;
+        row.setAttribute('role', 'button');
+        row.innerHTML = '<small>' + record.date + '</small><span class="history-worker">' + (record.worker || '현장 작업자') + '</span><div><b>' + record.amount + '</b></div><span class="history-env">' + record.env + '</span><span class="pill use">' + record.result + '</span>';
+        row.addEventListener('click', () => updateDetail(record));
+        group.querySelector('.job-history-title').addEventListener('click', () => group.classList.toggle('open'));
+        group.querySelector('.job-history-records').append(row);
+        list.prepend(group);
+        const badge = document.querySelector('#history .panel-head .badge');
+        if (badge) badge.textContent = '전체 ' + list.querySelectorAll('.job-history-record').length + '건';
+        updateDetail(record);
+      };
+      window.addEventListener('aiSmartMixingWorklogSaved', event => {
+        addHistoryRow(event.detail);
+        openHistory();
+      });
+    })();
+  </script>
  </body>
 </html>
