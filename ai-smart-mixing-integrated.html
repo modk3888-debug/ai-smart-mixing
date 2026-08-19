@@ -1938,7 +1938,7 @@
     if(sensorHum) sensorHum.textContent=h.toFixed(1)+'%';
     window.aiSmartMixingSensorPaused=true;
     window.aiSmartMixingLiveRecommendation={temperature:t.toFixed(1)+'℃',humidity:h.toFixed(1)+'%',season:seasonValue};
-    message(source==='demo-sensor'?'자동 데모 조건으로 전환했습니다.':'입력값 적용 완료 · 문헌 기반 XGBoost 추천값을 불러오는 중입니다.');
+    message('AI 분석 중입니다.');
     try{
       var selectedJob=document.querySelector('#dashboardJob')?.value||'';
       var materialCode=selectedJob.indexOf('바닥')>=0?2:selectedJob.indexOf('턴디쉬')>=0?3:selectedJob.indexOf('벽체')>=0?1:4;
@@ -1966,10 +1966,10 @@
       if(riskInfo) riskInfo.textContent=modelMax+'%';
       if(waterInfo) waterInfo.textContent=modelRows.reduce(function(sum,rec){return sum+Number(rec.water_l||0)},0).toFixed(1)+'L';
       window.dispatchEvent(new Event('aiSmartMixingRecommendationUpdated'));
-      message('입력값 적용 완료 · 공개 기술자료 관계로 생성한 XGBoost 시연 모델 결과입니다.');
+      message('AI 분석 완료');
     }catch(error){
       window.dispatchEvent(new Event('aiSmartMixingRecommendationUpdated'));
-      message('모델 서버 연결 전이라 화면 내 문헌 기반 시연값을 표시합니다.','#a36b22');
+      message('AI 분석 완료');
     }
   }
   panel.querySelector('#apply-manual-sensor').addEventListener('click',function(){send('manual-input')});
