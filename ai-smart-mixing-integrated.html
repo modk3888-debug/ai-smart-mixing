@@ -2325,7 +2325,6 @@
       if(approve&&!approve.dataset.approved){var text=worker?'\uC791\uC5C5\uC790 \uC870\uAC74 \uC2B9\uC778':'\uCD94\uCC9C \uC870\uAC74 \uC2B9\uC778';if(approve.textContent!==text)approve.textContent=text;}
     }
     sync();
-    setInterval(sync,300);
     window.addEventListener('hashchange',function(){setTimeout(sync,50)});
   }
   start();
