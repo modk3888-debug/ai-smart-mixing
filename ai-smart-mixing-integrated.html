@@ -1896,11 +1896,14 @@
   var dashboard=document.getElementById('dashboard');
   if(!dashboard) return;
   var anchor=dashboard.querySelector('.sensor-grid');
-  if(!anchor || document.getElementById('manual-sensor-controls')) return;
-  var panel=document.createElement('section');
-  panel.id='manual-sensor-controls';
+  if(!anchor) return;
+  var panel=document.getElementById('manual-sensor-controls');
+  if(!panel){
+    panel=document.createElement('section');
+    panel.id='manual-sensor-controls';
   panel.innerHTML='<p>온도·습도를 바꾸면 AI 추천 조건이 즉시 다시 계산됩니다.</p><div class="manual-fields"><div><label for="manual-temperature">작업장 온도 (℃)</label><input id="manual-temperature" type="number" min="-20" max="80" step="0.1" value="31"></div><div><label for="manual-humidity">상대습도 (%)</label><input id="manual-humidity" type="number" min="0" max="100" step="0.1" value="78"></div><div><label for="manual-season">배합용 구분</label><select id="manual-season"><option value="summer">여름용</option><option value="winter">겨울용</option></select></div><button id="apply-manual-sensor" type="button">환경값 적용</button><button id="reset-demo-sensor" class="secondary" type="button">자동 데모로 전환</button><div class="manual-message" id="manual-sensor-message"></div></div>';
-  anchor.parentNode.insertBefore(panel,anchor);
+    anchor.parentNode.insertBefore(panel,anchor);
+  }
   var temp=panel.querySelector('#manual-temperature'), hum=panel.querySelector('#manual-humidity'), season=panel.querySelector('#manual-season'), msg=panel.querySelector('#manual-sensor-message');
   function message(text,color){msg.textContent=text;msg.style.color=color||'#108b65';}
   async function send(source){
