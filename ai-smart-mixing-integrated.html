@@ -1811,9 +1811,20 @@
         const result=row.querySelector('span:nth-child(6)');
         if(result) result.innerHTML='<i class="pill '+(use?'use':'no')+'">'+(use?'사용':'미사용')+'</i> <i class="'+(use?'risk-high':'risk-low')+'">'+risk+'%</i>';
         const mix=row.querySelector('span:nth-child(4)');
-        if(mix) mix.textContent=(rowRec.mixing_minutes||5)+'분';
+        const mixingMinutes=Number(rowRec.mixing_minutes||5);
+        if(mix) mix.textContent=mixingMinutes+'분';
         const water=row.querySelector('span:nth-child(3)');
         if(water) water.textContent=fmt(rowRec.recommended_water_l||26)+'L';
+        // 호퍼 대기는 같은 사이클 안에서 남은 믹싱시간으로 계산합니다.
+        // 예: 3회 믹싱이면 1차 10분, 2차 5분, 3차 0분입니다.
+        const waitCell=row.querySelector('span:nth-child(5)');
+        if(waitCell){
+          const cycleIndex=Math.floor(index/3);
+          const roundIndex=index%3;
+          const cycleLength=Math.min(3,rows.length-(cycleIndex*3));
+          const hopperWait=Math.max(0,(cycleLength-roundIndex-1)*mixingMinutes);
+          waitCell.textContent=hopperWait+'분';
+        }
         return risk;
       });
       const maxRisk=Math.max(...calculated);
