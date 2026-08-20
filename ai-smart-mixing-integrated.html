@@ -1856,6 +1856,18 @@
         cycles:liveCycles
       };
       if(window.applyDashboardCycleOverrides) window.applyDashboardCycleOverrides();
+      // 환경값 적용 후에도 호퍼 대기는 같은 사이클의 남은 믹싱시간으로 다시 계산합니다.
+      // 작업자 수정값이 남아 있어도 차수별 표시가 모두 같은 값으로 덮어써지지 않게 합니다.
+      const cycleGroups=[...dashboard.querySelectorAll('.cycle-group')];
+      const groups=cycleGroups.length?cycleGroups:[dashboard.querySelector('.cycles')].filter(Boolean);
+      groups.forEach(group=>{
+        const groupRows=[...group.querySelectorAll('.cycle-row')];
+        groupRows.forEach((row,rowIndex)=>{
+          const mix=Number.parseFloat((row.querySelector('span:nth-child(4)')?.textContent||'').replace(/[^0-9.-]/g,''))||5;
+          const wait=row.querySelector('span:nth-child(5)');
+          if(wait) wait.textContent=Math.max(0,(groupRows.length-rowIndex-1)*mix)+'분';
+        });
+      });
 
     }catch(error){
 
