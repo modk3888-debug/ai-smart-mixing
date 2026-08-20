@@ -1892,11 +1892,11 @@
 @media(max-width:720px){#manual-sensor-controls .manual-fields{grid-template-columns:1fr 1fr}.manual-fields button{grid-column:1/-1;width:100%}}
 </style>
 <script id="manual-sensor-input-script">
-(function(){
+(function init(){
   var dashboard=document.getElementById('dashboard');
-  if(!dashboard) return;
+  if(!dashboard){setTimeout(init,50);return;}
   var anchor=dashboard.querySelector('.sensor-grid');
-  if(!anchor) return;
+  if(!anchor){setTimeout(init,50);return;}
   var panel=document.getElementById('manual-sensor-controls');
   if(!panel){
     panel=document.createElement('section');
